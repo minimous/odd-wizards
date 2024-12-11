@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
-import calculatePoint from '@/utils/utils';
 
 export async function POST(request: NextRequest) {
     try {
