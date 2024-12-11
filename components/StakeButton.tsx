@@ -54,7 +54,7 @@ const StakeSlider = () => {
   return (
     <div
       ref={sliderRef}
-      className="relative w-full h-14 bg-black rounded-2xl flex items-center overflow-hidden mt-2"
+      className="relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden mt-2"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => {
@@ -67,18 +67,18 @@ const StakeSlider = () => {
 
       {/* Chevron (arrow right) */}
       <div
-        className="absolute left-1 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-14 h-14 rounded-2xl cursor-pointer z-10"
+        className="absolute left-1 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-14 h-14 overflow-hidden rounded-2xl cursor-pointer z-10"
         style={{
           transform: `translate(${(sliderPosition / maxValue) * sliderWidth}px, -50%)`,
           transition: !isDragging && sliderPosition < maxValue ? "transform 0.3s ease" : "none",
         }}
         onMouseDown={handleMouseDown}
       >
-        <img src="/images/icon/Swipe.png" alt="Swipe" className="rounded-2xl" />
+        <img src="/images/icon/Swipe.png" alt="Swipe" className="h-16 max-w-max rounded-2xl" />
       </div>
 
       {/* Text */}
-      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-medium">
+      <span className="absolute inset-0 flex items-center ml-24 text-white text-lg font-medium">
         {sliderPosition === maxValue ? "Staked!" : "Stake Now"}
       </span>
     </div>

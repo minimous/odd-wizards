@@ -11,7 +11,10 @@ const StakeSection = () => {
         <div className="w-full p-4">
           <div className="flex justify-between mb-2">
             <h1 className="text-white text-4xl font-semibold">Odd Wizard</h1>
-            <span className="text-white text-lg font-semibold">Trade collection 👉</span>
+            <div className="flex items-center gap-x-4">
+              <span className="text-white text-lg font-semibold">Trade collection 👉</span>
+              <img src="/images/icon/stargaze.png" width="30px" />
+            </div>
           </div>
           <p className="text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
           <p className="text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
