@@ -1,22 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const StakeSlider = () => {
   const [sliderPosition, setSliderPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const maxValue = 100; // Posisi maksimum slider
-  const sliderWidth = 256; // Lebar slider dalam piksel
+  const [sliderWidth, setSliderWidth] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const maxValue = 100; // Maximum slider position
+
+  useEffect(() => {
+    // Update slider width when component mounts or resizes
+    const updateWidth = () => {
+      if (sliderRef.current) {
+        setSliderWidth(sliderRef.current.offsetWidth - 100);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+    };
+  }, []);
 
   const handleMouseDown = () => {
     setIsDragging(true);
   };
 
-  const handleMouseMove = (e: any) => {
-    if (!isDragging) return;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !sliderRef.current) return;
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left; // Posisi kursor relatif terhadap slider
-    const clampedValue = Math.min(Math.max(offsetX, 0), sliderWidth); // Membatasi nilai agar tetap dalam lebar slider
+    const rect = sliderRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left; // Cursor position relative to slider
+    const clampedValue = Math.min(Math.max(offsetX, 0), sliderWidth); // Constrain value within slider width
     setSliderPosition((clampedValue / sliderWidth) * maxValue);
   };
 
@@ -26,7 +43,7 @@ const StakeSlider = () => {
     if (sliderPosition === maxValue) {
       handleAction();
     } else {
-      setSliderPosition(0); // Reset posisi jika tidak mencapai paling kanan
+      setSliderPosition(0); // Reset position if not reaching far right
     }
   };
 
@@ -36,7 +53,8 @@ const StakeSlider = () => {
 
   return (
     <div
-      className="relative w-64 h-12 bg-black rounded-full flex items-center overflow-hidden"
+      ref={sliderRef}
+      className="relative w-full h-14 bg-black rounded-2xl flex items-center overflow-hidden mt-2"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => {
@@ -45,23 +63,23 @@ const StakeSlider = () => {
       }}
     >
       {/* Background Bar */}
-      <div className="absolute top-0 left-0 h-full w-full bg-gray-800 rounded-full" />
+      <div className="absolute top-0 left-0 h-full w-full bg-black rounded-2xl" />
 
       {/* Chevron (arrow right) */}
       <div
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-black rounded-full border-2 border-green-500 cursor-pointer z-10"
+        className="absolute left-1 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-14 h-14 rounded-2xl cursor-pointer z-10"
         style={{
           transform: `translate(${(sliderPosition / maxValue) * sliderWidth}px, -50%)`,
           transition: !isDragging && sliderPosition < maxValue ? "transform 0.3s ease" : "none",
         }}
         onMouseDown={handleMouseDown}
       >
-        <span className="text-green-500 text-xl">&raquo;</span>
+        <img src="/images/icon/Swipe.png" alt="Swipe" className="rounded-2xl" />
       </div>
 
       {/* Text */}
       <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-medium">
-        {sliderPosition === maxValue ? "Staked!" : "Slide to Stake"}
+        {sliderPosition === maxValue ? "Staked!" : "Stake Now"}
       </span>
     </div>
   );
