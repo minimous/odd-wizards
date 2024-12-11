@@ -17,6 +17,9 @@ module.exports = {
       }
     },
     extend: {
+      backgroundImage: {
+        'gradient-brown-home': `linear-gradient(159.21deg, rgba(0, 0, 0, 0) 9.3%, #221E16 51.09%, rgba(0, 0, 0, 0) 92.88%), linear-gradient(0deg, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 80%)`,
+      },
       height: {
         'screen-90': 'calc(100vh - 90px)',
       },

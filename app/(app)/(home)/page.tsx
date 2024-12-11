@@ -36,25 +36,27 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full h-[125px] bg-[#201621]" />
-      <div className="w-full bg-[#201621] mb-8">
+      <div className="w-full bg-[#201621] mb-16">
         <StakeSection />
       </div>
-      <Leaderboard />
-      <div className="w-full relative text-white flex flex-col justify-center items-center text-center">
-        <div className="mt-8">
-          <h1 className="text-[24px] md:text-[36px] font-bold mb-4">
-            The Prize
-          </h1>
-          <p className="text-lg leading-relaxed">
-            Rewards for challenge leaders, it could be you.
-          </p>
-        </div>
-        <Carousel images={imageList} interval={5000} />
-        <div className="mt-8 mb-12">
-          <h1 className="text-[24px] md:text-[36px] font-bold mb-4 flex items-center">
-            <span>Expedition ⚓</span>
-          </h1>
-          <p className="text-lg leading-relaxed">for 1st winner</p>
+      <div className="bg-[url('/images/blur-brown.png')] bg-cover bg-center">
+        <Leaderboard />
+        <div className="w-full relative text-white flex flex-col justify-center items-center text-center">
+          <div className="mt-8">
+            <h1 className="text-[24px] md:text-[36px] font-bold mb-4">
+              Prize
+            </h1>
+            <p className="text-lg leading-relaxed">
+              Only the biggest Seals will claim victory and win the prize!
+            </p>
+          </div>
+          <Carousel images={imageList} interval={5000} />
+          <div className="mt-8 mb-12">
+            <h1 className="text-[24px] md:text-[36px] font-bold mb-4 flex items-center">
+              <span>Expedition ⚓</span>
+            </h1>
+            <p className="text-lg leading-relaxed">for 1st winner</p>
+          </div>
         </div>
       </div>
       <Footer />

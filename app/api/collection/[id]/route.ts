@@ -4,7 +4,7 @@ import prisma from '@/prisma/prisma';
 // READ Single Collection
 export async function GET(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const id = parseInt(params.id);
@@ -45,7 +45,7 @@ export async function GET(
 // UPDATE Collection
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const id = parseInt(params.id);
@@ -88,7 +88,7 @@ export async function PUT(
 // DELETE Collection
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const id = parseInt(params.id);

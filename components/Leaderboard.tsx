@@ -34,24 +34,27 @@ const Leaderboard = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full py-12 px-4">
-      <h1 className="text-lg sm:text-xl lg:text-4xl font-bold mb-2 text-white text-center">
+      <h1 className="text-lg sm:text-xl lg:text-3xl font-bold mb-2 text-white text-center">
         Leaderboard
       </h1>
-      <p className="text-gray-400 text-center mb-2 max-w-lg text-base sm:text-xl">
-        Stake your Wizard, rise to the top, and show off your collection of these carefree.
+      <p className="text-gray-400 text-center leading-tight">
+        Stake your Wizard, rise to the top, and show off your
       </p>
-      <div className="flex flex-col items-center w-full">
+      <p className="text-gray-400 text-center leading-tight">
+        collection of these carefree.
+      </p>
+      <div className="flex flex-col items-center w-full mt-4">
         {leaderboardData.slice(0, visibleItems).map((user, index) => (
           <div
             key={index}
-            className="flex gap-4 items-center justify-center w-full mt-4 px-4 sm:px-8 md:px-12 lg:px-16"
+            className="flex gap-6 items-center justify-center w-full mt-2 px-4 sm:px-8 md:px-12 lg:px-16"
           >
-            <div className="flex items-center justify-center w-[50px] h-[50px]  md:h-[105px] md:w-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
+            <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
               {rankEmojis[index] || user.rank}
             </div>
             <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
-                <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px]  bg-amber-200 rounded-full flex items-center justify-center">
+                <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                   <Image
                     src="/images/seals.png"
                     alt="User Avatar"
@@ -92,7 +95,7 @@ const Leaderboard = () => {
         ) : (
           <button
             onClick={loadMore}
-            className="text-lg sm:text-xl font-semibold text-gray-400 hover:text-white"
+            className="text-lg sm:text-xl text-gray-400 hover:text-white"
           >
             Load More ...
           </button>
