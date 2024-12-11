@@ -86,20 +86,20 @@ export default function Header() {
           {!isWalletConnected ? (
             <Button
               variant={"ghost"}
-              className="px-8 py-4 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+              className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
               onClick={handleConnectWallet}
               aria-label="Connect"
             >
-              Connect
+              <span className="text-2xl font-black">Connect</span>
             </Button>
           ) : (
             <div className="flex items-center gap-x-3">
               <Button
-                className="px-5 py-4 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                className="px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
                 onClick={handleDisconnectWallet}
                 aria-label={address}
               >
-                {address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}
+                <span className="text-2xl font-black">{address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}</span>
               </Button>
               <img src="/images/wizard.png" className="w-[60px] h-[60px]" />
             </div>
@@ -165,18 +165,18 @@ export default function Header() {
               <Button
                 onClick={handleConnectWallet}
                 aria-label="Connect Wallet"
-                className="px-5 py-4 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                className="px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
               >
-                Connect
+                <span className="text-2xl font-black">Connect</span>
               </Button>
             ) : (
               <div className="w-full flex items-center gap-x-3">
                 <Button
-                  className="w-full px-5 py-4 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                  className="w-full px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
                   onClick={handleDisconnectWallet}
                   aria-label={address}
                 >
-                  {address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}
+                  <span className="text-2xl font-black">{address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}</span>
                 </Button>
                 <img src="/images/wizard.png" className="w-[60px] h-[60px]" />
               </div>
