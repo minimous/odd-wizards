@@ -44,26 +44,44 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
     }
   };
 
+  const getOrdinal = (number: number) =>  {
+    const suffixes = ["th", "st", "nd", "rd"];
+    const value = number % 100; // Handle numbers like 11, 12, 13
+    const suffix = 
+        value >= 11 && value <= 13 
+        ? "th" 
+        : suffixes[Math.min(value % 10, 4)] || "th";
+    return `${number}${suffix}`;
+}
+
   return (
-    <div className="relative w-full h-[500px] overflow-hidden">
-      <div className="relative w-full h-full flex items-center justify-center">
-        {images.map((image, index) => (
-          <div
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`absolute transition-all duration-700 ease-in-out ${getPositionStyle(
-              index
-            )}`}
-          >
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={400}
-              height={400}
-              className="rounded-lg shadow-lg"
-            />
-          </div>
-        ))}
+    <div className="w-full">
+      <div className="relative w-full h-[500px] overflow-hidden">
+        <div className="relative w-full h-full flex items-center justify-center">
+          {images.map((image, index) => (
+            <div
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`absolute transition-all duration-700 ease-in-out ${getPositionStyle(
+                index
+              )}`}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={400}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mt-8 mb-12">
+        <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
+          <span>Expedition ⚓</span>
+        </h1>
+        <p className="text-lg text-gray-400 leading-relaxed">for {getOrdinal(currentIndex + 1)} winner</p>
       </div>
     </div>
   );

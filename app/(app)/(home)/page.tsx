@@ -50,13 +50,7 @@ export default function Home() {
               Only the biggest Seals will claim victory and win the prize!
             </p>
           </div>
-          <Carousel images={imageList} interval={5000} />
-          <div className="mt-8 mb-12">
-            <h1 className="text-[24px] md:text-[36px] font-bold mb-4 flex items-center">
-              <span>Expedition ⚓</span>
-            </h1>
-            <p className="text-lg leading-relaxed">for 1st winner</p>
-          </div>
+          <Carousel images={imageList} interval={7500} />
         </div>
       </div>
       <Footer />
