@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model mst_collection {
+  collection_id          Int     @id @default(autoincrement())
+  collection_address     String?
+  collection_name        String?
+  collection_description String?
+  collection_supply      Int?
+  
+  // Relasi dengan Staker
+  mst_staker mst_staker[]
+  mst_attributes_reward mst_attributes_reward[]
+}
+
+model mst_staker {
+  staker_id               Int       @id @default(autoincrement())
+  staker_address          String?
+  staker_collection_id    Int?
+  staker_lastclaim_date   DateTime?
+  staker_nft_staked       Int?
+  created_date            DateTime? @default(now())
+  updated_date            DateTime? @updatedAt
+  
+  // Relasi dengan Collection dan Point
+  collection mst_collection? @relation(fields: [staker_collection_id], references: [collection_id])
+  trn_point  trn_point[]
+}
+
+model trn_point {
+  point_id            Int       @id @default(autoincrement())
+  point_amount        Int?
+  point_claim_date    DateTime?
+  point_nft_staked   Int?
+  point_staker_id     Int?
+  
+  // Relasi dengan Staker
+  staker mst_staker? @relation(fields: [point_staker_id], references: [staker_id])
+}
+
+model mst_attributes_reward {
+  attr_id             Int       @id @default(autoincrement())
+  attr_key            String?
+  attr_val            String?
+  attr_reward         Int?
+  attr_periode        String?
+  attr_collection_id  Int?
+  collection  mst_collection?  @relation(fields: [attr_collection_id], references: [collection_id])
+}

@@ -102,7 +102,7 @@ export function DateTimePicker({
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          type="button"
+          type='button'
           variant={'outline'}
           disabled={disabled}
           className={cn(
@@ -110,7 +110,7 @@ export function DateTimePicker({
             !value && 'text-muted-foreground',
             className
           )}
-          {...props}
+          // {...props}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {value && typeof value === 'string' ? (
