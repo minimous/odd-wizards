@@ -64,7 +64,7 @@ export default function Header() {
               About
             </Link>
             <Link
-              href="/"
+              href="/gallery"
               className="text-2xl font-bold text-white hover:text-gray-200 transition-colors duration-300"
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
@@ -150,7 +150,7 @@ export default function Header() {
               About
             </Link>
             <Link
-              href="/"
+              href="/gallery"
               className="text-xl font-semibold text-white hover:text-gray-200 transition-colors duration-300"
             >
               Gallery

@@ -1,10 +1,15 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-export const Footer = () => {
+export interface FooterProps {
+  className?: string
+}
+
+export const Footer = ({ className }: FooterProps) => {
   return (
-    <footer className="relative w-full text-white flex items-center justify-center gap-x-10 text-center p-10 my-20">
+    <footer className={cn("relative w-full text-white flex items-center justify-center gap-x-10 text-center p-10 my-20", className ?? "")}>
       <Link href="#" target="_blank">
         <div className="bg-[#3A3A3A] rounded-xl flex items-center shadow-md">
           <div className="flex gap-4 items-center py-4 pl-8">

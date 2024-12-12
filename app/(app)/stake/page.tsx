@@ -21,7 +21,7 @@ const imageList = [
     { src: "/images/Prize/The Watchers 9th.jpg", alt: "Image 12" },
 ];
 
-export default function Home() {
+export default function Stake() {
     return (
         <div className="relative bg-black w-full">
             <Header />
