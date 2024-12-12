@@ -25,29 +25,31 @@ export default function Stake() {
     return (
         <div className="relative bg-black w-full">
             <Header />
-            <div className="grid grid-cols-2">
-                <div className="mt-32 mx-auto p-6">
-                    <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1>
-                    <div className="mt-6">
-                        <p className="text-lg text-gray-400 leading-tight">Discover the ultimate NFT staking challenge! Compete to</p>
-                        <p className="text-lg text-gray-400 leading-tight">see who holds the most stacked NFTs and win prizes. Only</p>
-                        <p className="text-lg text-gray-400 leading-tight">the biggest Wizard will claim victory and win the prize!</p>
+            <div className="px-20">
+                <div className="grid grid-cols-2">
+                    <div className="mt-32 mx-auto py-6">
+                        <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1>
+                        <div className="mt-6">
+                            <p className="text-lg text-gray-400 leading-tight">Discover the ultimate NFT staking challenge! Compete to</p>
+                            <p className="text-lg text-gray-400 leading-tight">see who holds the most stacked NFTs and win prizes. Only</p>
+                            <p className="text-lg text-gray-400 leading-tight">the biggest Wizard will claim victory and win the prize!</p>
+                        </div>
+                    </div>
+                    <div className="p-6 mt-20">
+                        <CarouselStake images={imageList} interval={7500} />
                     </div>
                 </div>
-                <div className="p-6 mt-20">
-                    <CarouselStake images={imageList} interval={7500} />
+                <div className="mt-8">
+                    <StakeCard />
                 </div>
             </div>
-            <div className="my-6 px-20">
-                <StakeCard />
-            </div>
-            <div className="my-6">
+            <div className="my-4">
                 <BoxLeaderboard />
             </div>
-            <div className="py-36 bg-[url('/images/blur-brown.png')] bg-cover bg-center">
+            <div className="pt-20 bg-[url('/images/blur-brown.png')] bg-cover bg-center">
                 <Leaderboard />
             </div>
-            <Footer />
+            <Footer className="my-0 mb-8" />
         </div>
     );
 }

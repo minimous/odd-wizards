@@ -42,11 +42,11 @@ export default function Home() {
       <div className="bg-[url('/images/blur-brown.png')] bg-cover bg-center">
         <Leaderboard />
         <div className="w-full relative text-white flex flex-col justify-center items-center text-center">
-          <div className="mt-8">
+          <div className="mt-8 mb-4">
             <h1 className="text-[24px] md:text-[36px] font-bold mb-4">
               Prize
             </h1>
-            <p className="text-lg leading-relaxed">
+            <p className="text-lg text-gray-400 leading-relaxed">
               Only the biggest Seals will claim victory and win the prize!
             </p>
           </div>

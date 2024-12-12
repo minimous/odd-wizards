@@ -30,13 +30,13 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
       (index - currentIndex + images.length) % images.length;
 
     if (relativeIndex === 0) {
-      return "z-30 transform scale-110 translate-x-0 opacity-100";
+      return "z-30 transform scale-125 translate-x-0 opacity-100";
     } else if (relativeIndex === 1) {
-      return "z-20 transform scale-100 translate-x-[200px] opacity-80";
+      return "z-20 transform scale-110 translate-x-[200px] opacity-80";
     } else if (relativeIndex === 2) {
       return "z-10 transform scale-90 translate-x-[400px] opacity-60";
     } else if (relativeIndex === images.length - 1) {
-      return "z-20 transform scale-100 -translate-x-[200px] opacity-80";
+      return "z-20 transform scale-110 -translate-x-[200px] opacity-80";
     } else if (relativeIndex === images.length - 2) {
       return "z-10 transform scale-90 -translate-x-[400px] opacity-60";
     } else {
