@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 
 export default function About() {
     return (
-        <div className="relative w-full bg-[url('/images/about.gif')] bg-cover bg-center p-8">
+        <div className="relative w-full bg-[url('/images/About.gif')] bg-cover bg-center p-8">
             <div className="bg-black/40 absolute top-0 left-0 right-0 bottom-0 z-0" />
             <Header />
             <div className="relative">
@@ -32,7 +32,7 @@ export default function About() {
                     <p className="text-xl">The challenge will run for a month. We have a leaderboard system that you can see,</p>
                     <p className="text-xl">so everything is accessible transparently. Join the fun with us and win one of the Top</p>
                     <p className="text-xl">collections on Stargaze!</p>
-                    <Footer />
+                    <Footer className="my-6" />
                 </div>
             </div>
         </div>
