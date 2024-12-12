@@ -74,7 +74,7 @@ const StakeSlider = () => {
         }}
         onMouseDown={handleMouseDown}
       >
-        <img src="/images/icon/Swipe.png" alt="Swipe" className="h-16 max-w-max rounded-2xl" />
+        <img src="/images/Icon/Swipe.png" alt="Swipe" className="h-16 max-w-max rounded-2xl" />
       </div>
 
       {/* Text */}
