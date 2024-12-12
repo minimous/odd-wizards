@@ -34,7 +34,7 @@ export default function Home() {
                         <p className="text-lg text-gray-400 leading-tight">the biggest Wizard will claim victory and win the prize!</p>
                     </div>
                 </div>
-                <div className="p-6 mt-16">
+                <div className="p-6 mt-20">
                     <CarouselStake images={imageList} interval={7500} />
                 </div>
             </div>

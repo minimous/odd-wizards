@@ -12,7 +12,7 @@ const StakeSlider = () => {
     // Update slider width when component mounts or resizes
     const updateWidth = () => {
       if (sliderRef.current) {
-        setSliderWidth(sliderRef.current.offsetWidth - 100);
+        setSliderWidth(sliderRef.current.offsetWidth - 50);
       }
     };
 
