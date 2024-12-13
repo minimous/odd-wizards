@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model mst_users {
+  user_address           String  @id
+  user_discord_url       String?
+  user_twitter_url       String?
+  user_image_url         String?
+  user_created_date      DateTime?  
+  
+  // Relasi dengan Staker
+  mst_staker mst_staker[]
+}
+
 model mst_collection {
   collection_id          Int     @id @default(autoincrement())
   collection_address     String?
@@ -30,6 +41,8 @@ model mst_staker {
   
   // Relasi dengan Collection dan Point
   collection mst_collection? @relation(fields: [staker_collection_id], references: [collection_id])
+  // Relasi dengan User
+  user mst_users? @relation(fields: [staker_address], references: [user_address])
   trn_point  trn_point[]
 }
 

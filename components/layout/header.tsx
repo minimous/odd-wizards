@@ -1,43 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 
 import { useState, useEffect } from "react";
-import { useChain } from "@cosmos-kit/react"; // Import the hook for handling chain connection
-import { Button } from "@/components/ui/button";
+import ConnectButton from "@/components/ConnectButton";
+import { useChain } from "@cosmos-kit/react";
+import axios from "axios";
+import { useUser } from "@/hooks/useUser";
+import getConfig from "@/config/config";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const { connect, disconnect, address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
+  const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
+  const { setUser } = useUser();
+  const config = getConfig();
 
-  // Check if the wallet is connected
   useEffect(() => {
-    if (address) {
-      setIsWalletConnected(true);
-    } else {
-      setIsWalletConnected(false);
+    
+    async function fetchData(){
+      if(address){
+        let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
+        setUser(resp.data.data);
+      }
     }
-  }, [address]);
 
-  // Handle connecting the wallet
-  const handleConnectWallet = async () => {
-    try {
-      await connect(); // Connect the wallet
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-    }
-  };
-
-  // Handle disconnecting the wallet
-  const handleDisconnectWallet = async () => {
-    try {
-      await disconnect(); // Disconnect the wallet
-    } catch (error) {
-      console.error("Error disconnecting wallet:", error);
-    }
-  };
+    fetchData();
+  
+  }, [address])
 
   return (
     <nav className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 py-5 bg-transparent z-50">
@@ -81,29 +70,8 @@ export default function Header() {
         </div>
 
         {/* Connect Wallet Button */}
-
         <div className="hidden md:block">
-          {!isWalletConnected ? (
-            <Button
-              variant={"ghost"}
-              className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
-              onClick={handleConnectWallet}
-              aria-label="Connect"
-            >
-              <span className="text-2xl font-black">Connect</span>
-            </Button>
-          ) : (
-            <div className="flex items-center gap-x-3">
-              <Button
-                className="px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
-                onClick={handleDisconnectWallet}
-                aria-label={address}
-              >
-                <span className="text-2xl font-black">{address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}</span>
-              </Button>
-              <img src="/images/wizard.png" className="w-[60px] h-[60px]" />
-            </div>
-          )}
+          <ConnectButton />
         </div>
         {/* Mobile Menu Button */}
         <div className="md:hidden sm:flex items-center">
@@ -161,26 +129,7 @@ export default function Header() {
             >
               Stake
             </Link>
-            {!isWalletConnected ? (
-              <Button
-                onClick={handleConnectWallet}
-                aria-label="Connect Wallet"
-                className="px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
-              >
-                <span className="text-2xl font-black">Connect</span>
-              </Button>
-            ) : (
-              <div className="w-full flex items-center gap-x-3">
-                <Button
-                  className="w-full px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
-                  onClick={handleDisconnectWallet}
-                  aria-label={address}
-                >
-                  <span className="text-2xl font-black">{address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}</span>
-                </Button>
-                <img src="/images/wizard.png" className="w-[60px] h-[60px]" />
-              </div>
-            )}
+            <ConnectButton />
           </div>
         </div>
       )}

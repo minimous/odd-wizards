@@ -4,4 +4,4 @@ export enum REWARD_PERIODE {
     DAY = 'DAY'
 }
 
-export const GRAPHQL_ENDPOINT_STARGAZE = 'https://graphql.mainnet.stargaze-apis.com/graphql';
+export const DEFAULT_IMAGE_PROFILE = "/images/profile/default.png";

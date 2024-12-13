@@ -120,10 +120,10 @@ export interface Token {
     rarityPercent: number;
     rarity: string;
   }>;
-  media: Array<{
+  media: {
     url: string;
     type: string;
-  }>;
+  };
 }
 
 interface PageInfo {

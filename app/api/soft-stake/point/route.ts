@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
+import calculatePoint from '@/lib/utils';
 
 export async function POST(request: NextRequest) {
     try {
@@ -38,10 +39,17 @@ export async function POST(request: NextRequest) {
             where: { attr_collection_id: collection.collection_id }
         });
 
+        const totalPoints = attributes_rewards?.reduce((sum, reward) => 
+            sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
+        );
+
         return NextResponse.json(
             {
                 message: 'Get points successfully',
-                data: staker
+                data: {
+                    staker: staker,
+                    points: totalPoints 
+                }
             },
             { status: 201 }
         );

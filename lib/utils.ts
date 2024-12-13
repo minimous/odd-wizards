@@ -3,11 +3,13 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/components/kanban/board-column';
 import { TaskDragData } from '@/components/kanban/task-card';
-import { AttributesReward } from "@/types/attributes-reward";
-import { GRAPHQL_ENDPOINT_STARGAZE, REWARD_PERIODE } from "@/constants";
+import { REWARD_PERIODE } from "@/constants";
 import axios, { AxiosError } from "axios";
-import { FetchAllStargazeTokensOptions, Token } from "@/types";
+import { FetchAllStargazeTokensOptions, OwnedTokensResponse, Token } from "@/types";
+import getConfig from '@/config/config';
+import { mst_attributes_reward } from '@prisma/client';
 
+const config = getConfig();
 
 type DraggableData = ColumnDragData | TaskDragData;
 
@@ -40,7 +42,7 @@ export function formatAmount(amount: number | undefined | null) {
 }
 
 
-export default function calculatePoint(attrreward: AttributesReward, lastClaimDate?: Date): number {
+export default function calculatePoint(attrreward: mst_attributes_reward, lastClaimDate?: Date | null): number {
   // Validate input
   if (!attrreward) return 0;
   
@@ -51,13 +53,13 @@ export default function calculatePoint(attrreward: AttributesReward, lastClaimDa
   if (!lastClaimDate) {
       switch(attrreward.attr_periode){
           case REWARD_PERIODE.MINUTE:
-              return attrreward.attr_reward;
+              return attrreward.attr_reward || 0;
           
           case REWARD_PERIODE.HOUR:
-              return attrreward.attr_reward;
+              return attrreward.attr_reward || 0;
           
           case REWARD_PERIODE.DAY:
-              return attrreward.attr_reward;
+              return attrreward.attr_reward || 0;
           
           default:
               return 0;
@@ -72,17 +74,17 @@ export default function calculatePoint(attrreward: AttributesReward, lastClaimDa
       case REWARD_PERIODE.MINUTE:
           // Calculate points for minute-based rewards
           const minutesPassed = Math.floor(timeDifferenceMs / (1000 * 60));
-          return Math.floor(minutesPassed * attrreward.attr_reward);
+          return Math.floor(minutesPassed * (attrreward.attr_reward || 0));
       
       case REWARD_PERIODE.HOUR:
           // Calculate points for hour-based rewards
           const hoursPassed = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
-          return Math.floor(hoursPassed * attrreward.attr_reward);
+          return Math.floor(hoursPassed * (attrreward.attr_reward || 0));
       
       case REWARD_PERIODE.DAY:
           // Calculate points for day-based rewards
           const daysPassed = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
-          return Math.floor(daysPassed * attrreward.attr_reward);
+          return Math.floor(daysPassed * (attrreward.attr_reward || 0));
       
       default:
           // If an unknown period is provided, return 0
@@ -90,12 +92,26 @@ export default function calculatePoint(attrreward: AttributesReward, lastClaimDa
   }
 }
 
-export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOptions) {
+export interface FetchStargazeTokensOptions {
+  owner: string;
+  collectionAddress?: string;
+  maxTokens?: number;
+  sortBy?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): Promise<OwnedTokensResponse> {
+
+  if(!config) throw Error("Config not found");
+
   const {
-    owner, // Wallet address
-    collectionAddress, // Optional collection contract address
+    owner,
+    collectionAddress,
     maxTokens = Infinity,
-    sortBy = 'ACQUIRED_DESC'
+    sortBy = 'ACQUIRED_DESC',
+    limit = 10,
+    offset = 0
   } = options;
 
   const query = `
@@ -142,49 +158,69 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
     }
   `;
 
+  const variables = {
+    owner,
+    limit: Math.min(limit, maxTokens),
+    offset,
+    filterByCollectionAddrs: collectionAddress ? [collectionAddress] : undefined,
+    sortBy
+  };
+
+  try {
+    const response = await axios.post(config.graphql_url, {
+      query,
+      variables
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response.data?.data?.tokens || {};
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOptions): Promise<Token[]> {
+  
+  if(!config) throw Error("Config not found");
+  
+  const {
+    owner,
+    collectionAddress,
+    sortBy = 'ACQUIRED_DESC'
+  } = options;
+
   let allTokens: Token[] = [];
   let offset = 0;
   const limit = 100; // Recommended batch size
 
   while (true) {
-    try {
-      const response = await axios.post(GRAPHQL_ENDPOINT_STARGAZE, {
-        query,
-        variables: {
-          owner,
-          limit,
-          offset,
-          filterByCollectionAddrs: collectionAddress ? [collectionAddress] : null,
-          sortBy
-        }
-      });
+    const resp: OwnedTokensResponse = await fetchStargazeTokens({
+      owner,
+      collectionAddress,
+      maxTokens: limit,
+      sortBy,
+      limit,
+      offset
+    });
 
-      const { tokens, pageInfo } = response.data.data.tokens;
+    // Add fetched tokens to the collection
+    allTokens = [...allTokens, ...resp.tokens];
 
-      // Add fetched tokens to the collection
-      allTokens = [...allTokens, ...tokens];
-
-      // Check if we've reached the total number of tokens or maxTokens limit
-      if (
-        tokens.length === 0 || 
-        offset + limit >= pageInfo.total || 
-        allTokens.length >= maxTokens
-      ) {
-        break;
-      }
-
-      // Increment offset for next iteration
-      offset += limit;
-
-    } catch (error: AxiosError | any) {
-      console.error('Error fetching Stargaze tokens:', error.response ? error.response.data : error.message);
-      throw error;
+    // Check if we've reached the end or maxTokens limit
+    if (resp.tokens.length === 0 || allTokens.length >= resp.pageInfo.total) {
+      break;
     }
 
+    // Increment offset for next iteration
+    offset += limit;
+
     // Optional: Add a small delay to prevent rate limiting
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  // Slice to maxTokens if necessary
-  return allTokens.slice(0, maxTokens);
+  return allTokens;
 }

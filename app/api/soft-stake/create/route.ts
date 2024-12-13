@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
+import { updateNftOwner } from '@/lib/soft-staking-service';
 
 export async function POST(request: NextRequest) {
     try {
@@ -22,13 +23,25 @@ export async function POST(request: NextRequest) {
                 { status: 404 }
             );
         }
-
-        const staker = await prisma.mst_staker.create({
-            data: {
-                staker_address,
+    
+        // Check if staker already exists
+        let staker = await prisma.mst_staker.findFirst({
+            where: {
+                staker_address: staker_address,
                 staker_collection_id: collection.collection_id
             }
         });
+
+        if (!staker) {
+            staker = await prisma.mst_staker.create({
+                data: {
+                    staker_address,
+                    staker_collection_id: collection.collection_id
+                }
+            });  
+        } 
+
+        updateNftOwner(staker_address, collection_address);
 
         return NextResponse.json(
             {

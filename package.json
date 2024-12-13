@@ -59,6 +59,7 @@
     "clsx": "^2.0.0",
     "cosmos-kit": "^2.21.1",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.4.7",
     "embla-carousel": "^8.3.0",
     "embla-carousel-autoplay": "^8.3.0",
     "embla-carousel-react": "^8.3.0",
