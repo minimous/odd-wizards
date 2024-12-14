@@ -28,7 +28,7 @@ export default function Home() {
         <img src="/images/hero.png" className="w-full" />
         <div className="absolute bottom-0 w-full h-[200px] bg-gradient-to-b from-transparent to-[#201621]"></div>
       </div>
-      <div className="w-full bg-[#201621] py-8 text-center">
+      <div className="w-full bg-[#201621] px-4 py-8 text-center">
         <h1 className="text-4xl md:text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1>
         <div className="mt-8">
           <p className="text-lg md:text-2xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge! Compete</p>

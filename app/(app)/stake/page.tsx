@@ -27,7 +27,7 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid grid-cols-1 md:!grid-cols-2">
-                    <div className="px-10 md:!px-20 mt-32 mx-auto py-6">
+                    <div className="px-10 mt-20 md:!px-20 md:!mt-32 mx-auto py-6">
                         <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1>
                         <div className="mt-6">
                             <p className="text-lg text-gray-400 leading-tight">Discover the ultimate NFT staking challenge! Compete to see who holds the most stacked NFTs and win prizes. Only the biggest Wizard will claim victory and win the prize!</p>
