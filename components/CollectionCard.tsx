@@ -5,6 +5,7 @@ import axios from "axios";
 import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react";
+import Loading from "./Loading";
 
 export interface CollectionCardType {
     address?: string
@@ -20,11 +21,14 @@ export interface CollectionCardProps {
 const CollectionCard = ({ data }: CollectionCardProps) => {
 
     const [stat, setStat] = useState<CollectionStat>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        async function fetchData(){
+        async function fetchData() {
+            setLoading(true);
             let resp = await axios.get(`/api/collection/stat/${data.address}`);
             setStat(resp.data.data);
+            setLoading(false);
         }
 
         fetchData();
@@ -51,12 +55,22 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
             </div>
             <div className="grid grid-cols-2 w-full">
                 <div className="p-4 border border-white w-full">
-                    <p className="font-bold">{data.address ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
-                    <span>Floor</span>
+                    {
+                        loading ?
+                            (<Loading />) :
+                            (<div><p className="font-bold">{data.address ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
+                                <span>Floor</span></div>)
+                    }
                 </div>
                 <div className="p-4 border border-white w-full">
-                    <p className="font-bold">{ data.address ? stat?.tokenCounts.listed : 0} NFTs</p>
-                    <span>Listing</span>
+                    {
+                        loading ?
+                            (<Loading />) : (
+                                <div>
+                                    <p className="font-bold">{data.address ? stat?.tokenCounts.listed : 0} NFTs</p>
+                                    <span>Listing</span>
+                                </div>)
+                    }
                 </div>
             </div>
         </div>

@@ -219,7 +219,7 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
     offset += limit;
 
     // Optional: Add a small delay to prevent rate limiting
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 250));
   }
 
   return allTokens;
