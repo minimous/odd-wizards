@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Pagination and filtering
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';

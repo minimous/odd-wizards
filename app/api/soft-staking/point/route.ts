@@ -4,7 +4,7 @@ import { getTotalPoints } from '@/lib/soft-staking-service';
 
 export async function GET(request: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = request.nextUrl;
         const collection_address = searchParams.get('collection_address');
         const staker_address = searchParams.get('wallet_address');
 

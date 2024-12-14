@@ -8,7 +8,7 @@ import { updateNftOwner } from '@/lib/soft-staking-service';
 export async function GET(request: NextRequest, { params }: { params: { wallet: string } }) {
     try {
         const { wallet } = params;
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = request.nextUrl;
         const collection_address = searchParams.get('collection_address');
 
         // Check if user exists
