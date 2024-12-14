@@ -29,17 +29,16 @@ export default function Header() {
   }, [address])
 
   return (
-    <nav className="absolute top-0 left-0 right-0 flex items-center justify-between px-10 py-5 bg-transparent z-50">
+    <nav className="absolute top-0 left-0 right-0 flex items-center justify-between md:px-10 py-5 bg-transparent z-50">
       <div className="container mx-auto flex items-center justify-between w-full">
         {/* Logo and Links */}
-        <div className="flex items-center space-x-10">
+        <div className="flex items-center space-x-4 md:space-x-10">
           {/* Logo */}
           <Link href="/" aria-label="Home">
             <img
               src="/images/logo.png"
               alt="Logo"
-              width={75}
-              className="rounded-md"
+              className="w-[50px] md:w-[75px]  rounded-md"
             />
           </Link>
 

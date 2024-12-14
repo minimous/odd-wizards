@@ -31,12 +31,12 @@ const StakeCard: FC = () => {
         let data = resp.data.data;
         // setPoints(data.points);
         setStaker(data.staker);
-      } catch (error: AxiosError | any){
+      } catch (error: AxiosError | any) {
       }
       setIsFetch(true);
     }
 
-    if(wallet.status == WalletStatus.Connected && address){
+    if (wallet.status == WalletStatus.Connected && address) {
       fetchData();
     }
 
@@ -56,7 +56,7 @@ const StakeCard: FC = () => {
         },
         success: (result) => {
           setClaim(true);
-          
+
           return {
             title: "Success!",
             description: "Stake and Claim Successfully"
@@ -67,7 +67,7 @@ const StakeCard: FC = () => {
           description: error?.response?.data?.message || 'Internal server error.'
         })
       });
-      
+
     } catch (error: AxiosError | any) {
       toast({
         variant: 'destructive',
@@ -78,67 +78,65 @@ const StakeCard: FC = () => {
   }
 
   return (
-    <div className="bg-[#18181B] border-2 border-[#323237] p-8 rounded-[85px] flex gap-x-4">
-      <img src="/images/stake-wizard.gif" className="w-[175px] rounded-[50px]" />
-      <div className="w-full p-4">
-        <div className="flex justify-between mb-2">
-          <h1 className="text-white text-4xl font-semibold">Odd Wizard</h1>
-          <div className="flex items-center gap-x-4">
-            <span className="text-white text-lg font-semibold">Trade collection 👉</span>
+    <div className="bg-[#18181B] border-2 border-[#323237] p-4 md:p-8 rounded-[85px] md:flex gap-x-4">
+      <img src="/images/stake-wizard.gif" className="shrink-0 h-[175px] rounded-[50px] mx-auto" />
+      <div className="w-full p-2 md:p-4">
+        <div className="text-center md:flex md:text-start justify-between mb-2">
+          <h1 className="text-white text-2xl md:text-4xl font-semibold">Odd Wizard</h1>
+          <div className="flex items-center justify-between gap-x-4">
+            <span className="text-white md:text-lg font-semibold">Trade collection 👉</span>
             <img src="/images/Icon/stargaze.png" width="30px" />
           </div>
         </div>
-        <p className="text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
-        <p className="text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
-        {
-
-        }
-        {
-          wallet.status != WalletStatus.Connected ? (
-            <div className="mt-2">
-              <ConnectButton />
-            </div>
-          ) : (
-            isFetch ? (<div className="mt-2">
-              {
-                staker ? 
-                (<Button 
+        <p className="text-sm md:text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
+        <p className="text-sm md:text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
+        <div className="max-w-max mx-auto mt-4 md:!mx-0 md:!mt-2">
+          {
+            wallet.status != WalletStatus.Connected ? (
+              <div className="">
+                <ConnectButton />
+              </div>
+            ) : (
+              isFetch ? (<div className="">
+                {
+                  staker ?
+                    (<Button
+                      variant={"ghost"}
+                      onClick={doStakeAndClaim}
+                      className="px-8 py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                    >Stake And Claim</Button>) :
+                    (<StakeButton />)
+                }
+              </div>) : (
+                <Button
                   variant={"ghost"}
-                  onClick={doStakeAndClaim}
-                  className="px-8 py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
-                  >Stake And Claim</Button>) : 
-                (<StakeButton />)
-              }
-            </div>) : (
-              <Button 
-              variant={"ghost"}
-              disabled={true}
-              className="mt-2 px-8 py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
-              > <svg
-              className="animate-spin h-5 w-5 mr-3"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              stroke="black" /* Menentukan warna hitam */
-          >
-                  <circle
+                  disabled={true}
+                  className="mt-2 px-8 py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                > <svg
+                  className="animate-spin h-5 w-5 mr-3"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="black" /* Menentukan warna hitam */
+                >
+                    <circle
                       className="opacity-25"
                       cx="12"
                       cy="12"
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                  ></circle>
-                  <path
+                    ></circle>
+                    <path
                       className="opacity-75"
                       fill="black" /* Memberikan warna hitam */
                       d="M4 12a8 8 0 018-8V0C6.373 0 0 6.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-              </svg> Please Wait</Button>
+                    ></path>
+                  </svg> Please Wait</Button>
+              )
             )
-            
-          )
-        }
+          }
+        </div>
       </div>
     </div>
   );

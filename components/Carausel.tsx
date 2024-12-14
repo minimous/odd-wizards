@@ -32,13 +32,13 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
     if (relativeIndex === 0) {
       return "z-30 transform scale-125 translate-x-0 opacity-100";
     } else if (relativeIndex === 1) {
-      return "z-20 transform scale-110 translate-x-[200px] opacity-80";
+      return "z-20 transform scale-110 translate-x-[100px] md:translate-x-[200px] opacity-80";
     } else if (relativeIndex === 2) {
-      return "z-10 transform scale-90 translate-x-[400px] opacity-60";
+      return "z-10 transform scale-90 translate-x-[200px] md:translate-x-[400px] opacity-60";
     } else if (relativeIndex === images.length - 1) {
-      return "z-20 transform scale-110 -translate-x-[200px] opacity-80";
+      return "z-20 transform scale-110 -translate-x-[100px] md:-translate-x-[200px] opacity-80";
     } else if (relativeIndex === images.length - 2) {
-      return "z-10 transform scale-90 -translate-x-[400px] opacity-60";
+      return "z-10 transform scale-90 -translate-x-[200px] md:-translate-x-[400px] opacity-60";
     } else {
       return "hidden";
     }
@@ -56,7 +56,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
 
   return (
     <div className="w-full">
-      <div className="relative w-full h-[500px] overflow-hidden">
+      <div className="relative w-full h-[325px] md:h-[500px] overflow-hidden">
         <div className="relative w-full h-full flex items-center justify-center">
           {images.map((image, index) => (
             <div
@@ -66,12 +66,10 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
                 index
               )}`}
             >
-              <Image
+              <img
                 src={image.src}
                 alt={image.alt}
-                width={400}
-                height={400}
-                className="rounded-lg shadow-lg"
+                className="w-[175px] h-[175px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg"
               />
             </div>
           ))}

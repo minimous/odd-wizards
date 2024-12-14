@@ -38,7 +38,7 @@ export default function ConnectButton() {
                 onClick={handleConnectWallet}
                 aria-label="Connect"
             >
-                <div className="text-2xl font-black flex items-center">
+                <div className="md:text-2xl font-black flex items-center">
                     {
                         wallet.status == WalletStatus.Connecting ? (
                             <div className="flex items-center gap-2">

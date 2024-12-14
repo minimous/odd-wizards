@@ -79,12 +79,12 @@ const Leaderboard = () => {
         {leaderboard.slice(0, visibleItems).map((item, index) => (
           <div
             key={index}
-            className="flex gap-6 items-center justify-center w-full mt-2 px-4 sm:px-8 md:px-12 lg:px-16"
+            className="flex gap-4 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
           >
-            <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
+            <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
               {rankEmojis[index] || item.ranking}
             </div>
-            <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA]">
+            <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
                 <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                 <img
@@ -97,19 +97,19 @@ const Leaderboard = () => {
                   />
                 </div>
                 <div className="text-center">
-                  <p className="font-bold text-[#DB2877]">
+                  <p className="text-[10px] md:text-[20px] font-bold text-[#DB2877]">
                     {formatAddress(item.staker_address)}
                   </p>
                 </div>
               </div>
               <div className="text-center">
-                <p className="font-bold">
+                <p className="text-[10px] md:text-[20px] font-bold">
                   {item.total_points} $WZRD
                 </p>
               </div>
 
               <div className="text-center">
-                <p className="font-bold">
+                <p className="text-[10px] md:text-[20px] font-bold">
                   {item.staker_nft_staked} NFT Staked
                 </p>
               </div>
@@ -128,7 +128,7 @@ const Leaderboard = () => {
         <div className="mt-10 text-center">
           <button
             onClick={loadMore}
-            className="text-lg sm:text-xl text-gray-400 hover:text-white"
+            className="md:text-xl text-gray-400 hover:text-white"
           >
             Load More ...
           </button>
