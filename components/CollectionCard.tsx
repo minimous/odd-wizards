@@ -1,12 +1,16 @@
+"use client";
+import { formatToStars } from "@/lib/utils";
+import { CollectionStat } from "@/types/collection-stat";
+import axios from "axios";
 import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react";
 
 export interface CollectionCardType {
+    address?: string
     image: string
     imageGif: string
     name: string
-    floor: number
-    totalNft: number
 }
 
 export interface CollectionCardProps {
@@ -14,6 +18,18 @@ export interface CollectionCardProps {
 }
 
 const CollectionCard = ({ data }: CollectionCardProps) => {
+
+    const [stat, setStat] = useState<CollectionStat>();
+
+    useEffect(() => {
+        async function fetchData(){
+            let resp = await axios.get(`/api/collection/stat/${data.address}`);
+            setStat(resp.data.data);
+        }
+
+        fetchData();
+    }, []);
+
     return (
         <div className="flex flex-col items-center bg-black text-white border border-white group">
             <div className="relative flex justify-center items-center w-50 h-50 rounded-full">
@@ -35,11 +51,11 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
             </div>
             <div className="grid grid-cols-2 w-full">
                 <div className="p-4 border border-white w-full">
-                    <p className="font-bold">{data.floor} STARS</p>
+                    <p className="font-bold">{data.address ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
                     <span>Floor</span>
                 </div>
                 <div className="p-4 border border-white w-full">
-                    <p className="font-bold">{data.totalNft} NFTs</p>
+                    <p className="font-bold">{ data.address ? stat?.tokenCounts.listed : 0} NFTs</p>
                     <span>Listing</span>
                 </div>
             </div>

@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
                     // points: totalPoints 
                 }
             },
-            { status: 201 }
+            { status: 200 }
         );
     } catch (error) {
         console.error('Get points Error:', error);

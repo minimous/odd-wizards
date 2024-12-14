@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
                     point: resp.point
                 }
             },
-            { status: 201 }
+            { status: 200 }
         );
     } catch (error) {
         console.error('Get points Error:', error);

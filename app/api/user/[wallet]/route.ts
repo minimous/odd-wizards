@@ -60,7 +60,7 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
                 message: 'successfully',
                 data: user
             },
-            { status: 201 }
+            { status: 200 }
         );
     } catch (error) {
         console.error('Get User Error:', error);

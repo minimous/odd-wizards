@@ -1,35 +1,45 @@
 "use client";
 
+import getConfig from "@/config/config";
+import { formatAddress } from "@/lib/utils";
+import { LeaderboardItem } from "@/types/leaderboard";
+import axios from "axios";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Leaderboard = () => {
-  const leaderboardData = [
-    { rank: 1, name: "Stars123...1234", points: "376.333 $SEALS", staked: 300 },
-    { rank: 2, name: "Stars123...1234", points: "176.333 $SEALS", staked: 400 },
-    { rank: 3, name: "Stars123...1234", points: "96.333 $SEALS", staked: 90 },
-    { rank: 4, name: "Stars123...1234", points: "88.333 $SEALS", staked: 122 },
-    { rank: 5, name: "Stars123...1234", points: "76.333 $SEALS", staked: 200 },
-    { rank: 6, name: "Stars123...1234", points: "66.333 $SEALS", staked: 300 },
-    { rank: 7, name: "Stars123...1234", points: "56.333 $SEALS", staked: 400 },
-    { rank: 8, name: "Stars123...1234", points: "46.333 $SEALS", staked: 90 },
-    { rank: 9, name: "Stars123...1234", points: "36.333 $SEALS", staked: 122 },
-    { rank: 10, name: "Stars123...1234", points: "26.333 $SEALS", staked: 200 },
-  ];
-
   const rankEmojis = ["🥇", "🥈", "🥉"];
 
-  const [visibleItems, setVisibleItems] = useState(4);
-  const [isLoadMoreClicked, setIsLoadMoreClicked] = useState(false);
+  const [visibleItems, setVisibleItems] = useState(4); // Jumlah item yang ditampilkan
+  const [leaderboard, setLeaderboard] = useState<LeaderboardItem[]>([]); // Data leaderboard
+  const [page, setPage] = useState(0); // Halaman untuk pagination
+  const [hasMore, setHasMore] = useState(true); // Menandakan apakah masih ada data untuk dimuat
+  const [loading, setLoading] = useState<boolean>(false);
+  const config = getConfig();
 
+  // Fungsi untuk mengambil data leaderboard
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const resp = await axios.get(`/api/soft-staking/leaderboard?collection_address=${config?.collection_address}&page=${page}`);
+        const data = resp.data.data ?? [];
+        setLeaderboard((prev) => [...prev, ...data]); // Menambahkan data baru ke data yang sudah ada
+        setHasMore(data.length > 0); // Jika tidak ada data, set hasMore ke false
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+      setLoading(false);
+    }
+
+    fetchData();
+  }, [page]); // Efek dijalankan setiap kali halaman berubah
+
+  // Fungsi untuk memuat lebih banyak data
   const loadMore = () => {
-    setVisibleItems(leaderboardData.length);
-    setIsLoadMoreClicked(true);
-  };
-
-  const goBack = () => {
-    setVisibleItems(4);
-    setIsLoadMoreClicked(false);
+    if (hasMore) {
+      setPage((prevPage) => prevPage + 1); // Naikkan halaman saat tombol "Load More" diklik
+    }
   };
 
   return (
@@ -44,13 +54,13 @@ const Leaderboard = () => {
         collection of these carefree.
       </p>
       <div className="flex flex-col items-center w-full mt-4">
-        {leaderboardData.slice(0, visibleItems).map((user, index) => (
+        {leaderboard.slice(0, visibleItems).map((item, index) => (
           <div
             key={index}
             className="flex gap-6 items-center justify-center w-full mt-2 px-4 sm:px-8 md:px-12 lg:px-16"
           >
             <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
-              {rankEmojis[index] || user.rank}
+              {rankEmojis[index] || item.ranking}
             </div>
             <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
@@ -65,42 +75,62 @@ const Leaderboard = () => {
                 </div>
                 <div className="text-center">
                   <p className="font-bold text-[#DB2877]">
-                    {user.name}
+                    {formatAddress(item.staker_address)}
                   </p>
                 </div>
               </div>
               <div className="text-center">
                 <p className="font-bold">
-                  {user.points}
+                  {item.total_points} $WZRD
                 </p>
               </div>
 
               <div className="text-center">
                 <p className="font-bold">
-                  {user.staked} NFT Staked
+                  {item.staker_nft_staked} NFT Staked
                 </p>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-10 text-center">
-        {isLoadMoreClicked ? (
-          <button
-            onClick={goBack}
-            className="text-lg sm:text-xl font-semibold text-gray-400 hover:text-white"
-          >
-            Back
-          </button>
-        ) : (
+      {
+        loading && (
+          <div className="my-6 text-center">
+            <svg
+              className="animate-spin h-10 w-10 mr-3"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="black" /* Menentukan warna hitam */
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="black" /* Memberikan warna hitam */
+                d="M4 12a8 8 0 018-8V0C6.373 0 0 6.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+        )
+      }
+      {hasMore && (
+        <div className="mt-10 text-center">
           <button
             onClick={loadMore}
             className="text-lg sm:text-xl text-gray-400 hover:text-white"
           >
             Load More ...
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

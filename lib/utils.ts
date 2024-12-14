@@ -224,3 +224,109 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
 
   return allTokens;
 }
+
+export async function getCollection(collection_address: string) {
+  if (!config) throw Error("Config not found");
+
+  const query = `
+    query CollectionHeaderStats($collectionAddr: String!) {
+      collection(address: $collectionAddr) {
+        creationTime
+        contractAddress
+        floor {
+          amount
+          amountUsd
+          denom
+          symbol
+          rate
+          nativeConversion {
+            amount
+            amountUsd
+            denom
+            symbol
+            rate
+          }
+        }
+        highestOffer {
+          offerPrice {
+            amount
+            amountUsd
+            denom
+            symbol
+            rate
+            nativeConversion {
+              amount
+              amountUsd
+              denom
+              symbol
+              rate
+            }
+          }
+        }
+        startTradingTime
+        tokenCounts {
+          listed
+          active
+        }
+        stats {
+          bestOffer
+          bestOfferUsd
+          collectionAddr
+          change24HourPercent
+          change7DayPercent
+          volume24Hour
+          volume7Day
+          volumeUsd24hour
+          volumeUsd7day
+          numOwners
+          uniqueOwnerPercent
+        }
+        provenance {
+          chainId
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(config.graphql_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          collectionAddr: collection_address
+        },
+        operationName: 'CollectionHeaderStats'
+      })
+    });
+
+    const data = await response.json();
+    return data.data.collection;
+  } catch (error) {
+    console.error('Error fetching collection stats:', error);
+    throw error;
+  }
+}
+
+export function formatToStars(value?: string | number): string {
+  if (!value) return '0';
+  
+  let number = typeof value === 'string' ? parseFloat(value) : value;
+
+  number /= 1000000;
+
+  if (number >= 1_000_000) {
+    return `${(number / 1_000_000).toFixed(2)}M`;
+  } else if (number >= 1_000) {
+    return `${(number / 1_000).toFixed(2)}K`;
+  }
+  return `${number.toFixed(2)}`;
+}
+
+export function formatAddress(address: string | undefined) {
+  if(!address) return '';
+  return `${address.substring(0, 8)}...${address.substring(address.length - 5)}`
+}

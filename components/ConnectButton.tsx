@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { WalletStatus } from '@cosmos-kit/core';
 import { useUser } from "@/hooks/useUser";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
+import { formatAddress } from "@/lib/utils";
 
 export default function ConnectButton() {
     const wallet = useWallet();
@@ -77,7 +78,7 @@ export default function ConnectButton() {
                     onClick={handleDisconnectWallet}
                     aria-label={address}
                 >
-                    <span className="text-2xl font-black">{address ? `${address.substring(0, 8)}...${address.substring(address.length - 5)}` : ""}</span>
+                    <span className="text-2xl font-black">{formatAddress(address)}</span>
                 </Button>
                 <img src={ user?.user_image_url ?? DEFAULT_IMAGE_PROFILE } onError={(e: any) => {
                     e.target.src = DEFAULT_IMAGE_PROFILE;
