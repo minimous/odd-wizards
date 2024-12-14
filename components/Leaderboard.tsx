@@ -1,11 +1,13 @@
 "use client";
 
 import getConfig from "@/config/config";
+import { DEFAULT_IMAGE_PROFILE } from "@/constants";
 import { formatAddress } from "@/lib/utils";
 import { LeaderboardItem } from "@/types/leaderboard";
 import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import Loading from "./Loading";
 
 const Leaderboard = () => {
   const rankEmojis = ["🥇", "🥈", "🥉"];
@@ -65,12 +67,13 @@ const Leaderboard = () => {
             <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
                 <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
-                  <Image
-                    src="/images/seals.png"
-                    alt="User Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover"
+                <img
+                    src={ item?.user_image_url ?? DEFAULT_IMAGE_PROFILE }
+                    alt={ item?.staker_address ?? "" }
+                    className="rounded-full object-cover w-full h-full"
+                    onError={(e: any) => {
+                      e.target.src = DEFAULT_IMAGE_PROFILE;
+                    }}
                   />
                 </div>
                 <div className="text-center">
@@ -96,32 +99,12 @@ const Leaderboard = () => {
       </div>
       {
         loading && (
-          <div className="my-6 text-center">
-            <svg
-              className="animate-spin h-10 w-10 mr-3"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              stroke="black" /* Menentukan warna hitam */
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="black" /* Memberikan warna hitam */
-                d="M4 12a8 8 0 018-8V0C6.373 0 0 6.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
+          <div className="my-6 text-center flex items-center justify-center">
+            <Loading />
           </div>
         )
       }
-      {hasMore && (
+      {hasMore && !loading && (
         <div className="mt-10 text-center">
           <button
             onClick={loadMore}
