@@ -4,6 +4,8 @@ import { useChain, useWallet } from "@cosmos-kit/react";
 import axios, { AxiosResponse } from "axios";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useClaim } from "@/hooks/useClaim";
+import confetti from "canvas-confetti";
 
 const StakeSlider = () => {
   const [sliderPosition, setSliderPosition] = useState(0);
@@ -15,6 +17,7 @@ const StakeSlider = () => {
   const config = getConfig();
   const { address } = useChain("stargaze");
   const { toast, promiseToast } = useToast();
+  const { setClaim } = useClaim();
 
   useEffect(() => {
     // Responsive width calculation
@@ -27,7 +30,7 @@ const StakeSlider = () => {
         // Calculate width dynamically, leaving space for chevron and some padding
         const availableWidth = totalWidth - (chevronWidth * 1.5);
 
-        setSliderWidth(availableWidth - 15);
+        setSliderWidth(availableWidth + 15);
       }
     };
 
@@ -75,7 +78,7 @@ const StakeSlider = () => {
 
   const handleAction = async () => {
     try {
-
+      setClaim(false);
       promiseToast(axios.post("/api/soft-staking/create", {
         staker_address: address,
         collection_address: config?.collection_address
@@ -84,11 +87,15 @@ const StakeSlider = () => {
           title: "Processing...",
           description: "Please Wait"
         },
-        success: (result) => ({
-          title: "Success!",
-          // description: `Operation completed: ${result}`
-          description: `Stake Successfuly`
-        }),
+        success: (result) => {
+          setClaim(true);
+          showConfeti();
+          return {
+            title: "Success!",
+            // description: `Operation completed: ${result}`
+            description: `Stake Successfuly`
+          }
+        },
         error: (error) => ({
           title: "Error",
           description: error.message
@@ -105,73 +112,90 @@ const StakeSlider = () => {
 
   };
 
+  const showConfeti = () => {
+    if (sliderRef.current) {
+      const rect = sliderRef.current.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      confetti({
+        origin: {
+          x: x / window.innerWidth,
+          y: y / window.innerHeight,
+        },
+      });
+    }
+  }
+
   return (
-    <div
-      ref={sliderRef}
-      className={`
+    <div>
+      <div
+        ref={sliderRef}
+        className={`
         relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden
         ${isDragging ? 'cursor-grabbing' : 'cursor-default'}
       `}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={() => {
-        setIsDragging(false);
-        if (sliderPosition < maxValue) setSliderPosition(0);
-      }}
-    >
-      {/* Background Bar with Gradient */}
-      <div
-        className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-black via-gray-900 to-black opacity-80 rounded-2xl"
-        style={{
-          backgroundSize: `${(sliderPosition / maxValue) * 100}% 100%`,
-          transition: 'background-size 0.3s ease-out'
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => {
+          setIsDragging(false);
+          if (sliderPosition < maxValue) setSliderPosition(0);
         }}
-      />
+      >
+        {/* Background Bar with Gradient */}
+        <div
+          className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-black via-gray-900 to-black opacity-80 rounded-2xl"
+          style={{
+            backgroundSize: `${(sliderPosition / maxValue) * 100}% 100%`,
+            transition: 'background-size 0.3s ease-out'
+          }}
+        />
 
-      {/* Chevron (arrow right) */}
-      <div
-        ref={chevronRef}
-        className={`
+        {/* Chevron (arrow right) */}
+        <div
+          ref={chevronRef}
+          className={`
           absolute left-1 top-1/2 transform -translate-y-1/2 
           flex items-center justify-center w-14 h-14 
           overflow-hidden rounded-2xl z-10
           ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}
         `}
-        style={{
-          transform: `translate(${(sliderPosition / maxValue) * sliderWidth}px, -50%)`,
-          transition: !isDragging && sliderPosition < maxValue
-            ? "transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)"
-            : "none",
-          boxShadow: isDragging
-            ? "0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)"
-            : "0 2px 4px rgba(0,0,0,0.2)"
-        }}
-        onMouseDown={handleMouseDown}
-      >
-        <img
-          src="/images/Icon/Swipe.png"
-          alt="Swipe"
-          className={`
+          style={{
+            transform: `translate(${(sliderPosition / maxValue) * sliderWidth}px, -50%)`,
+            transition: !isDragging && sliderPosition < maxValue
+              ? "transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)"
+              : "none",
+            boxShadow: isDragging
+              ? "0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)"
+              : "0 2px 4px rgba(0,0,0,0.2)"
+          }}
+          onMouseDown={handleMouseDown}
+        >
+          <img
+            src="/images/Icon/Swipe.png"
+            alt="Swipe"
+            className={`
             h-16 max-w-max rounded-2xl 
             transition-transform duration-200
             ${isDragging ? 'scale-95' : 'scale-100'}
           `}
-        />
-      </div>
+          />
+        </div>
 
-      {/* Text */}
-      <span
-        className={`
+        {/* Text */}
+        <span
+          className={`
           absolute inset-0 flex items-center ml-24 
           text-white text-lg font-medium
           transition-all duration-300
           ${sliderPosition === maxValue
-            ? 'text-green-400 opacity-100'
-            : 'opacity-80'}
+              ? 'text-green-400 opacity-100'
+              : 'opacity-80'}
         `}
-      >
-        {sliderPosition === maxValue ? "Staked!" : "Stake Now"}
-      </span>
+        >
+          {sliderPosition === maxValue ? "Staked!" : "Stake Now"}
+        </span>
+      </div>
     </div>
   );
 };

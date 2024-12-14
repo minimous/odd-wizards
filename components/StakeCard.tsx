@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import StakeButton from "@/components/StakeButton";
 import { WalletStatus } from '@cosmos-kit/core';
 import { useChain, useWallet } from "@cosmos-kit/react";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { promiseToast, useToast } from "./ui/use-toast";
 import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
+import confetti from "canvas-confetti";
 const StakeCard: FC = () => {
 
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
@@ -21,8 +22,8 @@ const StakeCard: FC = () => {
   const wallet = useWallet();
   const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
   const { toast } = useToast();
-  const { setClaim } = useClaim();
-
+  const { claim, setClaim } = useClaim();
+  const claimRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setIsFetch(false);
@@ -42,7 +43,7 @@ const StakeCard: FC = () => {
     }
 
 
-  }, [address]);
+  }, [address, claim]);
 
   const doStakeAndClaim = async () => {
     try {
@@ -57,7 +58,7 @@ const StakeCard: FC = () => {
         },
         success: (result) => {
           setClaim(true);
-
+          showConfeti();
           return {
             title: "Success!",
             description: "Stake and Claim Successfully"
@@ -78,6 +79,21 @@ const StakeCard: FC = () => {
     }
   }
 
+  const showConfeti = () => {
+    if (claimRef.current) {
+      const rect = claimRef.current.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      confetti({
+        origin: {
+          x: x / window.innerWidth,
+          y: y / window.innerHeight,
+        },
+      });
+    }
+  }
+
   return (
     <div className="bg-[#18181B] border-2 border-[#323237] p-4 md:p-8 rounded-[85px] md:flex gap-x-4">
       <img src="/images/stake-wizard.gif" className="shrink-0 h-[175px] rounded-[50px] mx-auto" />
@@ -91,7 +107,7 @@ const StakeCard: FC = () => {
         </div>
         <p className="text-xs md:!text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
         <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
-        <div className="max-w-max mx-auto mt-4 md:!mx-0 md:!mt-2">
+        <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-2">
           {
             wallet.status != WalletStatus.Connected ? (
               <div className="">
@@ -102,6 +118,8 @@ const StakeCard: FC = () => {
                 {
                   staker ?
                     (<Button
+                      disabled={!isFetch}
+                      ref={claimRef}
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
                       className="px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
@@ -112,7 +130,7 @@ const StakeCard: FC = () => {
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="mt-2 px-8 text-xs md:!text-xl py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="mt-2 px-8 text-xs md:!text-2xl py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"
