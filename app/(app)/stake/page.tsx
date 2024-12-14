@@ -25,21 +25,21 @@ export default function Stake() {
     return (
         <div className="relative bg-black w-full">
             <Header />
-            <div className="px-20">
-                <div className="grid grid-cols-2">
-                    <div className="mt-32 mx-auto py-6">
+            <div>
+                <div className="grid grid-cols-1 md:!grid-cols-2">
+                    <div className="px-10 md:!px-20 mt-32 mx-auto py-6">
                         <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1>
                         <div className="mt-6">
-                            <p className="text-lg text-gray-400 leading-tight">Discover the ultimate NFT staking challenge! Compete to</p>
-                            <p className="text-lg text-gray-400 leading-tight">see who holds the most stacked NFTs and win prizes. Only</p>
-                            <p className="text-lg text-gray-400 leading-tight">the biggest Wizard will claim victory and win the prize!</p>
+                            <p className="text-lg text-gray-400 leading-tight">Discover the ultimate NFT staking challenge! Compete to see who holds the most stacked NFTs and win prizes. Only the biggest Wizard will claim victory and win the prize!</p>
+                            {/* <p className="text-lg text-gray-400 leading-tight"></p>
+                            <p className="text-lg text-gray-400 leading-tight"></p> */}
                         </div>
                     </div>
-                    <div className="p-6 mt-20">
+                    <div className="p-4 md:!p-6 md:!mt-20">
                         <CarouselStake images={imageList} interval={7500} />
                     </div>
                 </div>
-                <div className="mt-8">
+                <div className="mx-4 mt-8">
                     <StakeCard />
                 </div>
             </div>

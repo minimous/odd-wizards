@@ -41,7 +41,7 @@ export default function Gallery() {
         <div className="relative bg-black w-full">
             <Header />
             <div className="min-h-screen flex items-center justify-center pt-28">
-                <div className="grid grid-cols-3 w-full px-28">
+                <div className="grid grid-cols-1 md:!grid-cols-3 w-full px-10 md:!px-28">
                     {collections.map((item, index) => (
                         <CollectionCard
                             key={index}
@@ -51,9 +51,9 @@ export default function Gallery() {
                 </div>
             </div>
             <div className="my-20 text-center">
-                <h1 className="text-6xl text-white font-black">Create something fun!</h1>
+                <h1 className="text-2xl md:!text-6xl text-white font-black">Create something fun!</h1>
                 <div className="mt-6">
-                    <p className="text-3xl text-gray-400 leading-tight">click “random” for unilimited possibilities</p>
+                    <p className="text-sm md:!text-3xl text-gray-400 leading-tight">click “random” for unilimited possibilities</p>
                 </div>
             </div>
             <div className="w-full">

@@ -240,7 +240,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                         </SelectTrigger>
                                         <SelectContent className="bg-gray-100">
                                             {traits.map(item => (
-                                                <SelectItem className={selectedTraits[item] ? "text-blue-600" : ""} key={item} value={item}>
+                                                <SelectItem className={selectedTraits[item] ? "text-blue-600" : "text-black"} key={item} value={item}>
                                                     {item}
                                                 </SelectItem>
                                             ))}
@@ -287,7 +287,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                 className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
                                 onClick={handleRandomTraits}
                             >
-                                <Dices className="mx-1" /> Random
+                                <Dices className="mx-1" size={20} /> Random
                             </Button>
                             <Button
                                 variant={"ghost"}
@@ -324,17 +324,17 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                             })}
                         </div>
                         <div className="md:hidden sm:flex">
-                            <div className="flex gap-x-2 mt-4">
+                            <div className="flex items-center gap-x-2 mt-4">
                                 <Button
                                     variant="outline"
-                                    className="rounded-xl flex-2"
+                                    className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
                                     onClick={handleRandomTraits}
                                 >
-                                    <Dices className="mx-1" /> Random
+                                    <Dices className="mx-1" size={20} /> Random
                                 </Button>
                                 <Button
                                     variant="default"
-                                    className="rounded-xl flex-1 bg-slate-900 hover:bg-slate-800"
+                                    className="flex-1 px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
                                     onClick={handleDownload}
                                 >
                                     Download

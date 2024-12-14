@@ -79,7 +79,7 @@ const Leaderboard = () => {
         {leaderboard.slice(0, visibleItems).map((item, index) => (
           <div
             key={index}
-            className="flex gap-4 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
+            className="flex gap-2 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
           >
             <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
               {rankEmojis[index] || item.ranking}

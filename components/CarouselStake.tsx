@@ -32,13 +32,13 @@ const CarouselStake: React.FC<CarouselStakeProps> = ({ images, interval = 3000 }
     if (relativeIndex === 0) {
       return "z-30 transform scale-125 translate-x-0 opacity-100";
     } else if (relativeIndex === 1) {
-      return "z-20 transform scale-110 translate-x-[75px] opacity-80";
+      return "z-20 transform scale-110 translate-x-[55px] md:!translate-x-[75px] opacity-80";
     } else if (relativeIndex === 2) {
-      return "z-10 transform scale-95 translate-x-[150px] opacity-60";
+      return "z-10 transform scale-95 translate-x-[105px] md:!translate-x-[150px] opacity-60";
     } else if (relativeIndex === images.length - 1) {
-      return "z-20 transform scale-110 -translate-x-[75px] opacity-80";
+      return "z-20 transform scale-110 -translate-x-[55px] md:!-translate-x-[75px] opacity-80";
     } else if (relativeIndex === images.length - 2) {
-      return "z-10 transform scale-95 -translate-x-[150px] opacity-60";
+      return "z-10 transform scale-95  -translate-x-[105px] md:!-translate-x-[150px] opacity-60";
     } else {
       return "hidden";
     }

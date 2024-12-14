@@ -35,7 +35,7 @@ export const BoxLeaderboard = () => {
   return (
     <div>
       <div hidden={leaderboard == undefined}>
-        <div className="relative flex gap-4 md:!gap-6 w-full px-4 md:px-12 lg:px-20">
+        <div className="relative flex gap-2 md:!gap-6 w-full px-4 md:px-12 lg:px-20">
           <div hidden={(leaderboard?.ranking ?? 0) > (config?.ranking_reward as number ?? 0)}>
             <div className="absolute flex items-center left-20 -bottom-12 md:-bottom-16 md:left-44 gap-x-4">
               <img src="/images/Icon/Arrow.png" className="w-[50px] md:w-[75px]" />
