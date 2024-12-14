@@ -39,7 +39,7 @@ export const BoxLeaderboard = () => {
           <div hidden={(leaderboard?.ranking ?? 0) > (config?.ranking_reward as number ?? 0)}>
             <div className="absolute flex items-center left-20 -bottom-12 md:-bottom-16 md:left-44 gap-x-4">
               <img src="/images/Icon/Arrow.png" className="w-[50px] md:w-[75px]" />
-              <span className="text-[#49ED4A] mt-2 md:mt-4 md:text-lg">Congrats, you got 1 NFT, keep it up!</span>
+              <span className="text-[#49ED4A] mt-2 md:mt-4 text-xs md:!text-lg">Congrats, you got 1 NFT, keep it up!</span>
             </div>
             <div className="relative">
               <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-[#18181B] border-2 border-[#49ED4A] shadow-sm shadow-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-2xl text-center">

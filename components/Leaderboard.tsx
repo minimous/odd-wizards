@@ -69,10 +69,10 @@ const Leaderboard = () => {
       <h1 className="text-lg sm:text-xl lg:text-3xl font-bold mb-2 text-white text-center">
         Leaderboard
       </h1>
-      <p className="text-gray-400 text-center leading-tight">
+      <p className="text-xs md:!text-lg text-gray-400 text-center leading-tight">
         Stake your Wizard, rise to the top, and show off your
       </p>
-      <p className="text-gray-400 text-center leading-tight">
+      <p className="text-xs md:!text-lg text-gray-400 text-center leading-tight">
         collection of these carefree.
       </p>
       <div className="flex flex-col items-center w-full mt-4">

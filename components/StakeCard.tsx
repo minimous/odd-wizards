@@ -11,6 +11,7 @@ import { mst_staker } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { promiseToast, useToast } from "./ui/use-toast";
 import { useClaim } from "@/hooks/useClaim";
+import Link from "next/link";
 const StakeCard: FC = () => {
 
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
@@ -83,13 +84,13 @@ const StakeCard: FC = () => {
       <div className="w-full p-2 md:p-4">
         <div className="text-center md:flex md:text-start justify-between mb-2">
           <h1 className="text-white text-2xl md:text-4xl font-semibold">Odd Wizard</h1>
-          <div className="flex items-center justify-between gap-x-4">
+          <Link href="#" className="flex items-center justify-between gap-x-4">
             <span className="text-white md:text-lg font-semibold">Trade collection 👉</span>
             <img src="/images/Icon/stargaze.png" width="30px" />
-          </div>
+          </Link>
         </div>
-        <p className="text-sm md:text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
-        <p className="text-sm md:text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
+        <p className="text-xs md:!text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
+        <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
         <div className="max-w-max mx-auto mt-4 md:!mx-0 md:!mt-2">
           {
             wallet.status != WalletStatus.Connected ? (
@@ -103,7 +104,7 @@ const StakeCard: FC = () => {
                     (<Button
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
-                      className="px-8 py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                      className="px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                     >Stake And Claim</Button>) :
                     (<StakeButton />)
                 }
@@ -111,7 +112,7 @@ const StakeCard: FC = () => {
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="mt-2 px-8 py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="mt-2 px-8 text-xs md:!text-xl py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"

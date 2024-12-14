@@ -108,8 +108,8 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-0 left-0 right-0 mt-24 rounded-b-[30px] bg-neutral-900 px-6 py-4 md:hidden">
-          <div className="flex flex-col  text-center space-y-4">
+        <div className="absolute top-0 left-0 right-0 mt-16 bg-neutral-900 px-6 py-4 md:hidden">
+          <div className="flex flex-col text-center space-y-4">
             <Link
               href="/about"
               className="text-xl font-semibold text-white hover:text-gray-200 transition-colors duration-300"
@@ -128,7 +128,9 @@ export default function Header() {
             >
               Stake
             </Link>
-            <ConnectButton />
+            <div className="flex justify-center">
+              <ConnectButton />
+            </div>
           </div>
         </div>
       )}

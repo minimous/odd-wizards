@@ -38,7 +38,7 @@ export default function ConnectButton() {
                 onClick={handleConnectWallet}
                 aria-label="Connect"
             >
-                <div className="md:text-2xl font-black flex items-center">
+                <div className="text-sm md:!text-2xl font-black flex items-center">
                     {
                         wallet.status == WalletStatus.Connecting ? (
                             <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export default function ConnectButton() {
                     onClick={handleDisconnectWallet}
                     aria-label={address}
                 >
-                    <span className="text-2xl font-black">{formatAddress(address)}</span>
+                    <span className="text-sm md:!text-2xl font-black">{formatAddress(address)}</span>
                 </Button>
                 <img src={ user?.user_image_url ?? DEFAULT_IMAGE_PROFILE } onError={(e: any) => {
                     e.target.src = DEFAULT_IMAGE_PROFILE;
