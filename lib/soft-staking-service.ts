@@ -1,4 +1,4 @@
-import { fetchAllStargazeTokens } from "./utils";
+import calculatePoint, { fetchAllStargazeTokens } from "./utils";
 import prisma from '@/prisma/prisma';
 
 export async function updateNftOwner(address: string, collection_address: string) {
@@ -39,4 +39,59 @@ export async function updateNftOwner(address: string, collection_address: string
         console.error("Error in updateNftOwner:", error);
         throw error;
     }
+}
+
+
+export async function getTotalPoints(address: string, collection_address: string){
+
+    const collection = await prisma.mst_collection.findFirst({
+        where: { collection_address: collection_address },
+        include: {
+            mst_staker: false
+        }
+    });
+
+    if (!collection) {
+        throw Error("Collection not found")
+    }
+
+    const staker = await prisma.mst_staker.findFirst({
+        where: { staker_address: address, staker_collection_id: collection.collection_id }
+    })
+
+    if (!staker) {
+        throw Error("Staker not found");
+    }
+
+    const attributes_rewards = await prisma.mst_attributes_reward.findMany({
+        where: { attr_collection_id: collection.collection_id }
+    });
+
+    let allTokens = await fetchAllStargazeTokens({
+        owner: address,
+        collectionAddress: collection_address
+    });
+
+    let attrreward = [];
+    allTokens.forEach((nft) => {
+        nft.traits.forEach(trait => {
+            const matchingReward = attributes_rewards.find(reward => 
+                reward.attr_key == trait.name && 
+                reward.attr_val == trait.value
+            );
+            
+            if (matchingReward) {
+                attrreward.push(matchingReward);
+            }
+        });
+    });
+
+    const totalPoints = attributes_rewards?.reduce((sum, reward) => 
+        sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
+    );
+
+    return  {
+        totalNft: allTokens.length,
+        point: totalPoints
+    };
 }

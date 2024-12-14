@@ -4,6 +4,7 @@ import {
   Toast,
   ToastClose,
   ToastDescription,
+  ToastLoading,
   ToastProvider,
   ToastTitle,
   ToastViewport
@@ -15,8 +16,18 @@ export function Toaster() {
 
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
+      {toasts.map(function ({ id, title, isPending, description, action, ...props }) {
+        return isPending ? (
+          <ToastLoading key={id} {...props}>
+          <div className="grid gap-1">
+            {title && <ToastTitle>{title}</ToastTitle>}
+            {description && (
+              <ToastDescription>{description}</ToastDescription>
+            )}
+          </div>
+          {action}
+          {/* <ToastClose /> */}
+        </ToastLoading>) : (
           <Toast key={id} {...props}>
             <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}

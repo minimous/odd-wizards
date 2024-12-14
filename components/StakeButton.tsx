@@ -14,7 +14,7 @@ const StakeSlider = () => {
   const maxValue = 100; // Maximum slider position
   const config = getConfig();
   const { address } = useChain("stargaze");
-  const { toast } = useToast();
+  const { toast, promiseToast } = useToast();
 
   useEffect(() => {
     // Responsive width calculation
@@ -23,10 +23,10 @@ const StakeSlider = () => {
         // Calculate based on percentage of total width
         const totalWidth = sliderRef.current.offsetWidth;
         const chevronWidth = chevronRef.current ? chevronRef.current.offsetWidth : 56; // Default to 56px if not available
-        
+
         // Calculate width dynamically, leaving space for chevron and some padding
         const availableWidth = totalWidth - (chevronWidth * 1.5);
-        
+
         setSliderWidth(availableWidth - 15);
       }
     };
@@ -36,14 +36,14 @@ const StakeSlider = () => {
 
     // Recalculate on window resize
     window.addEventListener('resize', calculateSliderWidth);
-    
+
     return () => {
       window.removeEventListener('resize', calculateSliderWidth);
     };
   }, []);
 
   useEffect(() => {
-    if(sliderPosition === maxValue){
+    if (sliderPosition === maxValue) {
       handleAction();
     }
 
@@ -75,20 +75,32 @@ const StakeSlider = () => {
 
   const handleAction = async () => {
     try {
-      let resp = await axios.post("/api/soft-stake/create", {
+
+      promiseToast(axios.post("/api/soft-staking/create", {
         staker_address: address,
         collection_address: config?.collection_address
+      }), {
+        loading: {
+          title: "Processing...",
+          description: "Please Wait"
+        },
+        success: (result) => ({
+          title: "Success!",
+          // description: `Operation completed: ${result}`
+          description: `Stake Successfuly`
+        }),
+        error: (error) => ({
+          title: "Error",
+          description: error.message
+        })
       });
 
-      console.log("resp", resp);
-
-      alert("Stake action triggered! 🎉");
     } catch (error: AxiosResponse | any) {
       toast({
         variant: 'destructive',
         title: 'Ups! Something wrong.',
         description: error?.response?.data?.message || 'Internal server error.'
-    });
+      });
     }
 
   };
@@ -97,7 +109,7 @@ const StakeSlider = () => {
     <div
       ref={sliderRef}
       className={`
-        relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden mt-2
+        relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden
         ${isDragging ? 'cursor-grabbing' : 'cursor-default'}
       `}
       onMouseMove={handleMouseMove}
@@ -108,8 +120,8 @@ const StakeSlider = () => {
       }}
     >
       {/* Background Bar with Gradient */}
-      <div 
-        className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-black via-gray-900 to-black opacity-80 rounded-2xl" 
+      <div
+        className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-black via-gray-900 to-black opacity-80 rounded-2xl"
         style={{
           backgroundSize: `${(sliderPosition / maxValue) * 100}% 100%`,
           transition: 'background-size 0.3s ease-out'
@@ -127,18 +139,18 @@ const StakeSlider = () => {
         `}
         style={{
           transform: `translate(${(sliderPosition / maxValue) * sliderWidth}px, -50%)`,
-          transition: !isDragging && sliderPosition < maxValue 
-            ? "transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)" 
+          transition: !isDragging && sliderPosition < maxValue
+            ? "transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)"
             : "none",
-          boxShadow: isDragging 
-            ? "0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)" 
+          boxShadow: isDragging
+            ? "0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)"
             : "0 2px 4px rgba(0,0,0,0.2)"
         }}
         onMouseDown={handleMouseDown}
       >
-        <img 
-          src="/images/Icon/Swipe.png" 
-          alt="Swipe" 
+        <img
+          src="/images/Icon/Swipe.png"
+          alt="Swipe"
           className={`
             h-16 max-w-max rounded-2xl 
             transition-transform duration-200
@@ -148,13 +160,13 @@ const StakeSlider = () => {
       </div>
 
       {/* Text */}
-      <span 
+      <span
         className={`
           absolute inset-0 flex items-center ml-24 
           text-white text-lg font-medium
           transition-all duration-300
-          ${sliderPosition === maxValue 
-            ? 'text-green-400 opacity-100' 
+          ${sliderPosition === maxValue
+            ? 'text-green-400 opacity-100'
             : 'opacity-80'}
         `}
       >

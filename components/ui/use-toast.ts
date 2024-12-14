@@ -11,6 +11,7 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  isPending?: boolean; // New property to track promise state
 };
 
 const actionTypes = {
@@ -88,8 +89,12 @@ export const reducer = (state: State, action: Action): State => {
     case 'DISMISS_TOAST': {
       const { toastId } = action;
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
+      // Prevent dismissing toast if it's in a pending state
+      const targetToast = state.toasts.find(t => t.id === toastId);
+      if (targetToast?.isPending) {
+        return state;
+      }
+
       if (toastId) {
         addToRemoveQueue(toastId);
       } else {
@@ -137,6 +142,12 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>;
 
+interface PromiseToastOptions<T> {
+  loading: Toast;
+  success: (result: T) => Toast;
+  error: (error: Error) => Toast;
+}
+
 function toast({ ...props }: Toast) {
   const id = genId();
 
@@ -153,7 +164,8 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      onOpenChange: (open) => {
+      isPending: props.variant === 'loading', // Mark as pending for loading toasts
+      onOpenChange: (open: boolean) => {
         if (!open) dismiss();
       }
     }
@@ -164,6 +176,40 @@ function toast({ ...props }: Toast) {
     dismiss,
     update
   };
+}
+
+function promiseToast<T>(
+  promise: Promise<T>, 
+  { loading, success, error }: PromiseToastOptions<T>
+) {
+  // Create initial loading toast with isPending flag
+  const loadingToast = toast({
+    ...loading,
+    variant: 'loading',
+    isPending: true
+  });
+
+  promise
+    .then((result) => {
+      // Update to success state, remove pending flag
+      toast({
+        ...success(result),
+        id: loadingToast.id,
+        variant: 'success',
+        isPending: false
+      } as ToasterToast);
+    })
+    .catch((err) => {
+      // Update to error state, remove pending flag
+      toast({
+        ...error(err),
+        id: loadingToast.id,
+        variant: 'destructive',
+        isPending: false
+      } as ToasterToast);
+    });
+
+  return loadingToast;
 }
 
 function useToast() {
@@ -182,8 +228,9 @@ function useToast() {
   return {
     ...state,
     toast,
+    promiseToast,
     dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId })
   };
 }
 
-export { useToast, toast };
+export { useToast, toast, promiseToast };

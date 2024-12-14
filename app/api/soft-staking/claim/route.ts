@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
-import calculatePoint from '@/lib/utils';
+import { getTotalPoints } from '@/lib/soft-staking-service';
 
 export async function POST(request: NextRequest) {
     try {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         if (!collection) {
             return NextResponse.json(
                 { message: 'Collection not found' },
-                { status: 404 }
+                { status: 400 }
             );
         }
 
@@ -31,24 +31,41 @@ export async function POST(request: NextRequest) {
         if (!staker) {
             return NextResponse.json(
                 { message: 'Staker not found' },
-                { status: 404 }
+                { status: 400 }
             );
         }
 
-        const attributes_rewards = await prisma.mst_attributes_reward.findMany({
-            where: { attr_collection_id: collection.collection_id }
+        const resp = await getTotalPoints(staker_address, collection_address);
+
+        if(resp.point == 0){
+            return NextResponse.json(
+                { message: 'No points available to claim' },
+                { status: 400 }
+            );
+        }
+
+        await prisma.trn_point.create({
+            data: {
+                point_amount: resp.point,
+                point_nft_staked: resp.totalNft,
+                point_staker_id: staker.staker_id,
+                point_claim_date: new Date()
+            }
         });
 
-        const totalPoints = attributes_rewards?.reduce((sum, reward) => 
-            sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
-        );
+        await prisma.mst_staker.update({
+            where: { staker_id: staker.staker_id },
+            data: {
+                staker_lastclaim_date: new Date()
+            }
+        })
 
         return NextResponse.json(
             {
-                message: 'Get points successfully',
+                message: 'Claim successfully',
                 data: {
                     staker: staker,
-                    points: totalPoints 
+                    point: resp.point
                 }
             },
             { status: 201 }
@@ -57,7 +74,7 @@ export async function POST(request: NextRequest) {
         console.error('Get points Error:', error);
         return NextResponse.json(
             {
-                message: 'Failed to Get points',
+                message: 'Failed to Claim',
                 error: error instanceof Error ? error.message : 'Unknown error'
             },
             { status: 400 }

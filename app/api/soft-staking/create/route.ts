@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
+import { updateNftOwner } from '@/lib/soft-staking-service';
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,37 +20,41 @@ export async function POST(request: NextRequest) {
         if (!collection) {
             return NextResponse.json(
                 { message: 'Collection not found' },
-                { status: 404 }
+                { status: 400 }
             );
         }
-
-        const staker = await prisma.mst_staker.findFirst({
-            where: { staker_address: staker_address, staker_collection_id: collection.collection_id }
-        })
+    
+        // Check if staker already exists
+        let staker = await prisma.mst_staker.findFirst({
+            where: {
+                staker_address: staker_address,
+                staker_collection_id: collection.collection_id
+            }
+        });
 
         if (!staker) {
-            return NextResponse.json(
-                { message: 'Staker not found' },
-                { status: 404 }
-            );
-        }
+            staker = await prisma.mst_staker.create({
+                data: {
+                    staker_address,
+                    staker_collection_id: collection.collection_id
+                }
+            });  
+        } 
 
-        const attributes_rewards = await prisma.mst_attributes_reward.findMany({
-            where: { attr_collection_id: collection.collection_id }
-        });
+        updateNftOwner(staker_address, collection_address);
 
         return NextResponse.json(
             {
-                message: 'Get points successfully',
+                message: 'Stake created successfully',
                 data: staker
             },
             { status: 201 }
         );
     } catch (error) {
-        console.error('Get points Error:', error);
+        console.error('Stake Creation Error:', error);
         return NextResponse.json(
             {
-                message: 'Failed to Get points',
+                message: 'Failed to create Stake',
                 error: error instanceof Error ? error.message : 'Unknown error'
             },
             { status: 400 }

@@ -19,7 +19,7 @@ export async function GET(
     if (!collection) {
       return NextResponse.json(
         { message: 'Collection not found' }, 
-        { status: 404 }
+        { status: 400 }
       );
     }
 
