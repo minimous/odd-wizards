@@ -8,6 +8,7 @@ import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
+import { useClaim } from "@/hooks/useClaim";
 
 export const BoxLeaderboard = () => {
 
@@ -15,6 +16,7 @@ export const BoxLeaderboard = () => {
   const config = getConfig();
   const [leaderboard, setLeaderboard] = useState<LeaderboardItem>();
   const [loading, setLoading] = useState<boolean>(false);
+  const { claim } = useClaim();
 
   useEffect(() => {
     async function fetchData() {
@@ -28,7 +30,7 @@ export const BoxLeaderboard = () => {
     if (address) {
       fetchData();
     }
-  }, [address]);
+  }, [address, claim]);
 
   return (
     <div>
@@ -65,7 +67,7 @@ export const BoxLeaderboard = () => {
               </div>
             </div>
             <div className="text-center text-[#49ED4A]">
-              <p className="text-[10px] md:text-[20px] font-bold">{leaderboard?.total_points} $$WZRD</p>
+              <p className="text-[10px] md:text-[20px] font-bold">{leaderboard?.total_points} $WZRD</p>
             </div>
 
             <div className="text-center text-[#49ED4A] ">

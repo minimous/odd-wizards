@@ -8,6 +8,7 @@ import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
+import { useClaim } from "@/hooks/useClaim";
 
 const Leaderboard = () => {
   const rankEmojis = ["🥇", "🥈", "🥉"];
@@ -18,6 +19,7 @@ const Leaderboard = () => {
   const [hasMore, setHasMore] = useState(true); // Menandakan apakah masih ada data untuk dimuat
   const [loading, setLoading] = useState<boolean>(false);
   const config = getConfig();
+  const { claim } = useClaim();
 
   // Fungsi untuk mengambil data leaderboard
   useEffect(() => {
@@ -35,7 +37,25 @@ const Leaderboard = () => {
     }
 
     fetchData();
-  }, [page]); // Efek dijalankan setiap kali halaman berubah
+  }, [page]);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      setPage(0);
+      try {
+        const resp = await axios.get(`/api/soft-staking/leaderboard?collection_address=${config?.collection_address}&page=0`);
+        const data = resp.data.data ?? [];
+        setLeaderboard(data);
+        setHasMore(data.length > 0);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+      setLoading(false);
+    }
+
+    fetchData();
+  }, [claim]);
 
   // Fungsi untuk memuat lebih banyak data
   const loadMore = () => {

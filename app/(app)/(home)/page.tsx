@@ -53,7 +53,9 @@ export default function Home() {
           <Carousel images={imageList} interval={7500} />
         </div>
       </div>
-      <Footer />
+      <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center h-full py-16">
+        <Footer className="my-0" />
+      </div>
     </div>
   );
 }

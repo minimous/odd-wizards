@@ -10,6 +10,7 @@ import getConfig from "@/config/config";
 import { mst_staker } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { promiseToast, useToast } from "./ui/use-toast";
+import { useClaim } from "@/hooks/useClaim";
 const StakeCard: FC = () => {
 
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
@@ -19,6 +20,7 @@ const StakeCard: FC = () => {
   const wallet = useWallet();
   const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
   const { toast } = useToast();
+  const { setClaim } = useClaim();
 
 
   useEffect(() => {
@@ -43,7 +45,7 @@ const StakeCard: FC = () => {
 
   const doStakeAndClaim = async () => {
     try {
-
+      setClaim(false);
       promiseToast(axios.post("/api/soft-staking/claim", {
         staker_address: address,
         collection_address: config?.collection_address
@@ -52,16 +54,20 @@ const StakeCard: FC = () => {
           title: "Processing...",
           description: "Please Wait"
         },
-        success: (result) => ({
-          title: "Success!",
-          // description: `Operation completed: ${result}`
-          description: `Stake and Claim Successfuly`
-        }),
+        success: (result) => {
+          setClaim(true);
+          
+          return {
+            title: "Success!",
+            description: "Stake and Claim Successfully"
+          };
+        },
         error: (error: AxiosError | any) => ({
           title: "Ups! Something wrong.",
           description: error?.response?.data?.message || 'Internal server error.'
         })
       });
+      
     } catch (error: AxiosError | any) {
       toast({
         variant: 'destructive',

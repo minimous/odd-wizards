@@ -49,7 +49,9 @@ export default function Stake() {
             <div className="pt-20 bg-[url('/images/blur-brown.png')] bg-cover bg-center">
                 <Leaderboard />
             </div>
-            <Footer className="my-0 mb-8" />
+            <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center h-full py-16">
+                <Footer className="my-0" />
+            </div>
         </div>
     );
 }
