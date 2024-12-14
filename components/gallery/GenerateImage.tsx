@@ -233,7 +233,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                 </div>
                                 <div className="sm:flex mt-4 md:hidden">
                                     <Select onValueChange={(val: string) => setActiveTraits(val)} defaultValue={traits[0]}>
-                                        <SelectTrigger className={cn("bg-gray-100", selectedTraits[activeTraits] ? "text-blue-600" : "")}>
+                                        <SelectTrigger className={cn("bg-gray-100", selectedTraits[activeTraits] ? "text-blue-600" : "text-black")}>
                                             <SelectValue
                                                 placeholder="Select Traits"
                                             />
