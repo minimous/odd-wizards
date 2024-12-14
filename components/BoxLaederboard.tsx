@@ -43,7 +43,7 @@ export const BoxLeaderboard = () => {
             </div>
             <div className="relative">
               <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-[#18181B] border-2 border-[#49ED4A] shadow-sm shadow-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-2xl text-center">
-                1
+              {leaderboard?.ranking || "-"}
               </div>
               <img src="/images/Icon/Gift.png" className="w-[75px] md:w-[110px] max-w-max absolute -left-3 -bottom-10 md:!-bottom-12 md:!left-0" />
             </div>

@@ -56,6 +56,13 @@ export async function POST(request: NextRequest) {
         await prisma.mst_staker.update({
             where: { staker_id: staker.staker_id },
             data: {
+                staker_nft_staked: resp.totalNft
+            }
+        })
+
+        await prisma.mst_staker.update({
+            where: { staker_id: staker.staker_id },
+            data: {
                 staker_lastclaim_date: new Date()
             }
         })
@@ -71,7 +78,7 @@ export async function POST(request: NextRequest) {
             { status: 200 }
         );
     } catch (error) {
-        console.error('Get points Error:', error);
+        console.error('Claim points Error:', error);
         return NextResponse.json(
             {
                 message: 'Failed to Claim',

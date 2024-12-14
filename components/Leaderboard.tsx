@@ -13,7 +13,7 @@ import { useClaim } from "@/hooks/useClaim";
 const Leaderboard = () => {
   const rankEmojis = ["🥇", "🥈", "🥉"];
 
-  const [visibleItems, setVisibleItems] = useState(4); // Jumlah item yang ditampilkan
+  // const [visibleItems, setVisibleItems] = useState(4); // Jumlah item yang ditampilkan
   const [leaderboard, setLeaderboard] = useState<LeaderboardItem[]>([]); // Data leaderboard
   const [page, setPage] = useState(0); // Halaman untuk pagination
   const [hasMore, setHasMore] = useState(true); // Menandakan apakah masih ada data untuk dimuat
@@ -76,7 +76,7 @@ const Leaderboard = () => {
         collection of these carefree.
       </p>
       <div className="flex flex-col items-center w-full mt-4">
-        {leaderboard.slice(0, visibleItems).map((item, index) => (
+        {leaderboard.map((item, index) => (
           <div
             key={index}
             className="flex gap-2 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
