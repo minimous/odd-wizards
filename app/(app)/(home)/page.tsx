@@ -27,7 +27,11 @@ export default function Home() {
     <div className="relative bg-black w-full">
       <div className="relative">
         <Header />
-        <img src="/images/hero.png" className="w-full" />
+        {/* <img src="/images/hero.png" className="w-full" /> */}
+        <video autoPlay loop muted className="w-full">
+          <source src="/images/home.mp4" type="video/mp4" />
+          <img src="/images/hero.png" className="w-full" />
+        </video>
         <div className="absolute bottom-0 w-full h-[200px] bg-gradient-to-b from-transparent to-[#201621]"></div>
       </div>
       <div className="w-full bg-[#201621] px-4 py-12 text-center">
