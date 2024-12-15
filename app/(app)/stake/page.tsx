@@ -50,7 +50,7 @@ export default function Stake() {
                     <div className="relative mx-4 md:!ml-20 max-h-max">
                         <StakeCard />
                     </div>
-                    <div className="mx-auto md:!ml-12    relative w-[350px]">
+                    <div className="mx-auto relative w-[350px]">
                         <CarouselStake images={imageList} interval={7500} />
                     </div>
                 </div>
