@@ -214,7 +214,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
             <div className='md:max-w-screen-xl p-6 md:px-16 mx-auto'>
                 <div className="grid md:flex mt-10 gap-x-8 gap-y-4">
                     <div className="w-full order-last md:order-first">
-                        <Card className="w-full bg-white">
+                        <Card className="w-full bg-[#18181B]">
                             <CardContent>
                                 <div className="hidden mt-4 md:flex md:items-center md:justify-center gap-x-6 gap-y-4">
                                     {traits.map(item => (
@@ -224,7 +224,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                             className={cn(
                                                 "cursor-pointer text-black text-xs",
                                                 activeTraits === item ? "font-bold" : "",
-                                                selectedTraits[item] ? "text-blue-600" : ""
+                                                selectedTraits[item] ? "text-blue-600" : "text-[#A1A1AA]"
                                             )}
                                         >
                                             {item}
@@ -233,14 +233,14 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                 </div>
                                 <div className="sm:flex mt-4 md:hidden">
                                     <Select onValueChange={(val: string) => setActiveTraits(val)} defaultValue={traits[0]}>
-                                        <SelectTrigger className={cn("bg-gray-100", selectedTraits[activeTraits] ? "text-blue-600" : "text-black")}>
+                                        <SelectTrigger className={cn("bg-[#18181B]", selectedTraits[activeTraits] ? "text-blue-600" : "text-[#A1A1AA]")}>
                                             <SelectValue
                                                 placeholder="Select Traits"
                                             />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-gray-100">
+                                        <SelectContent className="bg-[#18181B]">
                                             {traits.map(item => (
-                                                <SelectItem className={selectedTraits[item] ? "text-blue-600" : "text-black"} key={item} value={item}>
+                                                <SelectItem className={selectedTraits[item] ? "text-blue-600" : "text-[#A1A1AA]"} key={item} value={item}>
                                                     {item}
                                                 </SelectItem>
                                             ))}
@@ -257,7 +257,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                                     "relative aspect-square rounded-lg overflow-hidden border transition-colors cursor-pointer",
                                                     selectedTraits[activeTraits] === item
                                                         ? "border-blue-500 border-2"
-                                                        : "hover:border-primary"
+                                                        : "hover:border-[#323237]"
                                                 )}
                                             >
                                                 {item.startsWith('custom-') ? (
@@ -284,21 +284,21 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                         <div className="hidden md:flex items-center gap-x-2 mt-4">
                             <Button
                                 variant={"ghost"}
-                                className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                                className="px-8 py-3 h-max font-black border border-[#323237] text-[#A1A1AA] rounded-xl bg-[#18181B] hover:bg-[#18181B] hover:text-[#A1A1AA]"
                                 onClick={handleRandomTraits}
                             >
                                 <Dices className="mx-1" size={20} /> Random
                             </Button>
                             <Button
                                 variant={"ghost"}
-                                className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                                className="px-8 py-3 h-max font-black border border-[#323237] text-[#A1A1AA] rounded-xl bg-[#18181B] hover:bg-[#18181B] hover:text-[#A1A1AA]"
                                 onClick={handleCopy}
                             >
                                 Copy
                             </Button>
                             <Button
                                 variant={"ghost"}
-                                className="flex-1 px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                                className="flex-1 px-8 py-3 h-max font-black border border-[#323237] text-[#A1A1AA] rounded-xl bg-[#18181B] hover:bg-[#18181B] hover:text-[#A1A1AA]"
                                 onClick={handleDownload}
                             >
                                 Download
@@ -327,14 +327,14 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                             <div className="flex items-center gap-x-2 mt-4">
                                 <Button
                                     variant="outline"
-                                    className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                                    className="px-8 py-3 h-max font-black border border-[#323237] text-[#A1A1AA] rounded-xl bg-[#18181B] hover:bg-[#18181B] hover:text-[#A1A1AA]"
                                     onClick={handleRandomTraits}
                                 >
                                     <Dices className="mx-1" size={20} /> Random
                                 </Button>
                                 <Button
                                     variant="default"
-                                    className="flex-1 px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                                    className="flex-1 px-8 py-3 h-max font-black border border-[#323237] text-[#A1A1AA] rounded-xl bg-[#18181B] hover:bg-[#18181B] hover:text-[#A1A1AA]"
                                     onClick={handleDownload}
                                 >
                                     Download

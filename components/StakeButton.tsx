@@ -96,13 +96,17 @@ const StakeSlider = () => {
             description: `Stake Successfuly`
           }
         },
-        error: (error) => ({
-          title: "Error",
-          description: error.message
-        })
+        error: (error: AxiosResponse | any) => {
+          setSliderPosition(0);
+          return {
+            title: "Ups! Something wrong.",
+            description: error?.response?.data?.message || 'Internal server error.'
+          }
+        }
       });
 
     } catch (error: AxiosResponse | any) {
+      setSliderPosition(0);
       toast({
         variant: 'destructive',
         title: 'Ups! Something wrong.',
@@ -113,18 +117,33 @@ const StakeSlider = () => {
   };
 
   const showConfeti = () => {
-    if (sliderRef.current) {
-      const rect = sliderRef.current.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
+    const end = Date.now() + 2 * 1000; // 2 seconds
+    const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+    const frame = () => {
+      if (Date.now() > end) return;
 
       confetti({
-        origin: {
-          x: x / window.innerWidth,
-          y: y / window.innerHeight,
-        },
+        particleCount: 1,
+        angle: 60,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 0, y: 0.5 },
+        colors: colors,
       });
-    }
+      confetti({
+        particleCount: 1,
+        angle: 120,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 1, y: 0.5 },
+        colors: colors,
+      });
+
+      requestAnimationFrame(frame);
+    };
+
+    frame();
   }
 
   return (

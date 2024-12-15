@@ -67,14 +67,11 @@ const Leaderboard = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full py-12 px-4">
-      <h1 className="text-lg sm:text-xl lg:text-3xl font-bold mb-2 text-white text-center">
+      <h1 className="text-2xl md:!text-4xl font-bold mb-2 text-white text-center">
         Leaderboard
       </h1>
       <p className="text-xs md:!text-lg text-gray-400 text-center leading-tight">
-        Stake your Wizard, rise to the top, and show off your
-      </p>
-      <p className="text-xs md:!text-lg text-gray-400 text-center leading-tight">
-        collection of these carefree.
+        Stake your Wizard, rise to the top, and show off your Odds collection
       </p>
       <div className="flex flex-col items-center w-full mt-4">
         {leaderboard.map((item, index) => (
@@ -85,7 +82,7 @@ const Leaderboard = () => {
             <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
               {rankEmojis[index] || item.ranking}
             </div>
-            <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="flex flex-grow items-center justify-between p-4 px-2 md:!px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
                 <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                 <img
@@ -98,7 +95,7 @@ const Leaderboard = () => {
                   />
                 </div>
                 <Link href={`https://www.stargaze.zone/p/${item?.staker_address}`}  className="text-center">
-                  <p className="text-[10px] md:text-[20px] font-bold text-[#DB2877]">
+                  <p className="text-[10px] md:text-[20px] text-[#DB2877]">
                     {formatAddress(item.staker_address)}
                   </p>
                 </Link>

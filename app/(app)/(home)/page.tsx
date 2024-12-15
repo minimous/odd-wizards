@@ -53,7 +53,7 @@ export default function Home() {
               Prize
             </h1>
             <p className="text-xs md:!text-lg text-gray-400 leading-relaxed">
-              Only the biggest Seals will claim victory and win the prize!
+              Only the biggest stakers will claim victory and win the prize!
             </p>
           </div>
           <Carousel images={imageList} interval={15000} />

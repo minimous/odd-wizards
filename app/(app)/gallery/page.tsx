@@ -11,19 +11,22 @@ const collections: CollectionCardType[] = [
         address: "stars1j9rk6fte8j2qlwx6qewxh6ezu83r0a290j4wemn0h0hjw37fn3wqvzan3s",
         image: "/images/Rebbits.png",
         imageGif: "/images/Rebbits.gif",
-        name: "Rebbits"
+        name: "Rebbits",
+        link: "https://www.stargaze.zone/m/rebbits/tokens"
     },
     {
         // address: "stars1j9rk6fte8j2qlwx6qewxh6ezu83r0a290j4wemn0h0hjw37fn3wqvzan3s",
         image: "/images/wizard-crown.png",
         imageGif: "/images/Odds-Wizard.gif",
-        name: "Odds Wizard"
+        name: "Odds Wizard",
+        link: "https://www.stargaze.zone/m/oddswizard/tokens"
     },
     {
         address: "stars1jf25kwveccgyp0cz5ae5wyvve8m8j8qpyr0mvul2t09e84yrplvscef9xa",
         image: "/images/Steamland.png",
         imageGif: "/images/Steamland.gif",
-        name: "Steamland"
+        name: "Steamland",
+        link: "https://www.stargaze.zone/m/steamland/tokens"
     }
 ]
 

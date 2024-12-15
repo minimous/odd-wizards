@@ -13,6 +13,7 @@ import { promiseToast, useToast } from "./ui/use-toast";
 import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
 import confetti from "canvas-confetti";
+import { BorderBeam } from "./ui/border-beam";
 const StakeCard: FC = () => {
 
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
@@ -80,29 +81,44 @@ const StakeCard: FC = () => {
   }
 
   const showConfeti = () => {
-    if (claimRef.current) {
-      const rect = claimRef.current.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-
+    const defaults = {
+      spread: 360,
+      ticks: 50,
+      gravity: 0,
+      decay: 0.94,
+      startVelocity: 30,
+      colors: ["#FFE400", "#FFBD00", "#E89400", "#FFCA6C", "#FDFFB8"],
+    };
+ 
+    const shoot = () => {
       confetti({
-        origin: {
-          x: x / window.innerWidth,
-          y: y / window.innerHeight,
-        },
+        ...defaults,
+        particleCount: 40,
+        scalar: 1.2,
+        shapes: ["star"],
       });
-    }
-  }
+ 
+      confetti({
+        ...defaults,
+        particleCount: 10,
+        scalar: 0.75,
+        shapes: ["circle"],
+      });
+    };
+ 
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 100);
+}
 
   return (
-    <div className="bg-[#18181B] border-2 border-[#323237] p-4 md:p-8 rounded-[50px] md:flex gap-x-4">
-      <img src="/images/stake-wizard.gif" className="shrink-0 h-[175px] rounded-[35px] mx-auto" />
+    <div className="bg-[#18181B] border border-[#323237] p-4 md:p-8 rounded-[50px] flex items-center gap-x-4">
+      <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
       <div className="w-full p-2 md:p-4">
         <div className="text-center md:flex md:text-start justify-between mb-2">
-          <h1 className="text-white text-2xl md:text-4xl font-semibold">Odd Wizard</h1>
-          <Link href="https://www.stargaze.zone/m/steamland/tokens" className="flex items-center justify-between gap-x-4">
-            <span className="text-white md:text-lg font-semibold">Trade collection</span>
-            <img src="/images/Icon/stargaze.png" width="40px" />
+          <h1 className="text-white text-2xl md:text-3xl font-semibold">Odd Wizard</h1>
+          <Link href="https://www.stargaze.zone/m/oddswizard/tokens" className="flex items-center justify-between gap-x-4">
+            <span className="text-white text-sm md:!text-lg font-semibold">Trade collection</span>
+            <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
           </Link>
         </div>
         <p className="text-xs md:!text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
@@ -123,14 +139,14 @@ const StakeCard: FC = () => {
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
                       className="px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
-                    >Stake And Claim</Button>) :
+                    >Stake and Claim</Button>) :
                     (<StakeButton />)
                 }
               </div>) : (
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="mt-2 px-8 text-xs md:!text-2xl py-3 h-max font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"
@@ -157,6 +173,7 @@ const StakeCard: FC = () => {
           }
         </div>
       </div>
+      <BorderBeam size={250} duration={12} delay={9} colorFrom="#49ED4A" colorTo="#98EF98"/>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { mst_attributes_reward } from "@prisma/client";
 import calculatePoint, { fetchAllStargazeTokens } from "./utils";
 import prisma from '@/prisma/prisma';
 
@@ -72,7 +73,7 @@ export async function getTotalPoints(address: string, collection_address: string
         collectionAddress: collection_address
     });
 
-    let attrreward = [];
+    let attrreward: mst_attributes_reward[] = [];
     allTokens.forEach((nft) => {
         nft.traits.forEach(trait => {
             const matchingReward = attributes_rewards.find(reward => 
@@ -86,9 +87,9 @@ export async function getTotalPoints(address: string, collection_address: string
         });
     });
 
-    console.log("attributes_rewards", attributes_rewards.length);
+    console.log("attrreward", attrreward.length);
 
-    const totalPoints = attributes_rewards?.reduce((sum, reward) => 
+    const totalPoints = attrreward?.reduce((sum, reward) => 
         sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
     );
 

@@ -12,6 +12,7 @@ export interface CollectionCardType {
     image: string
     imageGif: string
     name: string
+    link: string
 }
 
 export interface CollectionCardProps {
@@ -37,7 +38,7 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
     return (
         <div className="flex flex-col items-center bg-black text-white border border-white group">
             <div className="relative flex justify-center items-center w-50 h-50 rounded-full">
-                <Link href="#">
+                <Link href={data.link} target="_blank">
                     <div className="absolute top-0 w-full group overflow-hidden">
                         <div className="hidden group-hover:flex justify-between items-center p-2 animate-slide-down group-not-hover:animate-slide-up">
                             <span>Trade Collection</span>

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
 import { updateNftOwner } from '@/lib/soft-staking-service';
+import { fetchStargazeTokens } from '@/lib/utils';
+import { OwnedTokensResponse } from '@/types';
 
 export async function POST(request: NextRequest) {
     try {
@@ -22,6 +24,20 @@ export async function POST(request: NextRequest) {
                 { message: 'Collection not found' },
                 { status: 400 }
             );
+        }
+
+        let resp: OwnedTokensResponse = await fetchStargazeTokens({
+            owner: staker_address,
+            collectionAddress: collection_address,
+            limit: 1,
+            offset: 0
+        });
+
+        if(resp.tokens.length == 0){
+            return NextResponse.json(
+                { message: 'No tokens found for the given owner and collection.' },
+                { status: 400 }
+            );            
         }
     
         // Check if staker already exists
