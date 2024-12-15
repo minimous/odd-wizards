@@ -62,7 +62,7 @@ export const BoxLeaderboard = () => {
                   }}
                 />
               </div>
-              <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} className="text-center text-[#49ED4A]">
+              <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#49ED4A]">
                 <p className="text-[10px] md:text-[20px] font-bold ">
                   {formatAddress(leaderboard?.staker_address)}
                 </p>

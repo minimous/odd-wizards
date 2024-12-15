@@ -94,7 +94,7 @@ const Leaderboard = () => {
                     }}
                   />
                 </div>
-                <Link href={`https://www.stargaze.zone/p/${item?.staker_address}`}  className="text-center">
+                <Link href={`https://www.stargaze.zone/p/${item?.staker_address}`} target="_blank" className="text-center">
                   <p className="text-[10px] md:text-[20px] text-[#DB2877]">
                     {formatAddress(item.staker_address)}
                   </p>
