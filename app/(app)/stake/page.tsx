@@ -2,11 +2,11 @@
 import Header from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import CarouselStake from "@/components/CarouselStake";
-import StakeSection from "@/components/home/StakeSection";
 import StakeCard from "@/components/StakeCard";
 import { BoxLeaderboard } from "@/components/BoxLaederboard";
 import Leaderboard from "@/components/Leaderboard";
 import Particles from "@/components/ui/particles";
+import CustomGradualSpacing from "@/components/CustomGradouselSpacing";
 import { useState } from "react";
 
 const imageList = [
@@ -34,10 +34,14 @@ export default function Stake() {
             <div>
                 <div className="grid">
                     <div className="px-10 mt-20 md:!px-20 md:!mt-32 mx-auto py-6 text-center">
-                        <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1>
+                        <CustomGradualSpacing
+                            className="font-display text-center text-4xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+                            text="Stake, Win, and LFGODDS!"
+                        />
+                        {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
                         <div className="mt-6">
-                            <p className="text-lg text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
-                            <p className="text-lg text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
+                            <p className="text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
+                            <p className="text-xl text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
                             {/* <p className="text-lg text-gray-400 leading-tight"></p> */}
                         </div>
                     </div>
