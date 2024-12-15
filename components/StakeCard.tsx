@@ -138,7 +138,7 @@ const StakeCard: FC = () => {
                       ref={claimRef}
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
-                      className="px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                      className="w-full px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                     >Stake and Claim</Button>) :
                     (<StakeButton />)
                 }
@@ -146,7 +146,7 @@ const StakeCard: FC = () => {
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="w-full px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"
