@@ -47,14 +47,20 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // const totalPoints = await getTotalPoints(staker_address, collection_address);
+        const resp = await getTotalPoints(staker_address, collection_address);
 
+        if(resp.point == 0){
+            return NextResponse.json(
+                { message: 'No points available to claim' },
+                { status: 400 }
+            );
+        }
         return NextResponse.json(
             {
                 message: 'Get points successfully',
                 data: {
                     staker: staker,
-                    // points: totalPoints 
+                    points: resp.point 
                 }
             },
             { status: 200 }

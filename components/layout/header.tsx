@@ -46,21 +46,21 @@ export default function Header() {
           <div className="hidden md:flex space-x-8">
             <Link
               href="/about"
-              className="text-2xl font-bold text-white hover:text-gray-200 transition-colors duration-300"
+              className="text-2xl font-bold text-white transition-transform hover:animate-shake"
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               About
             </Link>
             <Link
               href="/gallery"
-              className="text-2xl font-bold text-white hover:text-gray-200 transition-colors duration-300"
+              className="text-2xl font-bold text-white transition-transform hover:animate-shake"
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Gallery
             </Link>
             <Link
               href="/stake"
-              className="text-2xl font-bold text-white hover:text-gray-200 transition-colors duration-300"
+              className="text-2xl font-bold text-white transition-transform hover:animate-shake"
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Stake

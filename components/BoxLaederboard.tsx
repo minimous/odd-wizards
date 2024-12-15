@@ -9,6 +9,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { useClaim } from "@/hooks/useClaim";
+import Link from "next/link";
 
 export const BoxLeaderboard = () => {
 
@@ -43,13 +44,13 @@ export const BoxLeaderboard = () => {
               <span className="text-[#49ED4A] mt-2 md:mt-4 text-xs md:!text-lg">Congrats, you got 1 NFT, keep it up!</span>
             </div>
             <div className="relative">
-              <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-[#18181B] border-2 border-[#49ED4A] shadow-sm shadow-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-2xl text-center">
+              <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-2xl text-center">
               {leaderboard ? (rankEmojis[Number(leaderboard.ranking) - 1] || leaderboard.ranking) : "-"}
               </div>
               <img src="/images/Icon/Gift.png" className="w-[75px] md:w-[110px] max-w-max absolute -left-3 -bottom-10 md:!-bottom-12 md:!left-0" />
             </div>
           </div>
-          <div className="flex flex-grow items-center justify-between  p-4 px-8 gap-2 w-[50px] h-[50px] md:w-[105px] md:h-[105px] md:w-full bg-[#18181B] border-2 border-[#49ED4A] shadow-sm shadow-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+          <div className="flex flex-grow items-center justify-between  p-4 px-8 gap-2 w-[50px] h-[50px] md:w-[105px] md:h-[105px] md:w-full bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
             <div className="flex items-center gap-4">
               <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px]  bg-amber-200 rounded-full flex items-center justify-center">
                 <img
@@ -61,11 +62,11 @@ export const BoxLeaderboard = () => {
                   }}
                 />
               </div>
-              <div className="text-center text-[#49ED4A]">
+              <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} className="text-center text-[#49ED4A]">
                 <p className="text-[10px] md:text-[20px] font-bold ">
                   {formatAddress(leaderboard?.staker_address)}
                 </p>
-              </div>
+              </Link>
             </div>
             <div className="text-center text-[#49ED4A]">
               <p className="text-[10px] md:text-[20px] font-bold">{leaderboard?.total_points} $WZRD</p>

@@ -42,7 +42,10 @@ export function formatAmount(amount: number | undefined | null) {
 }
 
 
-export default function calculatePoint(attrreward: mst_attributes_reward, lastClaimDate?: Date | null): number {
+export default function calculatePoint(
+  attrreward: mst_attributes_reward, 
+  lastClaimDate?: Date | null
+): number {
   // Validate input
   if (!attrreward) return 0;
   
@@ -51,19 +54,15 @@ export default function calculatePoint(attrreward: mst_attributes_reward, lastCl
   
   // If lastClaimDate is undefined, calculate for 1 full period
   if (!lastClaimDate) {
-      switch(attrreward.attr_periode){
-          case REWARD_PERIODE.MINUTE:
-              return attrreward.attr_reward || 0;
-          
-          case REWARD_PERIODE.HOUR:
-              return attrreward.attr_reward || 0;
-          
-          case REWARD_PERIODE.DAY:
-              return attrreward.attr_reward || 0;
-          
-          default:
-              return 0;
-      }
+    switch(attrreward.attr_periode){
+      case REWARD_PERIODE.MINUTE:
+      case REWARD_PERIODE.HOUR:
+      case REWARD_PERIODE.DAY:
+        return attrreward.attr_reward || 0;
+      
+      default:
+        return 0;
+    }
   }
   
   // Calculate time difference
@@ -71,24 +70,27 @@ export default function calculatePoint(attrreward: mst_attributes_reward, lastCl
   
   // Calculate points based on reward period
   switch(attrreward.attr_periode){
-      case REWARD_PERIODE.MINUTE:
-          // Calculate points for minute-based rewards
-          const minutesPassed = Math.floor(timeDifferenceMs / (1000 * 60));
-          return Math.floor(minutesPassed * (attrreward.attr_reward || 0));
-      
-      case REWARD_PERIODE.HOUR:
-          // Calculate points for hour-based rewards
-          const hoursPassed = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
-          return Math.floor(hoursPassed * (attrreward.attr_reward || 0));
-      
-      case REWARD_PERIODE.DAY:
-          // Calculate points for day-based rewards
-          const daysPassed = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
-          return Math.floor(daysPassed * (attrreward.attr_reward || 0));
-      
-      default:
-          // If an unknown period is provided, return 0
-          return 0;
+    case REWARD_PERIODE.MINUTE:
+      // Calculate points for minute-based rewards
+      const minutesPassed = timeDifferenceMs / (1000 * 60);
+      const minuteReward = minutesPassed * (attrreward.attr_reward || 0) / 60;
+      return Math.min(minuteReward, attrreward.attr_reward || 0);
+    
+    case REWARD_PERIODE.HOUR:
+      // Calculate points for hour-based rewards
+      const hoursPassed = timeDifferenceMs / (1000 * 60 * 60);
+      const hourReward = hoursPassed * (attrreward.attr_reward || 0) / 24;
+      return Math.min(hourReward, attrreward.attr_reward || 0);
+    
+    case REWARD_PERIODE.DAY:
+      // Calculate points for day-based rewards
+      const daysPassed = timeDifferenceMs / (1000 * 60 * 60 * 24);
+      const dayReward = daysPassed * (attrreward.attr_reward || 0);
+      return Math.min(dayReward, attrreward.attr_reward || 0);
+    
+    default:
+      // If an unknown period is provided, return 0
+      return 0;
   }
 }
 

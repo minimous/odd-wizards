@@ -56,7 +56,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
 
   return (
     <div className="w-full">
-      <div className="relative w-full h-[325px] md:h-[500px] overflow-hidden">
+      <div className="relative w-full h-[325px] md:h-[550px] overflow-hidden">
         <div className="relative w-full h-full flex items-center justify-center">
           {images.map((image, index) => (
             <div
@@ -69,7 +69,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
               <img
                 src={image.src}
                 alt={image.alt}
-                className="w-[150px] h-[150px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg"
+                className="w-[150px] h-[150px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg hover:scale-110 transition-all duration-200 ease-in-out"
               />
             </div>
           ))}

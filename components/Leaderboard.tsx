@@ -9,6 +9,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { useClaim } from "@/hooks/useClaim";
+import Link from "next/link";
 
 const Leaderboard = () => {
   const rankEmojis = ["🥇", "🥈", "🥉"];
@@ -81,10 +82,10 @@ const Leaderboard = () => {
             key={index}
             className="flex gap-2 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
           >
-            <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
+            <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-2xl text-center p-4">
               {rankEmojis[index] || item.ranking}
             </div>
-            <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border-2 border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="flex flex-grow items-center justify-between p-4 px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
                 <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                 <img
@@ -96,11 +97,11 @@ const Leaderboard = () => {
                     }}
                   />
                 </div>
-                <div className="text-center">
+                <Link href={`https://www.stargaze.zone/p/${item?.staker_address}`}  className="text-center">
                   <p className="text-[10px] md:text-[20px] font-bold text-[#DB2877]">
                     {formatAddress(item.staker_address)}
                   </p>
-                </div>
+                </Link>
               </div>
               <div className="text-center">
                 <p className="text-[10px] md:text-[20px] font-bold">

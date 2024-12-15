@@ -86,6 +86,8 @@ export async function getTotalPoints(address: string, collection_address: string
         });
     });
 
+    console.log("attributes_rewards", attributes_rewards.length);
+
     const totalPoints = attributes_rewards?.reduce((sum, reward) => 
         sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
     );
