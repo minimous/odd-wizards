@@ -8,12 +8,15 @@ import { useChain } from "@cosmos-kit/react";
 import axios from "axios";
 import { useUser } from "@/hooks/useUser";
 import getConfig from "@/config/config";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
   const { setUser } = useUser();
   const config = getConfig();
+  const path = usePathname();
 
   useEffect(() => {
     
@@ -46,21 +49,21 @@ export default function Header() {
           <div className="hidden md:flex space-x-8">
             <Link
               href="/about"
-              className="text-2xl font-bold text-white transition-transform hover:animate-shake"
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/about" ? "text-white" : "text-gray-400")}
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               About
             </Link>
             <Link
               href="/gallery"
-              className="text-2xl font-bold text-white transition-transform hover:animate-shake"
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/gallery" ? "text-white" : "text-gray-400")}
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Gallery
             </Link>
             <Link
               href="/stake"
-              className="text-2xl font-bold text-white transition-transform hover:animate-shake"
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/stake" ? "text-white" : "text-gray-400")}
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Stake
@@ -110,21 +113,24 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div className="absolute top-0 left-0 right-0 mt-16 bg-neutral-900 px-6 py-4 md:hidden">
           <div className="flex flex-col text-center space-y-4">
-            <Link
+          <Link
               href="/about"
-              className="text-xl font-semibold text-white hover:text-gray-200 transition-colors duration-300"
+              className={cn("text-xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/about" ? "text-white" : "text-gray-400")}
+              style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               About
             </Link>
             <Link
               href="/gallery"
-              className="text-xl font-semibold text-white hover:text-gray-200 transition-colors duration-300"
+              className={cn("text-xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/gallery" ? "text-white" : "text-gray-400")}
+              style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Gallery
             </Link>
             <Link
               href="/stake"
-              className="text-xl font-semibold text-white hover:text-gray-200 transition-colors duration-300"
+              className={cn("text-xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/stake" ? "text-white" : "text-gray-400")}
+              style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Stake
             </Link>
