@@ -8,7 +8,7 @@ import GenerateImage from "@/components/gallery/GenerateImage";
 
 const collections: CollectionCardType[] = [
     {
-        address: "stars1j9rk6fte8j2qlwx6qewxh6ezu83r0a290j4wemn0h0hjw37fn3wqvzan3s",
+        address: "stars12se30zklzhjf84ky669lrtx0wdlsk92lg4nad7yufk9d8qp08n2q8m58cw",
         image: "/images/Rebbits.png",
         imageGif: "/images/Rebbits.gif",
         name: "Rebbits",

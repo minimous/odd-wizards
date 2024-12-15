@@ -19,16 +19,16 @@ export default function Header() {
   const path = usePathname();
 
   useEffect(() => {
-    
-    async function fetchData(){
-      if(address){
+
+    async function fetchData() {
+      if (address) {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         setUser(resp.data.data);
       }
     }
 
     fetchData();
-  
+
   }, [address])
 
   return (
@@ -37,11 +37,20 @@ export default function Header() {
         {/* Logo and Links */}
         <div className="flex items-center space-x-4 md:space-x-10">
           {/* Logo */}
-          <Link href="/" aria-label="Home">
+          <Link
+            href="/"
+            aria-label="Home"
+            className="group rounded-[15px] md:rounded-[20px] overflow-hidden w-[50px] md:w-[75px] h-[40px] md:h-[60px] flex items-center justify-center"
+          >
             <img
               src="/images/logo.png"
               alt="Logo"
-              className="w-[50px] md:w-[75px]  rounded-md"
+              className="group-hover:hidden object-contain"
+            />
+            <img
+              src="/images/logo.gif"
+              alt="Logo"
+              className="hidden group-hover:block object-contain"
             />
           </Link>
 
@@ -113,7 +122,7 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div className="absolute top-0 left-0 right-0 mt-16 bg-neutral-900 px-6 py-4 md:hidden">
           <div className="flex flex-col text-center space-y-4">
-          <Link
+            <Link
               href="/about"
               className={cn("text-xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/about" ? "text-white" : "text-gray-400")}
               style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
