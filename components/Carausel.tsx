@@ -6,6 +6,7 @@ import Image from "next/image";
 // Carousel Component
 interface ImageData {
   src: string;
+  name: string;
   alt: string;
 }
 
@@ -76,10 +77,9 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
         </div>
       </div>
       <div className="mt-4 mb-6 md:mt-8 md:mb-12">
-        <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
-          <span>Expedition ⚓</span>
-        </h1>
-        <p className="text-lg text-gray-400 leading-relaxed">for {getOrdinal(currentIndex + 1)} winner</p>
+        {/* <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
+        </h1> */}
+        <p className="text-lg text-gray-400 leading-relaxed">{images[currentIndex]["name"]} for {getOrdinal(currentIndex + 1)} winner</p>
       </div>
     </div>
   );
