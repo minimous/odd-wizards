@@ -11,8 +11,27 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Odd Wizard',
-  description:
-    'Stake, Win, and LFGODDS!'
+  description: 'Stake, Win, and LFGODDS!',
+  openGraph: {
+    type: "website",
+    url: "https://www.oddsgarden.io",
+    title: 'Odd Wizard',
+    description: 'Stake, Win, and LFGODDS!',
+    images: [
+      {
+        url: 'https://www.oddsgarden.io/images/Odds-Garden.png',
+        width: 1200,
+        height: 630,
+        alt: 'Odd Wizard Share Image'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Odd Wizard',
+    description: 'Stake, Win, and LFGODDS!',
+    images: ['https://www.oddsgarden.io/images/Odds-Garden.png']
+  }
 };
 
 export default async function RootLayout({
