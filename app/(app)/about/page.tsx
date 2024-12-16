@@ -20,7 +20,7 @@ export default function About() {
 
                         <div className="my-6">
                             <p className="text-sm md:!text-xl">Wizards are divided into 3 tier traits: <span className="font-bold">Gold, Silver, and Bronze.</span></p>
-                            <p className="text-sm md:!text-xl">You can mint them on <span className="font-bold">16, 2024, at 7 PM UTC</span> only on Stargaze.</p>
+                            <p className="text-sm md:!text-xl">You can mint them on <span className="font-bold">Dec 16, 2024, at 7 PM UTC</span> only on Stargaze.</p>
                             <p className="text-sm md:!text-xl">After obtaining your Wizard NFT, make sure to stake them here.</p>
                         </div>
                         <div className="relative text-xl md:text-3xl font-bold my-6 text-center">

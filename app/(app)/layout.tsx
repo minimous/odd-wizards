@@ -4,12 +4,12 @@ import ChainProviderWrapper from '@/providers/chain-provider-wrapper';
 import type { ReactNode } from 'react';
 
 export const metadata = {
-  title: 'Odd Wizard',
+  title: 'Odds Wizard',
   description: 'Stake, Win, and LFGODDS!',
   openGraph: {
     type: "website",
     url: "https://www.oddsgarden.io",
-    title: 'Odd Wizard',
+    title: 'Odds Wizard',
     description: 'Stake, Win, and LFGODDS!',
     images: [
       {
@@ -22,7 +22,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Odd Wizard',
+    title: 'Odds Wizard',
     description: 'Stake, Win, and LFGODDS!',
     images: ['https://www.oddsgarden.io/images/Odds-Garden.png']
   }
