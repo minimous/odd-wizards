@@ -11,7 +11,7 @@ const config = (network: string) => {
       }
     case "mainnet":
       return {
-        collection_address: env.NEXT_PUBLIC_COLLECTION_ADDRESS || 'stars1j9rk6fte8j2qlwx6qewxh6ezu83r0a290j4wemn0h0hjw37fn3wqvzan3s',
+        collection_address: env.NEXT_PUBLIC_COLLECTION_ADDRESS || 'stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7',
         graphql_url: env.NEXT_PUBLIC_GRAPHQL_URL_MAINNET || 'https://graphql.mainnet.stargaze-apis.com/graphql',
         ranking_reward: env.NEXT_PUBLIC_RANKING_RWARD_MAINNET || 100
       }

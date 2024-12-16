@@ -15,7 +15,7 @@ const collections: CollectionCardType[] = [
         link: "https://www.stargaze.zone/m/rebbits/tokens"
     },
     {
-        // address: "stars1j9rk6fte8j2qlwx6qewxh6ezu83r0a290j4wemn0h0hjw37fn3wqvzan3s",
+        address: "stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7",
         image: "/images/wizard-crown.png",
         imageGif: "/images/Odds-Wizard.gif",
         name: "Odds Wizard",
