@@ -31,15 +31,15 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-20 md:!px-20 md:!mt-32 mx-auto py-6 text-center">
+                    <div className="px-10 mt-20 px-4 md:!px-20 md:!mt-32 mx-auto py-6 text-center">
                         <CustomGradualSpacing
-                            className="font-display text-center text-4xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+                            className="font-display text-center text-2xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
                             text="Stake, Win, and LFGODDS!"
                         />
                         {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
                         <div className="mt-6">
-                            <p className="text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
-                            <p className="text-xl text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
+                            <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
+                            <p className="text-sm md:!text-xl text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
                             {/* <p className="text-lg text-gray-400 leading-tight"></p> */}
                         </div>
                     </div>
@@ -48,7 +48,7 @@ export default function Stake() {
                     <div className="relative mx-4 md:!ml-20 max-h-max">
                         <StakeCard />
                     </div>
-                    <div className="mx-auto relative w-[375px]">
+                    <div className="mx-auto relative w-[375px] mb-4">
                         <CarouselStake images={imageList} interval={15000} />
                     </div>
                 </div>

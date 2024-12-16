@@ -35,12 +35,12 @@ export default function Home() {
       <div className="w-full bg-[#201621] px-4 py-12 text-center">
         {/* <h1 className="text-4xl md:!text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
         <CustomGradualSpacing
-          className="font-display text-center text-4xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+          className="font-display text-center text-2xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
           text="Stake, Win, and LFGODDS!"
         />
         <div className="mt-4">
-          <p className="text-lg md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
-          <p className="text-lg md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs, and win prizes.</p>
+          <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
+          <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs, and win prizes.</p>
         </div>
       </div>
       <div className="w-full h-[125px] bg-[#201621]" />
