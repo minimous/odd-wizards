@@ -40,7 +40,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <MobileComingSoon />
           {/* <Header /> */}
           {/* <NavPrice /> */}
-          <ScrollArea className="w-full h-screen">
+          <ScrollArea className="hidden md:!block w-full h-screen">
             <div className="mx-auto w-screen 2xl:max-w-[1920px]">
               {children}
             </div>
