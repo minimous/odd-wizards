@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
                 LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
                 LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
                 WHERE mc.collection_address = ${collection_address}
+                AND ms.staker_nft_staked > 0
                 GROUP BY mc.collection_address, ms.staker_address, ms.staker_nft_staked, mu.user_image_url
             ),
             ranked_leaderboard AS (
