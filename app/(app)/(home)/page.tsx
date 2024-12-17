@@ -35,17 +35,34 @@ export default function Home() {
     <div className="relative bg-black w-full">
       <div className="relative">
         <Header />
-        {/* <img src="/images/hero.png" className="w-full" /> */}
-        <video autoPlay loop muted className="w-full">
+        <div className="bg-[url('/images/wizard.gif')] md:!hidden bg-cover bg-center h-[500px] w-full" />
+        {/* <img src="/images/wizard.gif" className="md:!hidden h-screen w-full" /> */}
+        <video autoPlay loop muted className="hidden md:!block w-full">
           <source src="/images/home.mp4" type="video/mp4" />
           <img src="/images/hero.png" className="w-full" />
         </video>
-        <div className="absolute bottom-0 w-full h-[200px] bg-gradient-to-b from-transparent to-[#201621]"></div>
+        <div className="absolute bottom-0 w-full h-[200px] bg-gradient-to-b from-transparent to-[#201621]">
+          <div className=" md:!hidden w-full bg-transparent px-4 py-12 text-center">
+            {/* <h1 className="text-4xl md:!text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
+            <CustomGradualSpacing
+              className="font-display text-center text-4xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+              text="Stake, Win, and"
+            />
+            <CustomGradualSpacing
+              className="font-display text-center text-4xl font-black md:leading-[5rem]"
+              text="LFGODDS!"
+            />
+            <div className="my-4">
+              <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
+              <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs, and win prizes.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="w-full bg-[#201621] px-4 py-12 text-center">
+      <div className="hidden md:!block w-full bg-[#201621] px-4 py-12 text-center">
         {/* <h1 className="text-4xl md:!text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
         <CustomGradualSpacing
-          className="font-display text-center text-2xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+          className="font-display text-center text-2xl md:!text-6xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
           text="Stake, Win, and LFGODDS!"
         />
         <div className="mt-4">
@@ -60,7 +77,7 @@ export default function Home() {
       <div className="bg-[url('/images/blur-brown.png')] bg-cover bg-center mt-8 md:!mt-0">
         <Leaderboard />
         <div className="w-full relative text-white flex flex-col justify-center items-center text-center">
-          <div className="mt-8 mb-4 mx-4">
+          <div className="mt-4 md:!mt-8 mb-4 mx-20">
             <h1 className="text-[24px] md:text-[36px] font-bold mb-4">
               Prize
             </h1>

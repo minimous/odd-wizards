@@ -56,7 +56,7 @@ export default function Gallery() {
             <div className="my-20 text-center">
                 <h1 className="text-2xl md:!text-6xl text-white font-black">Create something fun!</h1>
                 <div className="mt-6">
-                    <p className="text-sm md:!text-3xl text-gray-400 leading-tight">click “random” for unilimited possibilities</p>
+                    <p className="text-sm md:!text-3xl text-gray-400 leading-tight">Click “random” for unlimited possibilities.</p>
                 </div>
             </div>
             <div className="w-full">

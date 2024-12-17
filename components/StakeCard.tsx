@@ -111,13 +111,13 @@ const StakeCard: FC = () => {
 }
 
   return (
-    <div className="bg-[#18181B] border border-[#323237] p-4 md:p-8 rounded-[50px] flex items-center gap-x-4">
+    <div className="w-full bg-[#18181B] border border-[#323237] p-4 md:p-8 rounded-[50px] flex items-center gap-x-4">
       <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
       <div className="w-full p-2 md:p-4">
         <div className="text-center md:flex md:text-start justify-between mb-2">
-          <h1 className="text-white text-2xl md:text-3xl font-semibold">Odd Wizard</h1>
-          <Link href="https://www.stargaze.zone/m/oddswizard/tokens" target="_blank" className="flex items-center justify-between gap-x-4">
-            <span className="text-white text-sm md:!text-lg font-semibold">Trade collection</span>
+          <Link href="https://www.stargaze.zone/m/oddswizard/tokens" target="_blank" className="w-full flex items-center justify-between gap-x-4">
+            <h1 className="text-white text-2xl md:text-3xl font-semibold">Odd Wizard</h1>
+            {/* <span className="text-white text-sm md:!text-lg font-semibold">Trade collection</span> */}
             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
           </Link>
         </div>

@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 import { WalletStatus } from '@cosmos-kit/core';
 import { useUser } from "@/hooks/useUser";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { formatAddress } from "@/lib/utils";
+import { cn, formatAddress } from "@/lib/utils";
 
-export default function ConnectButton() {
+export interface ConnectButtonProps {
+    showProfile?: boolean,
+    className?: string
+}
+
+export default function ConnectButton({ showProfile = true, className }: ConnectButtonProps) {
     const wallet = useWallet();
     const { user } = useUser();
     const { connect, disconnect, address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
@@ -34,7 +39,7 @@ export default function ConnectButton() {
         {wallet.status != WalletStatus.Connected ? (
             <Button
                 variant="ghost"
-                className="px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                className={cn("px-8 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black", className)}
                 onClick={handleConnectWallet}
                 aria-label="Connect"
             >
@@ -80,7 +85,7 @@ export default function ConnectButton() {
                 >
                     <span className="text-sm md:!text-2xl font-black">{formatAddress(address)}</span>
                 </Button>
-                <img src={ user?.user_image_url ?? DEFAULT_IMAGE_PROFILE } onError={(e: any) => {
+                <img hidden={!showProfile} src={ user?.user_image_url ?? DEFAULT_IMAGE_PROFILE } onError={(e: any) => {
                     e.target.src = DEFAULT_IMAGE_PROFILE;
                 }} className="w-[60px] h-[60px] rounded-full" />
             </div>
