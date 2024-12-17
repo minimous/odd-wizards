@@ -53,19 +53,15 @@ export async function POST(request: NextRequest) {
             }
         });
 
-        await prisma.mst_staker.update({
-            where: { staker_id: staker.staker_id },
-            data: {
-                staker_nft_staked: resp.totalNft
-            }
-        })
-
-        await prisma.mst_staker.update({
-            where: { staker_id: staker.staker_id },
-            data: {
-                staker_lastclaim_date: new Date()
-            }
-        })
+        if(resp.point >= 1){
+            await prisma.mst_staker.update({
+                where: { staker_id: staker.staker_id },
+                data: {
+                    staker_lastclaim_date: new Date(),
+                    staker_nft_staked: resp.totalNft
+                }
+            });    
+        }
 
         return NextResponse.json(
             {
