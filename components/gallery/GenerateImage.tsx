@@ -210,8 +210,8 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
     };
 
     return (
-        <div className="h-full mt-4">
-            <div className='md:max-w-screen-xl p-6 md:px-16 mx-auto'>
+        <div className="h-full md:!mt-4">
+            <div className='md:max-w-screen-xl py-0 px-6 md:!py-6 md:px-16 mx-auto'>
                 <div className="grid md:flex mt-10 gap-x-8 gap-y-4">
                     <div className="w-full order-last md:order-first">
                         <Card className="w-full bg-[#18181B]">

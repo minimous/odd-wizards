@@ -57,7 +57,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
 
   return (
     <div className="w-full">
-      <div className="relative w-full h-[325px] md:h-[550px] overflow-hidden">
+      <div className="relative w-full h-[225px] md:h-[550px] overflow-hidden">
         <div className="relative w-full h-full flex items-center justify-center">
           {images.map((image, index) => (
             <div
@@ -76,10 +76,10 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
           ))}
         </div>
       </div>
-      <div className="mt-4 mb-6 md:mt-8 md:mb-12">
+      <div className="mb-6 md:mt-8 md:mb-12">
         {/* <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
         </h1> */}
-        <p className="text-lg text-gray-400 leading-relaxed">{images[currentIndex]["name"]} for {getOrdinal(currentIndex + 1)} winner</p>
+        <p className="text-[13px] md:!text-lg text-gray-400 leading-relaxed">{images[currentIndex]["name"]} for {getOrdinal(currentIndex + 1)} winner</p>
       </div>
     </div>
   );

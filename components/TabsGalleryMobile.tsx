@@ -7,7 +7,7 @@ export interface TabsGalleryProps {
     setActiveTab: (id: string) => void
 }
 
-const TabsGallery = ({ tabs, activeTab, setActiveTab }: TabsGalleryProps) => {
+const TabsGalleryMobile = ({ tabs, activeTab, setActiveTab }: TabsGalleryProps) => {
 
     const [activeIndex, setActiveIndex]= useState<number>(0);
 
@@ -26,15 +26,15 @@ const TabsGallery = ({ tabs, activeTab, setActiveTab }: TabsGalleryProps) => {
             <img
               src={tab.icon}
               alt={tab.label}
-              className="h-24 w-24" // Ukuran ikon
+              className="h-16 w-16" // Ukuran ikon
             />
           </div>
         ))}
         {/* Garis indikator */}
         <div
-          className="absolute left-3 -bottom-5 h-1 w-20 bg-white transition-transform duration-300"
+          className="absolute left-0 -bottom-5 h-1 w-16 bg-white transition-transform duration-300"
           style={{
-            transform: `translateX(${activeIndex * 8.25}rem)`,
+            transform: `translateX(${activeIndex * 6.25}rem)`,
           }}
         />
       </div>
@@ -42,4 +42,4 @@ const TabsGallery = ({ tabs, activeTab, setActiveTab }: TabsGalleryProps) => {
   );
 };
 
-export default TabsGallery;
+export default TabsGalleryMobile;
