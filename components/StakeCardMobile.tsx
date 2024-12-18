@@ -112,7 +112,7 @@ const StakeCardMobile: FC = () => {
     }
 
     return (
-        <div className="w-full bg-[#18181B] border border-[#323237] p-4 py-6 md:p-8 rounded-[50px]">
+        <div className="w-full bg-[#18181B] border border-[#323237] p-4 py-6 md:p-8 rounded-[25px]">
             <div className="flex items-center gap-x-4">
                 <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
                 <div className="w-full p-2 md:p-4">
@@ -122,7 +122,7 @@ const StakeCardMobile: FC = () => {
                             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
                         </Link>
                     </div>
-                    <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-3">Each NFT represents a unique wizard, crafted to guide and assist you in exploring the cosmos.</p>
+                    <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-2">Each NFT represents a unique wizard, crafted to guide and assist you in exploring the cosmos.</p>
                 </div>
             </div>
             <div className="relative w-full mx-auto mt-4 md:!mx-0 md:!mt-2">

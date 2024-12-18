@@ -53,9 +53,9 @@ export default function Gallery() {
                     ))}
                 </div>
             </div>
-            <div className="my-20 text-center">
+            <div className="mt-8 md:!my-20 text-center">
                 <h1 className="text-2xl md:!text-6xl text-white font-black">Create something fun!</h1>
-                <div className="mt-6">
+                <div className="mt-2 md:!mt-6">
                     <p className="text-sm md:!text-3xl text-gray-400 leading-tight">Click “random” for unlimited possibilities.</p>
                 </div>
             </div>

@@ -14,9 +14,9 @@ export default function About() {
                 <Header />
                 <div className="relative">
                     {/* <img src="/images/about.gif" className="absolute top-0 z-0 w-full" /> */}
-                    <div className="text-center w-full mt-20 md:!mt-28">
-                        <h1 className="text-2xl md:!text-6xl text-white font-bold my-4">Participate in the Odds Wizard</h1>
-                        <h1 className="text-2xl md:!text-6xl text-white font-bold my-4">NFT stake challenge</h1>
+                    <div className="text-center w-full px-10 md:!px-40 mt-20 md:!mt-28">
+                        <h1 className="text-3xl md:!text-6xl text-white font-bold my-4">Participate in the Odds Wizard NFT stake challenge</h1>
+                        {/* <h1 className="text-3xl md:!text-6xl text-white font-bold my-4"></h1> */}
 
                         <div className="my-6">
                             <p className="text-sm md:!text-xl">Wizards are divided into 3 tier traits: <span className="font-bold">Gold, Silver, and Bronze.</span></p>

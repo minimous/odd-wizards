@@ -70,8 +70,11 @@ const Leaderboard = () => {
       <h1 className="text-2xl md:!text-4xl font-bold mb-2 text-white text-center">
         Leaderboard
       </h1>
-      <p className="text-xs md:!text-lg text-gray-400 text-center leading-tight">
-        Stake your Wizard, rise to the top, and show off your Odds collection.
+      <p className="flex text-xs md:!text-lg text-gray-400 text-center leading-tight">
+        Stake your Wizard, rise to the top, <span className="hidden md:!flex mx-2">and show off your Odds collection.</span>
+      </p>
+      <p className="md:!hidden text-xs md:!text-lg text-gray-400 text-center leading-tight">
+        and show off your Odds collection.
       </p>
       <div className="flex flex-col items-center w-full mt-4">
         {leaderboard.map((item, index) => (
@@ -79,10 +82,10 @@ const Leaderboard = () => {
             key={index}
             className="flex gap-2 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
           >
-            <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-lg md:!text-2xl text-center p-4">
+            <div className="flex items-center justify-center w-[60px] h-[60px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-lg md:!text-2xl text-center p-4">
               {rankEmojis[index] || item.ranking}
             </div>
-            <div className="flex flex-grow items-center justify-between p-4 px-4 md:!px-8 gap-2 w-full h-[50px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] shadow-sm shadow-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="flex flex-grow items-center justify-between p-4 px-4 md:!px-8 gap-2 w-full h-[60px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
                 <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                   <img
@@ -96,12 +99,12 @@ const Leaderboard = () => {
                 </div>
                 <div>
                   <Link href={`https://www.stargaze.zone/p/${item?.staker_address}`} target="_blank" className="text-center text-[#DB2877]">
-                    <p className="text-[10px] md:text-[20px] font-bold ">
+                    <p className="text-[12px] md:text-[20px] font-bold ">
                       {formatAddress(item?.staker_address)}
                     </p>
                   </Link>
                   <div className="text-left md:!hidden text-white">
-                    <p className="text-[10px] md:text-[20px] font-bold">{item?.total_points} $WZRD</p>
+                    <p className="text-[12px] md:text-[20px] font-bold">{item?.total_points} $WZRD</p>
                   </div>
                 </div>
               </div>
@@ -112,12 +115,12 @@ const Leaderboard = () => {
               </div>
 
               <div className="text-center">
-                <p className="text-[10px] hidden md:!block md:text-[20px] font-bold">
+                <p className="text-[12px] hidden md:!block md:text-[20px] font-bold">
                   {item.staker_nft_staked} NFT Staked
                 </p>
                 <div className="md:!hidden">
-                  <p className="text-[10px] md:text-[20px] font-bold">{item?.staker_nft_staked} NFTs</p>
-                  <p className="text-[10px] md:text-[20px] font-bold">Staked</p>
+                  <p className="text-[12px] md:text-[20px] font-bold">{item?.staker_nft_staked} NFTs</p>
+                  <p className="text-[12px] md:text-[20px] font-bold">Staked</p>
                 </div>
               </div>
             </div>
