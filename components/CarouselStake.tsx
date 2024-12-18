@@ -78,7 +78,7 @@ const CarouselStake: React.FC<CarouselStakeProps> = ({ images, interval = 3000 }
           ))}
         </div>
       </div>
-      <div className="text-center">
+      <div className="text-center mt-2">
         {/* <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
         </h1> */}
         <p className="text-sm text-gray-400 leading-relaxed">{images[currentIndex]["name"]} for {getOrdinal(currentIndex + 1)} winner</p>

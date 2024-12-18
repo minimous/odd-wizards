@@ -45,7 +45,7 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                             <ArrowUpRight />
                         </div>
                     </div>
-                    <div className="p-10 group-hover:hidden">
+                    <div className="p-20 group-hover:hidden">
                         <img src={data.image} alt={data.name} className="h-full w-full" />
                     </div>
                     <img src={data.imageGif} alt={data.name} className="h-full w-full hidden group-hover:flex" />

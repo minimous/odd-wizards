@@ -42,9 +42,9 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-20 px-4 md:!px-20 md:!mt-32 mx-auto py-6 text-center">
+                    <div className="px-10 mt-20 px-4 md:!px-20 md:!mt-32 mx-auto py-4 md:!py-6 text-center">
                         <CustomGradualSpacing
-                            className="font-display text-center text-4xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+                            className="font-display text-center text-[36px] font-black md:leading-[5rem]"
                             text="Stake, Win, and"
                         />
                         <CustomGradualSpacing
@@ -52,14 +52,14 @@ export default function Stake() {
                             text="LFGODDS!"
                         />
                         {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
-                        <div className="mt-6">
+                        <div className="px-6 mt-6">
                             <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
                             <p className="text-sm md:!text-xl text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
                             {/* <p className="text-lg text-gray-400 leading-tight"></p> */}
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col-reverse md:!flex-row mt-0 md:!mt-8">
+                <div className="flex flex-col-reverse md:!flex-row mt-0 md:!mt-8 gap-y-4">
                     <div className="relative mx-4 md:!ml-20 max-h-max">
                         <div className="hidden md:!flex w-full">
                             <StakeCard />
@@ -76,10 +76,10 @@ export default function Stake() {
             <div className="my-4">
                 <BoxLeaderboard />
             </div>
-            <div className="pt-4 md:pt-20 bg-cover bg-center">
+            <div className="md:pt-20 bg-cover bg-center">
                 <Leaderboard />
             </div>
-            <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center h-full py-16">
+            <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center h-full py-12 md:py-16">
                 <Footer className="my-0" />
             </div>
             <Particles
