@@ -5,6 +5,7 @@ import CollectionCard, { CollectionCardType } from "@/components/CollectionCard"
 import TabsGallery from "@/components/TabsGallery";
 import { useState } from "react";
 import GenerateImage from "@/components/gallery/GenerateImage";
+import TabsGalleryMobile from "@/components/TabsGalleryMobile";
 
 const collections: CollectionCardType[] = [
     {
@@ -31,8 +32,8 @@ const collections: CollectionCardType[] = [
 ]
 
 const tabs = [
-    { id: "rebbits", icon: '/images/Rebbits.png', label: "Rebbits"},
-    { id: "odds-wizard", icon: '/images/wizard-crown.png', label: "Odds Wizard" }, 
+    { id: "rebbits", icon: '/images/Rebbits.png', label: "Rebbits" },
+    { id: "odds-wizard", icon: '/images/wizard-crown.png', label: "Odds Wizard" },
 ];
 
 
@@ -60,7 +61,12 @@ export default function Gallery() {
                 </div>
             </div>
             <div className="w-full">
-                <TabsGallery tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+                <div className="hidden md:!block">
+                    <TabsGallery tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+                </div>
+                <div className="md:!hidden">
+                    <TabsGalleryMobile tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+                </div>
                 <GenerateImage collection={activeTab} />
             </div>
             <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center h-full py-16">
