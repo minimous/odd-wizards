@@ -8,6 +8,7 @@ import Leaderboard from "@/components/Leaderboard";
 import Particles from "@/components/ui/particles";
 import CustomGradualSpacing from "@/components/CustomGradouselSpacing";
 import { useState } from "react";
+import StakeCardMobile from "@/components/StakeCardMobile";
 
 const imageList = [
     { src: "https://i.stargaze-apis.com/pZa0xBOtYOrxbFADavj6t8T8MVRUkeSDo9OvfpvDRXc/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeifpduio7sv3cy3ok76j3ldvrwan6owqv5uvrkk5xhuiuvhuy5eupe/558.jpg", alt: "German Shepherd #558", name: "Expedition" },
@@ -43,8 +44,12 @@ export default function Stake() {
                 <div className="grid">
                     <div className="px-10 mt-20 px-4 md:!px-20 md:!mt-32 mx-auto py-6 text-center">
                         <CustomGradualSpacing
-                            className="font-display text-center text-2xl md:!text-6xl font-black tracking-tighter md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
-                            text="Stake, Win, and LFGODDS!"
+                            className="font-display text-center text-4xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+                            text="Stake, Win, and"
+                        />
+                        <CustomGradualSpacing
+                            className="font-display text-center text-4xl font-black md:leading-[5rem]"
+                            text="LFGODDS!"
                         />
                         {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
                         <div className="mt-6">
@@ -54,9 +59,14 @@ export default function Stake() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col-reverse md:!flex-row mt-8">
+                <div className="flex flex-col-reverse md:!flex-row mt-0 md:!mt-8">
                     <div className="relative mx-4 md:!ml-20 max-h-max">
-                        <StakeCard />
+                        <div className="hidden md:!flex w-full">
+                            <StakeCard />
+                        </div>
+                        <div className="flex md:!hidden w-full">
+                            <StakeCardMobile />
+                        </div>
                     </div>
                     <div className="mx-auto relative w-[375px] mb-4">
                         <CarouselStake images={imageList} interval={15000} />
@@ -66,7 +76,7 @@ export default function Stake() {
             <div className="my-4">
                 <BoxLeaderboard />
             </div>
-            <div className="pt-20 bg-cover bg-center">
+            <div className="pt-4 md:pt-20 bg-cover bg-center">
                 <Leaderboard />
             </div>
             <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center h-full py-16">
