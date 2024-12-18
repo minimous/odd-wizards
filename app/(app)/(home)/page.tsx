@@ -45,7 +45,7 @@ export default function Home() {
           <div className=" md:!hidden w-full bg-transparent px-4 py-12 text-center">
             {/* <h1 className="text-4xl md:!text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
             <CustomGradualSpacing
-              className="font-display text-center text-4xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+              className="font-display text-center text-4xl font-black md:leading-[5rem]"
               text="Stake, Win, and"
             />
             <CustomGradualSpacing
@@ -75,14 +75,14 @@ export default function Home() {
       <div className="w-full bg-[#201621] md:mb-16">
         <StakeSection />
       </div>
-      <div className="bg-[url('/images/blur-brown.png')] bg-cover bg-center mt-8 md:!mt-0">
+      <div className="bg-[url('/images/blur-brown.png')] bg-cover bg-center mt-4 md:!mt-0">
         <Leaderboard />
         <div className="w-full relative text-white flex flex-col justify-center items-center text-center">
           <div className="mt-4 md:!mt-8 mb-4 mx-20">
-            <h1 className="text-[24px] md:text-[36px] font-bold mb-4">
+            <h1 className="text-[20px] md:text-[36px] font-bold mb-2 md:!mb-4">
               Prize
             </h1>
-            <p className="text-xs md:!text-lg text-gray-400 leading-relaxed">
+            <p className="text-[13px] md:!text-lg text-gray-400 leading-relaxed">
               Only the biggest stakers will claim victory and win the prize!
             </p>
           </div>

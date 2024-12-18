@@ -12,8 +12,8 @@ const TabsGallery = ({ tabs, activeTab, setActiveTab }: TabsGalleryProps) => {
     const [activeIndex, setActiveIndex]= useState<number>(0);
 
   return (
-    <div className="relative flex justify-center items-center">
-      <div className="relative flex">
+    <div className="relative flex justify-center items-center py-4">
+      <div className="relative flex gap-x-8">
         {tabs.map((tab, index) => (
           <div
             key={tab.id}
@@ -26,15 +26,15 @@ const TabsGallery = ({ tabs, activeTab, setActiveTab }: TabsGalleryProps) => {
             <img
               src={tab.icon}
               alt={tab.label}
-              className="h-44 w-44" // Ukuran ikon
+              className="h-24 w-24" // Ukuran ikon
             />
           </div>
         ))}
         {/* Garis indikator */}
         <div
-          className="absolute left-12 bottom-5 h-1 w-20 bg-white transition-transform duration-300"
+          className="absolute left-3 -bottom-5 h-1 w-20 bg-white transition-transform duration-300"
           style={{
-            transform: `translateX(${activeIndex * 11.25}rem)`,
+            transform: `translateX(${activeIndex * 8.25}rem)`,
           }}
         />
       </div>

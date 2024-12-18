@@ -118,7 +118,7 @@ const StakeCardMobile: FC = () => {
                 <div className="w-full p-2 md:p-4">
                     <div className="text-center md:flex md:text-start justify-between mb-2">
                         <Link href="https://www.stargaze.zone/m/oddswizard/tokens" target="_blank" className="w-full flex items-center justify-between gap-x-4">
-                            <h1 className="text-white text-xl font-semibold">Odd Wizard</h1>
+                            <h1 className="text-white text-xl font-semibold">Odds Wizard</h1>
                             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
                         </Link>
                     </div>

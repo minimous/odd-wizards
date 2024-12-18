@@ -14,7 +14,7 @@ const StakeSection = () => {
           <StakeCardMobile />
         </div>
       </div>
-      <div className="h-[150px] md:!h-[175px]" />
+      <div className="h-[125px] md:!h-[175px]" />
       <BoxLeaderboard />
     </div>
   );

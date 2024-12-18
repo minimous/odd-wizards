@@ -116,7 +116,7 @@ const StakeCard: FC = () => {
       <div className="w-full p-2 md:p-4">
         <div className="text-center md:flex md:text-start justify-between mb-2">
           <Link href="https://www.stargaze.zone/m/oddswizard/tokens" target="_blank" className="w-full flex items-center justify-between gap-x-4">
-            <h1 className="text-white text-2xl md:text-3xl font-semibold">Odd Wizard</h1>
+            <h1 className="text-white text-[20px] md:text-3xl font-semibold">Odds Wizard</h1>
             {/* <span className="text-white text-sm md:!text-lg font-semibold">Trade collection</span> */}
             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
           </Link>
@@ -138,7 +138,7 @@ const StakeCard: FC = () => {
                       ref={claimRef}
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
-                      className="w-full px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                      className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                     >Stake and Claim</Button>) :
                     (<StakeButton />)
                 }
@@ -146,7 +146,7 @@ const StakeCard: FC = () => {
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="w-full px-8 py-3 h-max text-xs md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"
