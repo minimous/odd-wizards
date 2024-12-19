@@ -13,31 +13,23 @@ const StakeSlider = () => {
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
-  const maxValue = 100; // Maximum slider position
+  const maxValue = 100;
   const config = getConfig();
   const { address } = useChain("stargaze");
   const { toast, promiseToast } = useToast();
   const { setClaim } = useClaim();
 
   useEffect(() => {
-    // Responsive width calculation
     const calculateSliderWidth = () => {
       if (sliderRef.current) {
-        // Calculate based on percentage of total width
         const totalWidth = sliderRef.current.offsetWidth;
-        const chevronWidth = chevronRef.current ? chevronRef.current.offsetWidth : 56; // Default to 56px if not available
-
-        // Calculate width dynamically, leaving space for chevron and some padding
+        const chevronWidth = chevronRef.current ? chevronRef.current.offsetWidth : 56;
         const availableWidth = totalWidth - (chevronWidth * 1.5);
-
         setSliderWidth(availableWidth + 15);
       }
     };
 
-    // Initial calculation
     calculateSliderWidth();
-
-    // Recalculate on window resize
     window.addEventListener('resize', calculateSliderWidth);
 
     return () => {
@@ -49,30 +41,52 @@ const StakeSlider = () => {
     if (sliderPosition === maxValue) {
       handleAction();
     }
+  }, [sliderPosition]);
 
-  }, [sliderPosition])
-
+  // Mouse event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    // Prevent text selection and default drag behavior
     e.preventDefault();
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
-
-    const rect = sliderRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left; // Cursor position relative to slider
-    const clampedValue = Math.min(Math.max(offsetX, 0), sliderWidth); // Constrain value within slider width
-    setSliderPosition((clampedValue / sliderWidth) * maxValue);
+    updateSliderPosition(e.clientX);
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    handleDragEnd();
+  };
 
-    if (sliderPosition === maxValue) {
-    } else {
-      setSliderPosition(0); // Reset position if not reaching far right
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !sliderRef.current) return;
+    updateSliderPosition(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    handleDragEnd();
+  };
+
+  // Common function to update slider position
+  const updateSliderPosition = (clientX: number) => {
+    if (!sliderRef.current) return;
+    const rect = sliderRef.current.getBoundingClientRect();
+    const offsetX = clientX - rect.left;
+    const clampedValue = Math.min(Math.max(offsetX, 0), sliderWidth);
+    setSliderPosition((clampedValue / sliderWidth) * maxValue);
+  };
+
+  // Common function to handle drag end
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    if (sliderPosition !== maxValue) {
+      setSliderPosition(0);
     }
   };
 
@@ -92,8 +106,7 @@ const StakeSlider = () => {
           showConfeti();
           return {
             title: "Success!",
-            // description: `Operation completed: ${result}`
-            description: `Stake Successfuly`
+            description: "Stake Successfully"
           }
         },
         error: (error: AxiosResponse | any) => {
@@ -104,7 +117,6 @@ const StakeSlider = () => {
           }
         }
       });
-
     } catch (error: AxiosResponse | any) {
       setSliderPosition(0);
       toast({
@@ -113,11 +125,10 @@ const StakeSlider = () => {
         description: error?.response?.data?.message || 'Internal server error.'
       });
     }
-
   };
 
   const showConfeti = () => {
-    const end = Date.now() + 2 * 1000; // 2 seconds
+    const end = Date.now() + 2 * 1000;
     const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
 
     const frame = () => {
@@ -151,17 +162,19 @@ const StakeSlider = () => {
       <div
         ref={sliderRef}
         className={`
-        relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden
-        ${isDragging ? 'cursor-grabbing' : 'cursor-default'}
-      `}
+          relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden
+          ${isDragging ? 'cursor-grabbing' : 'cursor-default'}
+          touch-none
+        `}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => {
           setIsDragging(false);
           if (sliderPosition < maxValue) setSliderPosition(0);
         }}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Background Bar with Gradient */}
         <div
           className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-black via-gray-900 to-black opacity-80 rounded-2xl"
           style={{
@@ -170,15 +183,14 @@ const StakeSlider = () => {
           }}
         />
 
-        {/* Chevron (arrow right) */}
         <div
           ref={chevronRef}
           className={`
-          absolute left-1 top-1/2 transform -translate-y-1/2 
-          flex items-center justify-center w-14 h-14 
-          overflow-hidden rounded-2xl z-10
-          ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}
-        `}
+            absolute left-1 top-1/2 transform -translate-y-1/2 
+            flex items-center justify-center w-14 h-14 
+            overflow-hidden rounded-2xl z-10
+            ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}
+          `}
           style={{
             transform: `translate(${(sliderPosition / maxValue) * sliderWidth}px, -50%)`,
             transition: !isDragging && sliderPosition < maxValue
@@ -189,28 +201,28 @@ const StakeSlider = () => {
               : "0 2px 4px rgba(0,0,0,0.2)"
           }}
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
         >
           <img
             src="/images/Icon/Swipe.png"
             alt="Swipe"
             className={`
-            h-16 max-w-max rounded-2xl 
-            transition-transform duration-200
-            ${isDragging ? 'scale-95' : 'scale-100'}
-          `}
+              h-16 max-w-max rounded-2xl 
+              transition-transform duration-200
+              ${isDragging ? 'scale-95' : 'scale-100'}
+              select-none
+            `}
+            draggable="false"
           />
         </div>
 
-        {/* Text */}
         <span
           className={`
-          absolute inset-0 flex items-center ml-24 
-          text-white text-lg font-medium
-          transition-all duration-300
-          ${sliderPosition === maxValue
-              ? 'text-green-400 opacity-100'
-              : 'opacity-80'}
-        `}
+            absolute inset-0 flex items-center ml-24 
+            text-white text-lg font-medium select-none
+            transition-all duration-300
+            ${sliderPosition === maxValue ? 'text-green-400 opacity-100' : 'opacity-80'}
+          `}
         >
           {sliderPosition === maxValue ? "Staked!" : "Stake Now"}
         </span>
