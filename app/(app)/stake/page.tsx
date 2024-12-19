@@ -43,14 +43,22 @@ export default function Stake() {
             <div>
                 <div className="grid">
                     <div className="px-10 mt-20 px-4 md:!px-20 md:!mt-32 mx-auto py-4 md:!py-6 text-center">
-                        <CustomGradualSpacing
-                            className="font-display text-center text-[36px] font-black md:leading-[5rem]"
-                            text="Stake, Win, and"
-                        />
-                        <CustomGradualSpacing
-                            className="font-display text-center text-4xl font-black md:leading-[5rem]"
-                            text="LFGODDS!"
-                        />
+                        <div className="hidden md:!block">
+                            <CustomGradualSpacing
+                                className="font-display text-center text-2xl md:!text-6xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+                                text="Stake, Win, and LFGODDS!"
+                            />
+                        </div>
+                        <div className="md:!hidden">
+                            <CustomGradualSpacing
+                                className="font-display text-center text-[36px] font-black md:leading-[5rem]"
+                                text="Stake, Win, and"
+                            />
+                            <CustomGradualSpacing
+                                className="font-display text-center text-4xl font-black md:leading-[5rem]"
+                                text="LFGODDS!"
+                            />
+                        </div>
                         {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
                         <div className="px-6 mt-6">
                             <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
