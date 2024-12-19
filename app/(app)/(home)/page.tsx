@@ -20,7 +20,7 @@ const imageList = [
   { src: "https://i.stargaze-apis.com/TNOoS03TvDUFlkDSZ67tDpC0RxzTLclf8hL5qyiAygg/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeidbxpppa6catqaf2zatk6nh3b3ca7mune6jluima7mxaj4uijt6fq/9853.png", alt: "Baaaad Kid #9853", name: "Baaaad Kids" },
   { src: "https://i.stargaze-apis.com/i3462axock4w0yZqFyU1KFs1wqI5BPWaJd9staBClHI/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeigkl7dwo6n7lgvq6g6kh2n37mojxxsebgshiguztm7buce2zisg6q/6765.png", alt: "The Watchers #6765", name: "The Watchers" },
   { src: "https://i.stargaze-apis.com/DQiMyw-oIiRqc7W_ehnEJ-lIUJfskuvGPKa8XdzdfcA/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeid7jma4j7lhmnwen53x76vnixcv6d3cklaavxoyb2cu2bnlwwh5ni/288.png", alt: "RarityBotz #288", name: "RarityBotz" },
-  { src: "https://i.stargaze-apis.com/vBqyi3nb9gWfeQ5hoznH7BAIaBE_2keZt80U1v0by0w/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeif7yizijnyifm52iugokjhghfzbpxpsicq3lyal3hkszradkzzora/790.png", alt: "Yield Kitty #790", name: "Yield Kitty" },
+  { src: "https://www.oddsgarden.io/images/kitty-790.png", alt: "Yield Kitty #790", name: "Yield Kitty" },
   { src: "https://i.stargaze-apis.com/Wo1hmNFgB8speFhQKeZwEiJQlnADUVDpcJ25zmgIPk0/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://Qmc2e9A7GM5AsqxhK6ny9TLVEnKMJeFyZWETYZNeU4awBE/openart-269b0d069edb438185e076a464cfb3ec_raw.jpg", alt: "Smokey Samantha", name: "Things" },
   { src: "https://i.stargaze-apis.com/koYlOq1KI2lZlK_aj-ILUCjsmhJUtfNFUon3DOtuk4o/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeicxaf7as66zpshjil4xmhcmogakow5wqxje22ksyq6sltsotabuaa/2271.png", alt: "CELOTHIRAPTOR 2271", name: "Celothiraptors" },
   { src: "https://i.stargaze-apis.com/GFsVdB1KeS6wMWFNIDgMAwvUgZgIBnODd4kSymXrv7k/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeiaa3eueevoug6vkvyhyrjbwonzfpifmea2wui7xfgac7fevgresha/12.png", alt: "Steamland #12", name: "Steamland" },
@@ -52,7 +52,7 @@ export default function Home() {
               className="font-display text-center text-4xl font-black md:leading-[5rem]"
               text="LFGODDS!"
             />
-            <div className="my-4">
+            <div className="my-2">
               <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
               <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs,</p>
               <p className="text-sm md:!text-xl text-gray-400 leading-none">and win prizes.</p>
@@ -68,8 +68,7 @@ export default function Home() {
         />
         <div className="mt-4">
           <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
-          <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs,</p>
-          <p className="text-sm md:!text-xl text-gray-400 leading-none">and win prizes.</p>
+          <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs, and win prizes.</p>
         </div>
       </div>
       <div className="w-full h-[125px] bg-[#201621]" />

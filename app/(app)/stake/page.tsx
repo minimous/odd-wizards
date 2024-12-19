@@ -23,7 +23,7 @@ const imageList = [
     { src: "https://i.stargaze-apis.com/TNOoS03TvDUFlkDSZ67tDpC0RxzTLclf8hL5qyiAygg/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeidbxpppa6catqaf2zatk6nh3b3ca7mune6jluima7mxaj4uijt6fq/9853.png", alt: "Baaaad Kid #9853", name: "Baaaad Kids" },
     { src: "https://i.stargaze-apis.com/i3462axock4w0yZqFyU1KFs1wqI5BPWaJd9staBClHI/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeigkl7dwo6n7lgvq6g6kh2n37mojxxsebgshiguztm7buce2zisg6q/6765.png", alt: "The Watchers #6765", name: "The Watchers" },
     { src: "https://i.stargaze-apis.com/DQiMyw-oIiRqc7W_ehnEJ-lIUJfskuvGPKa8XdzdfcA/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeid7jma4j7lhmnwen53x76vnixcv6d3cklaavxoyb2cu2bnlwwh5ni/288.png", alt: "RarityBotz #288", name: "RarityBotz" },
-    { src: "https://i.stargaze-apis.com/vBqyi3nb9gWfeQ5hoznH7BAIaBE_2keZt80U1v0by0w/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeif7yizijnyifm52iugokjhghfzbpxpsicq3lyal3hkszradkzzora/790.png", alt: "Yield Kitty #790", name: "Yield Kitty" },
+    { src: "https://www.oddsgarden.io/images/kitty-790.png", alt: "Yield Kitty #790", name: "Yield Kitty" },
     { src: "https://i.stargaze-apis.com/Wo1hmNFgB8speFhQKeZwEiJQlnADUVDpcJ25zmgIPk0/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://Qmc2e9A7GM5AsqxhK6ny9TLVEnKMJeFyZWETYZNeU4awBE/openart-269b0d069edb438185e076a464cfb3ec_raw.jpg", alt: "Smokey Samantha", name: "Things" },
     { src: "https://i.stargaze-apis.com/koYlOq1KI2lZlK_aj-ILUCjsmhJUtfNFUon3DOtuk4o/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeicxaf7as66zpshjil4xmhcmogakow5wqxje22ksyq6sltsotabuaa/2271.png", alt: "CELOTHIRAPTOR 2271", name: "Celothiraptors" },
     { src: "https://i.stargaze-apis.com/GFsVdB1KeS6wMWFNIDgMAwvUgZgIBnODd4kSymXrv7k/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeiaa3eueevoug6vkvyhyrjbwonzfpifmea2wui7xfgac7fevgresha/12.png", alt: "Steamland #12", name: "Steamland" },
@@ -43,18 +43,26 @@ export default function Stake() {
             <div>
                 <div className="grid">
                     <div className="px-10 mt-20 px-4 md:!px-20 md:!mt-32 mx-auto py-4 md:!py-6 text-center">
-                        <CustomGradualSpacing
-                            className="font-display text-center text-[36px] font-black md:leading-[5rem]"
-                            text="Stake, Win, and"
-                        />
-                        <CustomGradualSpacing
-                            className="font-display text-center text-4xl font-black md:leading-[5rem]"
-                            text="LFGODDS!"
-                        />
+                        <div className="hidden md:!block">
+                            <CustomGradualSpacing
+                                className="font-display text-center text-2xl md:!text-6xl font-black md:leading-[5rem] text-transparent bg-clip-text bg-gradient-to-b from-gray-400 to-white"
+                                text="Stake, Win, and LFGODDS!"
+                            />
+                        </div>
+                        <div className="md:!hidden">
+                            <CustomGradualSpacing
+                                className="font-display text-center text-[36px] font-black md:leading-[5rem]"
+                                text="Stake, Win, and"
+                            />
+                            <CustomGradualSpacing
+                                className="font-display text-center text-4xl font-black md:leading-[5rem]"
+                                text="LFGODDS!"
+                            />
+                        </div>
                         {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
                         <div className="px-6 mt-6">
                             <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
-                            <p className="text-sm md:!text-xl text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
+                            <p className="text-sm md:!text-xl text-gray-400 leading-tight">Join to complete, stack the most NFTs, and win prizes.</p>
                             {/* <p className="text-lg text-gray-400 leading-tight"></p> */}
                         </div>
                     </div>
