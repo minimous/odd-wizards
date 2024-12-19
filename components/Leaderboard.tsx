@@ -2,7 +2,7 @@
 
 import getConfig from "@/config/config";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { formatAddress } from "@/lib/utils";
+import { formatAddress, formatDecimal } from "@/lib/utils";
 import { LeaderboardItem } from "@/types/leaderboard";
 import axios from "axios";
 import Image from "next/image";
@@ -110,7 +110,7 @@ const Leaderboard = () => {
               </div>
               <div className="text-center hidden md:!block">
                 <p className="text-[10px] md:text-[20px] font-bold">
-                  {item.total_points} $WZRD
+                  {formatDecimal(item.total_points, 0)} $WZRD
                 </p>
               </div>
 

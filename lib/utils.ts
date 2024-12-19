@@ -315,17 +315,24 @@ export async function getCollection(collection_address: string) {
 
 export function formatToStars(value?: string | number): string {
   if (!value) return '0';
-  
   let number = typeof value === 'string' ? parseFloat(value) : value;
 
   number /= 1000000;
 
+  return formatDecimal(number, 2);
+}
+
+export function formatDecimal(value?: string | number, decimal: number = 2): string {
+  if (!value) return '0';
+  let number = typeof value === 'string' ? parseFloat(value) : value;
+
   if (number >= 1_000_000) {
-    return `${(number / 1_000_000).toFixed(2)}M`;
+    return `${(number / 1_000_000).toFixed(decimal)}M`;
   } else if (number >= 1_000) {
-    return `${(number / 1_000).toFixed(2)}K`;
+    return `${(number / 1_000).toFixed(decimal)}K`;
   }
-  return `${number.toFixed(2)}`;
+
+  return `${number.toFixed(decimal)}`;
 }
 
 export function formatAddress(address: string | undefined) {

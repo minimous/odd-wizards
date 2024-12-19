@@ -37,8 +37,8 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
     }, []);
 
     return (
-        <div className="flex flex-col items-center bg-black text-white border border-white group">
-            <div className="relative flex justify-center items-center w-50 h-50 rounded-full">
+        <div className="flex flex-col items-center bg-black text-white border border-white group w-[300px] h-[425px] md:!w-[365px] md:!h-[500px]">
+            <div className="relative flex justify-center items-center w-[300px] h-[300px] md:!w-[365px] md:!h-[365px] overflow-hidden">
                 <Link href={data.link} target="_blank">
                     <div className="absolute top-0 w-full group overflow-hidden">
                         <div className="hidden group-hover:flex justify-between items-center p-2 animate-slide-down group-not-hover:animate-slide-up">
@@ -47,36 +47,42 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                         </div>
                     </div>
                     <div className="p-20 group-hover:hidden">
-                        <img src={data.image} alt={data.name} className="h-full w-full" />
+                        <img src={data.image} alt={data.name} className="h-full w-full object-cover" />
                     </div>
-                    <img src={data.imageGif} alt={data.name} className="h-full w-full hidden group-hover:flex" />
+                    <img src={data.imageGif} alt={data.name} className="h-full w-full hidden group-hover:flex object-cover" />
                 </Link>
             </div>
             <div className="border border-white w-full p-4">
-                <h2 className="text-xl font-bold">{data.name}</h2>
+                <h2 className="text-xl font-bold truncate">{data.name}</h2>
             </div>
             <div className="grid grid-cols-2 w-full">
                 <div className="p-4 border border-white w-full">
                     {
-                        loading ?
-                            (<Loading />) :
-                            (<div><p className="font-bold">{data.id ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
-                                <span>Floor</span></div>)
+                        loading ? (
+                            <Loading />
+                        ) : (
+                            <div>
+                                <p className="font-bold">{data.id ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
+                                <span>Floor</span>
+                            </div>
+                        )
                     }
                 </div>
                 <div className="p-4 border border-white w-full">
                     {
-                        loading ?
-                            (<Loading />) : (
-                                <div>
-                                    <p className="font-bold">{data.id ? stat?.tokenCounts.listed : 0} NFTs</p>
-                                    <span>Listing</span>
-                                </div>)
+                        loading ? (
+                            <Loading />
+                        ) : (
+                            <div>
+                                <p className="font-bold">{data.id ? stat?.tokenCounts.listed : 0} NFTs</p>
+                                <span>Listing</span>
+                            </div>
+                        )
                     }
                 </div>
             </div>
         </div>
-    )
+    );    
 }
 
 export default CollectionCard;

@@ -1,7 +1,7 @@
 "use client";
 import getConfig from "@/config/config";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { formatAddress } from "@/lib/utils";
+import { formatAddress, formatDecimal, formatToStars } from "@/lib/utils";
 import { LeaderboardItem } from "@/types/leaderboard";
 import { useChain } from "@cosmos-kit/react";
 import axios from "axios";
@@ -69,7 +69,7 @@ export const BoxLeaderboardMobile = () => {
               </Link>
             </div>
             <div className="text-center text-[#49ED4A]">
-              <p className="text-[10px] md:text-[20px] font-bold">{leaderboard?.total_points} $WZRD</p>
+              <p className="text-[10px] md:text-[20px] font-bold">{formatDecimal(leaderboard?.total_points, 0)} $WZRD</p>
             </div>
 
             <div className="text-center text-[#49ED4A] ">
