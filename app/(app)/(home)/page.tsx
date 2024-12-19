@@ -52,7 +52,7 @@ export default function Home() {
               className="font-display text-center text-4xl font-black md:leading-[5rem]"
               text="LFGODDS!"
             />
-            <div className="my-4">
+            <div className="my-2">
               <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
               <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs,</p>
               <p className="text-sm md:!text-xl text-gray-400 leading-none">and win prizes.</p>
@@ -68,8 +68,7 @@ export default function Home() {
         />
         <div className="mt-4">
           <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
-          <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs,</p>
-          <p className="text-sm md:!text-xl text-gray-400 leading-none">and win prizes.</p>
+          <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs, and win prizes.</p>
         </div>
       </div>
       <div className="w-full h-[125px] bg-[#201621]" />
