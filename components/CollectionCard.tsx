@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Loading from "./Loading";
 
 export interface CollectionCardType {
+    id: string
     address?: string
     image: string
     imageGif: string
@@ -27,7 +28,7 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
-            let resp = await axios.get(`/api/collection/stat/${data.address}`);
+            let resp = await axios.get(`/api/collection/stat/${data.id}`);
             setStat(resp.data.data);
             setLoading(false);
         }
@@ -59,7 +60,7 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                     {
                         loading ?
                             (<Loading />) :
-                            (<div><p className="font-bold">{data.address ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
+                            (<div><p className="font-bold">{data.id ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
                                 <span>Floor</span></div>)
                     }
                 </div>
@@ -68,7 +69,7 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                         loading ?
                             (<Loading />) : (
                                 <div>
-                                    <p className="font-bold">{data.address ? stat?.tokenCounts.listed : 0} NFTs</p>
+                                    <p className="font-bold">{data.id ? stat?.tokenCounts.listed : 0} NFTs</p>
                                     <span>Listing</span>
                                 </div>)
                     }

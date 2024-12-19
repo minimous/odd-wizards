@@ -62,7 +62,7 @@ export default function Stake() {
                         {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
                         <div className="px-6 mt-6">
                             <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
-                            <p className="text-sm md:!text-xl text-gray-400 leading-tight">Joing to complete, stack the most NFTs, and wind prizes</p>
+                            <p className="text-sm md:!text-xl text-gray-400 leading-tight">Join to complete, stack the most NFTs, and win prizes.</p>
                             {/* <p className="text-lg text-gray-400 leading-tight"></p> */}
                         </div>
                     </div>

@@ -9,6 +9,7 @@ import TabsGalleryMobile from "@/components/TabsGalleryMobile";
 
 const collections: CollectionCardType[] = [
     {
+        id: "rebbits",
         address: "stars12se30zklzhjf84ky669lrtx0wdlsk92lg4nad7yufk9d8qp08n2q8m58cw",
         image: "/images/Rebbits.png",
         imageGif: "/images/Rebbits.gif",
@@ -16,6 +17,7 @@ const collections: CollectionCardType[] = [
         link: "https://www.stargaze.zone/m/rebbits/tokens"
     },
     {
+        id: "oddswizard",
         address: "stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7",
         image: "/images/wizard-crown.png",
         imageGif: "/images/Odds-Wizard.gif",
@@ -23,6 +25,7 @@ const collections: CollectionCardType[] = [
         link: "https://www.stargaze.zone/m/oddswizard/tokens"
     },
     {
+        id: "steamland",
         address: "stars1jf25kwveccgyp0cz5ae5wyvve8m8j8qpyr0mvul2t09e84yrplvscef9xa",
         image: "/images/Steamland.png",
         imageGif: "/images/Steamland.gif",
