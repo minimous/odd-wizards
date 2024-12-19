@@ -37,8 +37,8 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
     }, []);
 
     return (
-        <div className="flex flex-col items-center bg-black text-white border border-white group w-[365px] h-[500px]">
-            <div className="relative flex justify-center items-center w-[365px] h-[365px] overflow-hidden">
+        <div className="flex flex-col items-center bg-black text-white border border-white group w-[300px] h-[425px] md:!w-[365px] md:!h-[500px]">
+            <div className="relative flex justify-center items-center w-[300px] h-[300px] md:!w-[365px] md:!h-[365px] overflow-hidden">
                 <Link href={data.link} target="_blank">
                     <div className="absolute top-0 w-full group overflow-hidden">
                         <div className="hidden group-hover:flex justify-between items-center p-2 animate-slide-down group-not-hover:animate-slide-up">
