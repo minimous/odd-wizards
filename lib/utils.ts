@@ -43,51 +43,51 @@ export function formatAmount(amount: number | undefined | null) {
 
 
 export default function calculatePoint(
-  attrreward: mst_attributes_reward, 
+  attrreward: mst_attributes_reward,
   lastClaimDate?: Date | null
 ): number {
   // Validate input
   if (!attrreward) return 0;
-  
+
   // Get current time
   const currentTime = new Date();
-  
+
   // If lastClaimDate is undefined, calculate for 1 full period
   if (!lastClaimDate) {
-    switch(attrreward.attr_periode){
+    switch (attrreward.attr_periode) {
       case REWARD_PERIODE.MINUTE:
       case REWARD_PERIODE.HOUR:
       case REWARD_PERIODE.DAY:
         return attrreward.attr_reward || 0;
-      
+
       default:
         return 0;
     }
   }
-  
+
   // Calculate time difference
   const timeDifferenceMs = currentTime.getTime() - lastClaimDate.getTime();
-  
+
   // Calculate points based on reward period
-  switch(attrreward.attr_periode){
+  switch (attrreward.attr_periode) {
     case REWARD_PERIODE.MINUTE:
       // Calculate points for minute-based rewards
       const minutesPassed = timeDifferenceMs / (1000 * 60);
       const minuteReward = minutesPassed * (attrreward.attr_reward || 0) / 60;
       return Math.min(minuteReward, attrreward.attr_reward || 0);
-    
+
     case REWARD_PERIODE.HOUR:
       // Calculate points for hour-based rewards
       const hoursPassed = timeDifferenceMs / (1000 * 60 * 60);
       const hourReward = hoursPassed * (attrreward.attr_reward || 0) / 24;
       return Math.min(hourReward, attrreward.attr_reward || 0);
-    
+
     case REWARD_PERIODE.DAY:
       // Calculate points for day-based rewards
       const daysPassed = timeDifferenceMs / (1000 * 60 * 60 * 24);
       const dayReward = daysPassed * (attrreward.attr_reward || 0);
       return Math.min(dayReward, attrreward.attr_reward || 0);
-    
+
     default:
       // If an unknown period is provided, return 0
       return 0;
@@ -105,7 +105,7 @@ export interface FetchStargazeTokensOptions {
 
 export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): Promise<OwnedTokensResponse> {
 
-  if(!config) throw Error("Config not found");
+  if (!config) throw Error("Config not found");
 
   const {
     owner,
@@ -186,9 +186,9 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
 }
 
 export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOptions): Promise<Token[]> {
-  
-  if(!config) throw Error("Config not found");
-  
+
+  if (!config) throw Error("Config not found");
+
   const {
     owner,
     collectionAddress,
@@ -231,64 +231,68 @@ export async function getCollection(collection_address: string) {
   if (!config) throw Error("Config not found");
 
   const query = `
-    query CollectionHeaderStats($collectionAddr: String!) {
-      collection(address: $collectionAddr) {
-        creationTime
-        contractAddress
-        floor {
-          amount
-          amountUsd
-          denom
-          symbol
-          rate
-          nativeConversion {
-            amount
-            amountUsd
-            denom
-            symbol
-            rate
-          }
+  query CollectionHeaderStats($collectionAddr: String!) {
+    collection(address: $collectionAddr) {
+      __typename
+      creationTime
+      contractAddress
+      floor {
+        ...fragmentCoinAmountWithConversion
+        __typename
+      }
+      highestOffer {
+        offerPrice {
+          ...fragmentCoinAmountWithConversion
+          __typename
         }
-        highestOffer {
-          offerPrice {
-            amount
-            amountUsd
-            denom
-            symbol
-            rate
-            nativeConversion {
-              amount
-              amountUsd
-              denom
-              symbol
-              rate
-            }
-          }
-        }
-        startTradingTime
-        tokenCounts {
-          listed
-          active
-        }
-        stats {
-          bestOffer
-          bestOfferUsd
-          collectionAddr
-          change24HourPercent
-          change7DayPercent
-          volume24Hour
-          volume7Day
-          volumeUsd24hour
-          volumeUsd7day
-          numOwners
-          uniqueOwnerPercent
-        }
-        provenance {
-          chainId
-        }
+        __typename
+      }
+      startTradingTime
+      tokenCounts {
+        listed
+        active
+        __typename
+      }
+      stats {
+        bestOffer
+        bestOfferUsd
+        collectionAddr
+        change24HourPercent
+        change7DayPercent
+        volume24Hour
+        volume7Day
+        volumeUsd24hour
+        volumeUsd7day
+        numOwners
+        uniqueOwnerPercent
+        __typename
+      }
+      provenance {
+        chainId
+        __typename
       }
     }
-  `;
+  }
+
+  fragment fragmentCoinAmountWithConversion on CoinAmount {
+    id
+    amount
+    amountUsd
+    denom
+    symbol
+    rate
+    nativeConversion {
+      amount
+      amountUsd
+      denom
+      symbol
+      rate
+      __typename
+    }
+    __typename
+  }
+`;
+
 
   try {
     const response = await fetch(config.graphql_url, {
@@ -336,6 +340,6 @@ export function formatDecimal(value?: string | number, decimal: number = 2): str
 }
 
 export function formatAddress(address: string | undefined) {
-  if(!address) return '';
+  if (!address) return '';
   return `${address.substring(0, 8)}...${address.substring(address.length - 5)}`
 }

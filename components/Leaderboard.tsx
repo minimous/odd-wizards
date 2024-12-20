@@ -110,7 +110,7 @@ const Leaderboard = () => {
               </div>
               <div className="text-center hidden md:!block">
                 <p className="text-[10px] md:text-[20px] font-bold">
-                  {formatDecimal(item.total_points, 0)} $WZRD
+                  {formatDecimal(item.total_points, 2)} $WZRD
                 </p>
               </div>
 
