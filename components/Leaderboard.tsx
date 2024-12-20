@@ -104,7 +104,7 @@ const Leaderboard = () => {
                     </p>
                   </Link>
                   <div className="text-left md:!hidden text-white">
-                    <p className="text-[12px] md:text-[20px] font-bold">{item?.total_points} $WZRD</p>
+                    <p className="text-[12px] md:text-[20px] font-bold">{formatDecimal(item.total_points, 2)} $WZRD</p>
                   </div>
                 </div>
               </div>
