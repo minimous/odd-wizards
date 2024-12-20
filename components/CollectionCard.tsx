@@ -1,5 +1,5 @@
 "use client";
-import { formatToStars } from "@/lib/utils";
+import { formatToStars, getCollection } from "@/lib/utils";
 import { CollectionStat } from "@/types/collection-stat";
 import axios from "axios";
 import { ArrowUpRight } from "lucide-react"
@@ -28,8 +28,9 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
-            let resp = await axios.get(`/api/collection/stat/${data.id}`);
-            setStat(resp.data.data);
+            // let resp = await axios.get(`/api/collection/stat/${data.id}`);
+            let resp = await getCollection(data.id);
+            setStat(resp);
             setLoading(false);
         }
 
