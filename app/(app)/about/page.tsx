@@ -1,14 +1,21 @@
+"use client";
 import StakeSection from "@/components/home/StakeSection";
 import Header from "@/components/layout/header";
 import Carousel from "@/components/Carausel";
 import Leaderboard from "@/components/Leaderboard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Footer } from "@/components/layout/footer";
+import Snowfall from 'react-snowfall';
 
 
 export default function About() {
     return (
         <div className="relative w-full bg-[url('/images/About.gif')] bg-cover bg-center">
+            <div className="fixed inset-0 pointer-events-none z-[1000]">
+                <div className="relative w-full h-full">
+                    <Snowfall snowflakeCount={24} speed={[0.5, 1]} wind={[-0.5, 1]} radius={[0.5, 4.5]} />
+                </div>
+            </div>
             <div className="p-4 md:!p-8">
                 <div className="bg-black/40 absolute top-0 left-0 right-0 bottom-0 z-0" />
                 <Header />

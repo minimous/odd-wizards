@@ -82,6 +82,7 @@
     "react-dom": "^18.2.0",
     "react-fast-marquee": "^1.6.5",
     "react-hook-form": "^7.47.0",
+    "react-snowfall": "^2.2.0",
     "recharts": "^2.12.7",
     "sharp": "^0.32.5",
     "stargaze-query": "^0.15.5",

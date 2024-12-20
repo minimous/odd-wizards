@@ -38,22 +38,25 @@ export default function Header() {
         {/* Logo and Links */}
         <div className="flex items-center space-x-4 md:space-x-10">
           {/* Logo */}
-          <Link
-            href="/"
-            aria-label="Home"
-            className="group rounded-[12px] md:rounded-[20px] overflow-hidden w-[50px] md:w-[75px] h-[40px] md:h-[60px] flex items-center justify-center"
-          >
-            <img
-              src="/images/logo.png"
-              alt="Logo"
-              className="group-hover:hidden object-contain"
-            />
-            <img
-              src="/images/logo.gif"
-              alt="Logo"
-              className="hidden group-hover:block object-contain"
-            />
-          </Link>
+          <div className="relative">
+            <Link
+              href="/"
+              aria-label="Home"
+              className="group rounded-[12px] md:rounded-[20px] overflow-hidden w-[50px] md:w-[75px] h-[40px] md:h-[60px] flex items-center justify-center"
+            >
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                className="group-hover:hidden object-contain"
+              />
+              <img
+                src="/images/logo.gif"
+                alt="Logo"
+                className="hidden group-hover:block object-contain"
+              />
+            </Link>
+            <img src="/images/santa-hat.png" className="absolute -top-3 -left-3 md:-top-4 md:-left-4 h-[40px] md:h-[50px]" />
+          </div>
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-8">
