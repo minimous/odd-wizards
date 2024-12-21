@@ -28,7 +28,7 @@ const imageList = [
   { src: "https://i.stargaze-apis.com/koYlOq1KI2lZlK_aj-ILUCjsmhJUtfNFUon3DOtuk4o/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeicxaf7as66zpshjil4xmhcmogakow5wqxje22ksyq6sltsotabuaa/2271.png", alt: "CELOTHIRAPTOR 2271", name: "Celothiraptors" },
   { src: "https://i.stargaze-apis.com/GFsVdB1KeS6wMWFNIDgMAwvUgZgIBnODd4kSymXrv7k/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeiaa3eueevoug6vkvyhyrjbwonzfpifmea2wui7xfgac7fevgresha/12.png", alt: "Steamland #12", name: "Steamland" },
   { src: "https://i.stargaze-apis.com/EbmwYUojWPPyaBklwBn2xWZrcgtT2y5qysWQ-LFz5aE/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeifjyejf6s4lnnqyapkyziyadubsa4topvh3dyicn374b4vukzpiam/7949.jpg", alt: "Stamp #1215", name: "Stamps" },
-  { src: "https://i.stargaze-apis.com/eyVJGdm7t4R8544owTMI2PMFwAPeSyT66ISTuAQaPXs/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeigwhpdmupm754ceuxgakgksfpzmq2kdz4y5imb7k46stiwamtt6fi/884.png", alt: "Dirty #884", name: "Pink is Punk" },  
+  { src: "https://i.stargaze-apis.com/eyVJGdm7t4R8544owTMI2PMFwAPeSyT66ISTuAQaPXs/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeigwhpdmupm754ceuxgakgksfpzmq2kdz4y5imb7k46stiwamtt6fi/884.png", alt: "Dirty #884", name: "Pink is Punk" },
   { src: "https://i.stargaze-apis.com/IxudzWVd_qOI1LReJodhb6ZDXwWXkBhK0XbAkcisD2w/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeifmjwkgr6owmmqons7alu2as2jiig7gnrpjy5pekpkhslnl7d6jj4/839.png", alt: "Cham #839", name: "the Sidekicks" },
 ];
 
@@ -49,16 +49,20 @@ export default function Home() {
           <img src="/images/hero.png" className="w-full" />
         </video>
         <div className="absolute bottom-0 w-full h-[100px] bg-gradient-to-b from-transparent to-black">
-          <div className=" md:!hidden w-full bg-transparent px-4 py-12 text-center">
-            {/* <h1 className="text-4xl md:!text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
-            <CustomGradualSpacing
-              className="font-display text-center text-4xl font-black md:leading-[5rem]"
-              text="Stake, Win, and"
-            />
-            <CustomGradualSpacing
-              className="font-display text-center text-4xl font-black md:leading-[5rem]"
-              text="LFGODDS!"
-            />
+          <div className="md:!hidden w-full bg-transparent px-4 py-12 text-center">
+            <div className="flex justify-center">
+              {/* <h1 className="text-4xl md:!text-6xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
+              <CustomGradualSpacing
+                className="font-display text-center text-4xl font-black md:leading-[5rem]"
+                text="Stake, Win, and"
+              />
+            </div>
+            <div className="flex justify-center">
+              <CustomGradualSpacing
+                className="font-display text-center text-4xl font-black md:leading-[5rem]"
+                text="LFGODDS!"
+              />
+            </div>
             <div className="my-2">
               <p className="text-sm md:!text-xl text-gray-400 leading-none">Discover the ultimate NFT stake challenge</p>
               <p className="text-sm md:!text-xl text-gray-400 leading-none">Join to compete, stack the most NFTs,</p>

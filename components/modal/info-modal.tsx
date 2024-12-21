@@ -56,7 +56,7 @@ export default function InfoModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-xl rounded-xl bg-black">
+            <DialogContent className="max-w-[95%] md:!max-w-xl rounded-xl bg-black">
                 {/* <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

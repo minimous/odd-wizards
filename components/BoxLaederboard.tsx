@@ -1,7 +1,7 @@
 "use client";
 import getConfig from "@/config/config";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { formatAddress, formatDecimal, formatToStars } from "@/lib/utils";
+import { cn, formatAddress, formatDecimal, formatToStars } from "@/lib/utils";
 import { LeaderboardItem } from "@/types/leaderboard";
 import { useChain } from "@cosmos-kit/react";
 import axios from "axios";
@@ -52,10 +52,10 @@ export const BoxLeaderboard = () => {
               <img hidden={(leaderboard?.ranking ?? 0) > (config?.ranking_reward as number ?? 0)} src="/images/Icon/Gift.png" className="w-[65px] md:w-[110px] max-w-max absolute left-0 -bottom-8 md:!-bottom-12 md:!left-0" />
             </div>
           </div>
-          <div className="w-full grid grid-cols-3 gap-x-4">
-            <div className="flex bg-[url('/images/Cosmos.gif')] bg-cover bg-center flex-grow items-center justify-between p-4 px-8 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+          <div className="w-full grid md:grid-cols-3 gap-x-4">
+            <div className="flex bg-[url('/images/Cosmos.gif')] bg-cover bg-center flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
-                <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
+                <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                   <img
                     src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
                     alt={leaderboard?.staker_address ?? ""}
@@ -75,7 +75,7 @@ export const BoxLeaderboard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex bg-[url('/images/About.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="hidden md:!flex bg-[url('/images/About.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div>
                 <img src="/images/Icon/wzrd.png" className="h-[55px]" />
               </div>
@@ -84,7 +84,7 @@ export const BoxLeaderboard = () => {
                 <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
               </div>
             </div>
-            <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-8 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="hidden md:!flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-8 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="text-6xl">
                 <img src="/images/Token.png" className="h-[50px]" />
               </div>
@@ -92,6 +92,26 @@ export const BoxLeaderboard = () => {
                 <span className="text-[12px] md:text-[20px]">NFT</span>
                 <p className="text-[12px] text-white hidden md:!block md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
               </div>
+            </div>
+          </div>
+        </div>
+        <div className={cn("w-full grid grid-cols-2 md:!hidden px-4 gap-x-2", (leaderboard?.ranking ?? 0) > (config?.ranking_reward as number ?? 0) ? "mt-2" : "mt-9" )}>
+          <div className="flex bg-[url('/images/About.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-6 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div>
+              <img src="/images/Icon/wzrd.png" className="h-[40px]" />
+            </div>
+            <div className="">
+              <span className="text-[12px] md:text-[20px]">Token</span>
+              <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+            </div>
+          </div>
+          <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="text-6xl">
+              <img src="/images/Token.png" className="h-[35px]" />
+            </div>
+            <div className="text-left">
+              <span className="text-[12px] md:text-[20px]">NFT</span>
+              <p className="text-[12px] text-white md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
             </div>
           </div>
         </div>
