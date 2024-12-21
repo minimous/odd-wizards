@@ -66,7 +66,7 @@ export const BoxLeaderboard = () => {
                   />
                 </div>
                 <div>
-                  <span className="text-[12px] md:text-[20px] text-white">Address</span>
+                  <span className="text-[13px] md:text-[20px] text-white">Address</span>
                   <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#DB2877]">
                     <p className="text-[12px] md:text-[20px] font-bold ">
                       {formatAddress(leaderboard?.staker_address)}
@@ -102,7 +102,7 @@ export const BoxLeaderboard = () => {
             </div> */}
             <div className="text-center">
               <span className="text-[12px] md:text-[20px] text-white">Token</span>
-              <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+              <p className="text-[13px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
             </div>
           </div>
           <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center justify-center p-4 px-8 gap-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
@@ -111,7 +111,7 @@ export const BoxLeaderboard = () => {
             </div> */}
             <div className="text-center">
               <span className="text-[12px] md:text-[20px] text-white">NFT</span>
-              <p className="text-[12px] text-white md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
+              <p className="text-[13px] text-white md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
             </div>
           </div>
         </div>
