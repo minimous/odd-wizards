@@ -94,17 +94,17 @@ export default function calculatePoint(
   }
 }
 
-export interface FetchStargazeTokensOptions {
+interface FetchStargazeTokensOptions {
   owner: string;
   collectionAddress?: string;
   maxTokens?: number;
   sortBy?: string;
   limit?: number;
   offset?: number;
+  filterForSale?: string; // Add this new option
 }
 
 export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): Promise<OwnedTokensResponse> {
-
   if (!config) throw Error("Config not found");
 
   const {
@@ -113,7 +113,8 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
     maxTokens = Infinity,
     sortBy = 'ACQUIRED_DESC',
     limit = 10,
-    offset = 0
+    offset = 0,
+    filterForSale // Extract the new option
   } = options;
 
   const query = `
@@ -122,7 +123,8 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
       $limit: Int, 
       $offset: Int, 
       $filterByCollectionAddrs: [String!], 
-      $sortBy: TokenSort
+      $sortBy: TokenSort,
+      $filterForSale: SaleType
     ) {
       tokens(
         ownerAddrOrName: $owner
@@ -130,6 +132,7 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
         offset: $offset
         filterByCollectionAddrs: $filterByCollectionAddrs
         sortBy: $sortBy
+        filterForSale: $filterForSale
       ) {
         tokens {
           id
@@ -165,7 +168,8 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
     limit: Math.min(limit, maxTokens),
     offset,
     filterByCollectionAddrs: collectionAddress ? [collectionAddress] : undefined,
-    sortBy
+    sortBy,
+    filterForSale // Add to variables
   };
 
   try {

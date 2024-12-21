@@ -70,7 +70,8 @@ export async function getTotalPoints(address: string, collection_address: string
 
     let allTokens = await fetchAllStargazeTokens({
         owner: address,
-        collectionAddress: collection_address
+        collectionAddress: collection_address,
+        filterForSale: 'UNLISTED'
     });
 
     let attrreward: mst_attributes_reward[] = [];
