@@ -63,41 +63,41 @@ export default function InfoModal({
         </DialogHeader> */}
                 <div className="w-full bg-black text-white">
                     <span className='font-bold text-xl'>Odds Wizard</span>
-                    <p className='text-gray-400 text-xs'>ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
+                    <p className='text-gray-400 text-xs md:!text-md mt-2'>ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
                     <Separator className="my-4" />
-                    <div className='flex justify-between my-2 text-gray-400 text-xs'>
+                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-md'>
                         <span>Contract Address:</span>
-                        <div className='flex gap-x-1 items-center text-xs'>
+                        <div className='flex gap-x-1 items-center text-xs md:!text-md'>
                             <span>{formatAddress("stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7")}</span>
                             <span onClick={() => { handleCopy("stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7")}} className='cursor-pointer'><Copy size={16} /></span>
                         </div>
                     </div>
-                    <div className='flex justify-between my-2 text-gray-400 text-xs'>
+                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-md'>
                         <span>Creator:</span>
                         <div className='flex gap-x-1 items-center '>
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <Link href={"https://www.stargaze.zone/p/artnesh/tokens"} target='_blank'>
-                                            <span className='cursor-pointer text-green-500 text-xs'>artnesh</span>
+                                            <span className='cursor-pointer text-green-500 text-xs md:!text-md'>artnesh</span>
                                         </Link>
                                     </TooltipTrigger>
-                                    <TooltipContent className='bg-black border border-[#323237] text-xs'>
+                                    <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-md'>
                                         <p>{formatAddress("stars130tcpz6l0j9f382prlj67r29jmr25cgpacmd7r")}</p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
                         </div>
                     </div>
-                    <div className='flex justify-between my-2 text-gray-400 text-xs'>
+                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-md'>
                         <span>Created:</span>
                         <span>December 15, 2024 10:07 AM</span>
                     </div>
-                    <div className='flex justify-between my-2 text-gray-400 text-xs'>
+                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-md'>
                         <span>Home chain:</span>
                         <span>Stargaze</span>
                     </div>
-                    <div className='flex justify-between my-2 text-gray-400 text-xs'>
+                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-mdmd:!text-md'>
                         <span>Royalties:</span>
                         <span>5%</span>
                     </div>
