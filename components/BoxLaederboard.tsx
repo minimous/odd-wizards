@@ -46,50 +46,51 @@ export const BoxLeaderboard = () => {
               </div>
             </div>
             <div className="relative">
-              <div className="flex items-center justify-center w-[60px] h-[68px] md:w-[105px] md:h-[105px] bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-lg md:!text-2xl text-center">
+              <div className="flex bg-[url('/images/Epigraph.gif')] bg-cover bg-center items-center justify-center w-[60px] h-[68px] md:w-[105px] md:h-[105px] border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-lg md:!text-2xl text-center">
                 {leaderboard ? (rankEmojis[Number(leaderboard.ranking) - 1] || leaderboard.ranking) : "-"}
               </div>
               <img hidden={(leaderboard?.ranking ?? 0) > (config?.ranking_reward as number ?? 0)} src="/images/Icon/Gift.png" className="w-[65px] md:w-[110px] max-w-max absolute left-0 -bottom-8 md:!-bottom-12 md:!left-0" />
             </div>
           </div>
-          <div className="flex flex-grow items-center justify-between p-4 px-4 md:!px-8 gap-2 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-            <div className="flex items-center gap-4">
-              <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px]  bg-amber-200 rounded-full flex items-center justify-center">
-                <img
-                  src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
-                  alt={leaderboard?.staker_address ?? ""}
-                  className="rounded-full object-cover w-full h-full"
-                  onError={(e: any) => {
-                    e.target.src = DEFAULT_IMAGE_PROFILE;
-                  }}
-                />
-              </div>
-              <div>
-                <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#49ED4A]">
-                  <p className="text-[12px] md:text-[20px] font-bold ">
-                    {formatAddress(leaderboard?.staker_address)}
-                  </p>
-                </Link>
-                <div className="text-left md:!hidden text-[#49ED4A]">
-                  <p className="text-[12px] md:text-[20px] font-bold">{leaderboard?.total_points} $WZRD</p>
+          <div className="w-full grid grid-cols-3 gap-x-4">
+            <div className="flex bg-[url('/images/Cosmos.gif')] bg-cover bg-center flex-grow items-center justify-between p-4 px-8 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+              <div className="flex items-center gap-4">
+                <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
+                  <img
+                    src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
+                    alt={leaderboard?.staker_address ?? ""}
+                    className="rounded-full object-cover w-full h-full"
+                    onError={(e: any) => {
+                      e.target.src = DEFAULT_IMAGE_PROFILE;
+                    }}
+                  />
+                </div>
+                <div>
+                  <span className="text-[12px] md:text-[20px]">Address</span>
+                  <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#DB2877]">
+                    <p className="text-[12px] md:text-[20px] font-bold ">
+                      {formatAddress(leaderboard?.staker_address)}
+                    </p>
+                  </Link>
                 </div>
               </div>
-
-              {/* <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#49ED4A]">
-                <p className="text-[10px] md:text-[20px] font-bold ">
-                  {formatAddress(leaderboard?.staker_address)}
-                </p>
-              </Link> */}
             </div>
-            <div className="text-center hidden md:!block text-[#49ED4A]">
-              <p className="text-[10px] md:text-[20px] font-bold">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+            <div className="flex bg-[url('/images/About.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+              <div>
+                <img src="/images/Icon/wzrd.png" className="h-[55px]" />
+              </div>
+              <div className="hidden md:!block">
+                <span className="text-[12px] md:text-[20px]">Token</span>
+                <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+              </div>
             </div>
-
-            <div className="text-center text-[#49ED4A] ">
-              <p className="text-[12px] hidden md:!block md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} NFT Staked</p>
-              <div className="md:!hidden">
-                <p className="text-[12px] md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} NFTs</p>
-                <p className="text-[12px] md:text-[20px] font-bold">Staked</p>
+            <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-8 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+              <div className="text-6xl">
+                <img src="/images/Token.png" className="h-[50px]" />
+              </div>
+              <div className="text-left">
+                <span className="text-[12px] md:text-[20px]">NFT</span>
+                <p className="text-[12px] text-white hidden md:!block md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
               </div>
             </div>
           </div>

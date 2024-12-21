@@ -85,9 +85,9 @@ const Leaderboard = () => {
             <div className="flex items-center justify-center w-[60px] h-[68px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-lg md:!text-2xl text-center p-4">
               {rankEmojis[index] || item.ranking}
             </div>
-            <div className="flex flex-grow items-center justify-between p-4 px-4 md:!px-8 gap-2 w-full h-[68px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            <div className="grid grid-cols-3 p-4 px-4 md:!px-8 gap-2 w-full h-[68px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
-                <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
+                <div className="shrink-0 w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
                   <img
                     src={item?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
                     alt={item?.staker_address ?? ""}
@@ -108,13 +108,12 @@ const Leaderboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="text-center hidden md:!block">
+              <div className="flex items-center justify-end text-center">
                 <p className="text-[10px] md:text-[20px] font-bold">
                   {formatDecimal(item.total_points, 2)} $WZRD
                 </p>
               </div>
-
-              <div className="text-center">
+              <div className="flex items-center justify-end text-center">
                 <p className="text-[12px] hidden md:!block md:text-[20px] font-bold">
                   {item.staker_nft_staked} NFT Staked
                 </p>
