@@ -114,7 +114,7 @@ const StakeCardMobile: FC = () => {
     }
 
     return (
-        <div className="w-full bg-[#18181B] border border-[#323237] p-4 py-6 md:p-8 rounded-[25px]">
+        <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center w-full border border-[#323237] p-4 py-6 md:p-8 rounded-[25px]">
             <InfoModal isOpen={infoModal} onClose={() => { setInfoModal(false) }} loading={false} />
             <div className="flex items-center gap-x-4">
                 <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
@@ -146,7 +146,7 @@ const StakeCardMobile: FC = () => {
                                         ref={claimRef}
                                         variant={"ghost"}
                                         onClick={doStakeAndClaim}
-                                        className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-2xl bg-green-500 hover:bg-green-600 hover:text-black"
+                                        className="w-full px-8 py-3 h-max text-[15px] md:!text-xl font-bold text-black rounded-2xl bg-green-500 hover:bg-green-400 hover:text-black"
                                     >Stake and Claim</Button>) :
                                     (<StakeButton />)
                             }
@@ -154,7 +154,7 @@ const StakeCardMobile: FC = () => {
                             <Button
                                 variant={"ghost"}
                                 disabled={true}
-                                className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-2xl bg-green-500 hover:bg-green-600 hover:text-black"
+                                className="w-full px-8 py-3 h-max text-[15px] md:!text-xl font-bold text-black rounded-2xl bg-green-500 hover:bg-green-400 hover:text-black"
                             > <svg
                                 className="animate-spin h-5 w-5 mr-3"
                                 viewBox="0 0 24 24"
