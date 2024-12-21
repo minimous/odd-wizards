@@ -125,9 +125,9 @@ const StakeCardMobile: FC = () => {
                             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
                         </Link>
                     </div>
-                    <div className="flex gap-x-1">
-                        <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-1">ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
-                        <span className="cursor-pointer text-xs md:!text-md text-green-500" onClick={() => { setInfoModal(true) }}>More</span>
+                    <div className="flex gap-x-1 items-end">
+                        <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-3">ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
+                        <span className="cursor-pointer text-xs md:!text-md text-green-500" onClick={() => { setInfoModal(true) }}>more</span>
                     </div>
                 </div>
             </div>
