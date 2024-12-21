@@ -30,9 +30,9 @@ const imageList = [
     { src: "https://i.stargaze-apis.com/koYlOq1KI2lZlK_aj-ILUCjsmhJUtfNFUon3DOtuk4o/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeicxaf7as66zpshjil4xmhcmogakow5wqxje22ksyq6sltsotabuaa/2271.png", alt: "CELOTHIRAPTOR 2271", name: "Celothiraptors" },
     { src: "https://i.stargaze-apis.com/GFsVdB1KeS6wMWFNIDgMAwvUgZgIBnODd4kSymXrv7k/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeiaa3eueevoug6vkvyhyrjbwonzfpifmea2wui7xfgac7fevgresha/12.png", alt: "Steamland #12", name: "Steamland" },
     { src: "https://i.stargaze-apis.com/EbmwYUojWPPyaBklwBn2xWZrcgtT2y5qysWQ-LFz5aE/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeifjyejf6s4lnnqyapkyziyadubsa4topvh3dyicn374b4vukzpiam/7949.jpg", alt: "Stamp #1215", name: "Stamps" },
-    { src: "https://i.stargaze-apis.com/eyVJGdm7t4R8544owTMI2PMFwAPeSyT66ISTuAQaPXs/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeigwhpdmupm754ceuxgakgksfpzmq2kdz4y5imb7k46stiwamtt6fi/884.png", alt: "Dirty #884", name: "Pink is Punk" },  
+    { src: "https://i.stargaze-apis.com/eyVJGdm7t4R8544owTMI2PMFwAPeSyT66ISTuAQaPXs/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeigwhpdmupm754ceuxgakgksfpzmq2kdz4y5imb7k46stiwamtt6fi/884.png", alt: "Dirty #884", name: "Pink is Punk" },
     { src: "https://i.stargaze-apis.com/IxudzWVd_qOI1LReJodhb6ZDXwWXkBhK0XbAkcisD2w/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeifmjwkgr6owmmqons7alu2as2jiig7gnrpjy5pekpkhslnl7d6jj4/839.png", alt: "Cham #839", name: "the Sidekicks" },
-  ];
+];
 
 export default function Stake() {
 
@@ -48,20 +48,22 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-16 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left flex justify-between items-center">
-                        <div className="ml-16">
-                            <div>
+                    <div className="px-10 mt-16 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
+                        <div className="md:!ml-16">
+                            <div className="flex justify-center md:!justify-start">
                                 <CustomGradualSpacing
-                                    className="font-display text-[36px] md:!text-6xl font-black md:leading-[5rem]"
+                                    className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
                                     text="Stake your NFT"
                                 />
+                            </div>
+                            <div className="flex justify-center md:!justify-start">
                                 <CustomGradualSpacing
-                                    className="font-display text-[36px] md:!text-6xl font-black md:leading-[5rem]"
+                                    className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
                                     text="and LFGODDS"
                                 />
                             </div>
                             {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
-                            <div className="mx-auto mt-6">
+                            <div className="text-center md:!text-start mx-auto mt-6">
                                 <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
                                 <p className="text-sm md:!text-xl text-gray-400 leading-tight">Join to complete, stack the most NFTs, and win prizes.</p>
                                 {/* <p className="text-lg text-gray-400 leading-tight"></p> */}
@@ -73,12 +75,14 @@ export default function Stake() {
                     </div>
                 </div>
                 <div className="w-full mx-auto flex flex-col-reverse md:!flex-row mt-0 md:!mt-8 gap-y-4">
-                    <div className="w-full relative mx-4 md:!mx-20 max-h-max">
-                        <div className="w-full hidden md:!flex w-full">
-                            <StakeCard />
-                        </div>
-                        <div className="w-full flex md:!hidden w-full">
-                            <StakeCardMobile />
+                    <div className="w-full relative px-4 md:!px-20 max-h-max">
+                        <div className="relative">
+                            <div className="w-full hidden md:!flex">
+                                <StakeCard />
+                            </div>
+                            <div className="w-full flex md:!hidden">
+                                <StakeCardMobile />
+                            </div>
                         </div>
                     </div>
                 </div>

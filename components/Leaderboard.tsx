@@ -108,14 +108,14 @@ const Leaderboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-end text-center">
+              <div className="hidden md:!flex items-center justify-end text-center">
                 <p className="text-[10px] md:text-[20px] font-bold">
                   {formatDecimal(item.total_points, 2)} $WZRD
                 </p>
               </div>
-              <div className="flex items-center justify-end text-center">
+              <div className="col-span-2 md:col-span-1 flex items-center justify-end text-center">
                 <p className="text-[12px] hidden md:!block md:text-[20px] font-bold">
-                  {item.staker_nft_staked} NFT Staked
+                  {item.staker_nft_staked} NFTs Staked
                 </p>
                 <div className="md:!hidden">
                   <p className="text-[12px] md:text-[20px] font-bold">{item?.staker_nft_staked} NFTs</p>
