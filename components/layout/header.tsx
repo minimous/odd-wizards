@@ -62,22 +62,22 @@ export default function Header() {
           <div className="hidden md:flex space-x-8">
             <Link
               href="/about"
-              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/about" ? "text-white" : "text-gray-400")}
-              style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/about" ? "text-white" : "text-gray-400"))}
+              // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               About
             </Link>
             <Link
               href="/gallery"
-              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/gallery" ? "text-white" : "text-gray-400")}
-              style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/gallery" ? "text-white" : "text-gray-400"))}
+              // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Gallery
             </Link>
             <Link
               href="/stake"
-              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" || path == "/stake" ? "text-white" : "text-gray-400")}
-              style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/stake" ? "text-white" : "text-gray-400"))}
+              // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Stake
             </Link>
