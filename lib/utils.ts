@@ -341,5 +341,5 @@ export function formatDecimal(value?: string | number, decimal: number = 2): str
 
 export function formatAddress(address: string | undefined) {
   if (!address) return '';
-  return `${address.substring(0, 8)}...${address.substring(address.length - 5)}`
+  return `${address.substring(5, 9)}...${address.substring(address.length - 4)}`
 }

@@ -66,7 +66,7 @@ export const BoxLeaderboard = () => {
                   />
                 </div>
                 <div>
-                  <span className="text-[12px] md:text-[20px]">Address</span>
+                  <span className="text-[12px] md:text-[20px] text-white">Address</span>
                   <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#DB2877]">
                     <p className="text-[12px] md:text-[20px] font-bold ">
                       {formatAddress(leaderboard?.staker_address)}
@@ -80,7 +80,7 @@ export const BoxLeaderboard = () => {
                 <img src="/images/Icon/wzrd.png" className="h-[55px]" />
               </div>
               <div className="hidden md:!block">
-                <span className="text-[12px] md:text-[20px]">Token</span>
+                <span className="text-[12px] md:text-[20px] text-white">Token</span>
                 <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
               </div>
             </div>
@@ -89,28 +89,28 @@ export const BoxLeaderboard = () => {
                 <img src="/images/Token.png" className="h-[50px]" />
               </div>
               <div className="text-left">
-                <span className="text-[12px] md:text-[20px]">NFT</span>
+                <span className="text-[12px] md:text-[20px] text-white">NFT</span>
                 <p className="text-[12px] text-white hidden md:!block md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
               </div>
             </div>
           </div>
         </div>
         <div className={cn("w-full grid grid-cols-2 md:!hidden px-4 gap-x-2", (leaderboard?.ranking ?? 0) > (config?.ranking_reward as number ?? 0) ? "mt-2" : "mt-9" )}>
-          <div className="flex bg-[url('/images/About.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-6 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-            <div>
-              <img src="/images/Icon/wzrd.png" className="h-[40px]" />
-            </div>
-            <div className="">
-              <span className="text-[12px] md:text-[20px]">Token</span>
+          <div className="flex bg-[url('/images/About.gif')] bg-cover bg-center flex-grow items-center justify-center p-4 px-8 gap-6 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            {/* <div>
+              <img src="/images/Icon/wzrd.png" className="shrink-0 h-[40px]" />
+            </div> */}
+            <div className="text-center">
+              <span className="text-[12px] md:text-[20px] text-white">Token</span>
               <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
             </div>
           </div>
-          <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-            <div className="text-6xl">
-              <img src="/images/Token.png" className="h-[35px]" />
-            </div>
-            <div className="text-left">
-              <span className="text-[12px] md:text-[20px]">NFT</span>
+          <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center justify-center p-4 px-8 gap-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+            {/* <div className="text-6xl">
+              <img src="/images/Token.png" className="shrink-0 h-[35px]" />
+            </div> */}
+            <div className="text-center">
+              <span className="text-[12px] md:text-[20px] text-white">NFT</span>
               <p className="text-[12px] text-white md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
             </div>
           </div>
