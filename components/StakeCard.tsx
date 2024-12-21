@@ -14,6 +14,7 @@ import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
 import confetti from "canvas-confetti";
 import { BorderBeam } from "./ui/border-beam";
+import InfoModal from "./modal/info-modal";
 const StakeCard: FC = () => {
 
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
@@ -25,6 +26,7 @@ const StakeCard: FC = () => {
   const { toast } = useToast();
   const { claim, setClaim } = useClaim();
   const claimRef = useRef<HTMLButtonElement>(null);
+  const [infoModal, setInfoModal] = useState<boolean>(false);
 
   useEffect(() => {
     setIsFetch(false);
@@ -111,19 +113,23 @@ const StakeCard: FC = () => {
 }
 
   return (
-    <div className="w-full bg-[#18181B] border border-[#323237] p-4 md:p-8 rounded-[50px] flex items-center gap-x-4">
-      <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
+    <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center border-2 border-[#323237] p-4 md:px-12 md:p-8 rounded-[50px] flex items-center gap-x-4">
+      <InfoModal isOpen={infoModal} onClose={() => {setInfoModal(false)}} loading={false} />
+      <img src="/images/wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
       <div className="w-full p-2 md:p-4">
         <div className="text-center md:flex md:text-start justify-between mb-2">
           <Link href="https://www.stargaze.zone/m/oddswizard/tokens" target="_blank" className="w-full flex items-center justify-between gap-x-4">
-            <h1 className="text-white text-[20px] md:text-3xl font-semibold">Odds Wizard</h1>
+            <h1 className="text-white text-[20px] md:text-3xl font-semibold">Odds Wizard 🧙‍♂️</h1>
             {/* <span className="text-white text-sm md:!text-lg font-semibold">Trade collection</span> */}
             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
           </Link>
         </div>
-        <p className="text-xs md:!text-lg text-gray-400 leading-tight">Each NFT represents a unique wizard, crafted to</p>
-        <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p>
-        <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-2">
+        <div className="flex gap-x-1">
+          <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-1">ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
+          <span className="cursor-pointer text-green-500" onClick={() => { setInfoModal(true) }}>more</span>
+        </div>
+        {/* <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p> */}
+        <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-4">
           {
             wallet.status != WalletStatus.Connected ? (
               <div className="">
@@ -138,7 +144,7 @@ const StakeCard: FC = () => {
                       ref={claimRef}
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
-                      className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                      className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-400 hover:text-black"
                     >Stake and Claim</Button>) :
                     (<StakeButton />)
                 }
@@ -146,7 +152,7 @@ const StakeCard: FC = () => {
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-400 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"

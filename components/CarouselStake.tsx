@@ -72,13 +72,13 @@ const CarouselStake: React.FC<CarouselStakeProps> = ({ images, interval = 3000 }
                 alt={image.alt}
                 width={175} // Lebar gambar lebih kecil
                 height={175} // Tinggi gambar lebih kecil
-                className="cursor-pointer rounded-lg shadow-md hover:scale-110 transition-all duration-200 ease-in-out"
+                className="cursor-pointer rounded-lg shadow-md hover:scale-105 transition-all duration-200 ease-in-out"
               />
             </div>
           ))}
         </div>
       </div>
-      <div className="text-center mt-2">
+      <div className="text-center">
         {/* <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
         </h1> */}
         <p className="text-sm text-gray-400 leading-relaxed">{images[currentIndex]["name"]} for {getOrdinal(currentIndex + 1)} winner</p>

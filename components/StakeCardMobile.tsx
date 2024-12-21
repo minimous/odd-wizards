@@ -14,6 +14,7 @@ import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
 import confetti from "canvas-confetti";
 import { BorderBeam } from "./ui/border-beam";
+import InfoModal from "./modal/info-modal";
 
 const StakeCardMobile: FC = () => {
 
@@ -26,6 +27,7 @@ const StakeCardMobile: FC = () => {
     const { toast } = useToast();
     const { claim, setClaim } = useClaim();
     const claimRef = useRef<HTMLButtonElement>(null);
+    const [infoModal, setInfoModal] = useState<boolean>(false);
 
     useEffect(() => {
         setIsFetch(false);
@@ -112,7 +114,8 @@ const StakeCardMobile: FC = () => {
     }
 
     return (
-        <div className="w-full bg-[#18181B] border border-[#323237] p-4 py-6 md:p-8 rounded-[25px]">
+        <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center w-full border border-[#323237] p-4 py-6 md:p-8 rounded-[25px]">
+            <InfoModal isOpen={infoModal} onClose={() => { setInfoModal(false) }} loading={false} />
             <div className="flex items-center gap-x-4">
                 <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
                 <div className="w-full p-2 md:p-4">
@@ -122,7 +125,10 @@ const StakeCardMobile: FC = () => {
                             <img src="/images/Icon/stargaze.png" className="w-[25px] md:!w-[40px]" />
                         </Link>
                     </div>
-                    <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-2">Each NFT represents a unique wizard, crafted to guide and assist you in exploring the cosmos.</p>
+                    <div className="flex gap-x-1 items-end">
+                        <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-3">ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
+                        <span className="cursor-pointer text-xs md:!text-md text-green-500" onClick={() => { setInfoModal(true) }}>more</span>
+                    </div>
                 </div>
             </div>
             <div className="relative w-full mx-auto mt-4 md:!mx-0 md:!mt-2">
@@ -140,7 +146,7 @@ const StakeCardMobile: FC = () => {
                                         ref={claimRef}
                                         variant={"ghost"}
                                         onClick={doStakeAndClaim}
-                                        className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-2xl bg-green-500 hover:bg-green-600 hover:text-black"
+                                        className="w-full px-8 py-3 h-max text-[15px] md:!text-xl font-bold text-black rounded-2xl bg-green-500 hover:bg-green-400 hover:text-black"
                                     >Stake and Claim</Button>) :
                                     (<StakeButton />)
                             }
@@ -148,7 +154,7 @@ const StakeCardMobile: FC = () => {
                             <Button
                                 variant={"ghost"}
                                 disabled={true}
-                                className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-2xl bg-green-500 hover:bg-green-600 hover:text-black"
+                                className="w-full px-8 py-3 h-max text-[15px] md:!text-xl font-bold text-black rounded-2xl bg-green-500 hover:bg-green-400 hover:text-black"
                             > <svg
                                 className="animate-spin h-5 w-5 mr-3"
                                 viewBox="0 0 24 24"
