@@ -103,6 +103,7 @@ export interface FetchAllStargazeTokensOptions {
   collectionAddress?: string; // Optional collection contract address
   maxTokens?: number; // Maximum number of tokens to fetch
   sortBy?: 'ACQUIRED_DESC' | 'ACQUIRED_ASC' | 'MINTED_DESC' | 'MINTED_ASC'; // Sorting options
+  filterForSale?: 'LIVE_AUCTION' | 'UNLISTED' | 'LISTED' | undefined
 }
 
 export interface Token {
