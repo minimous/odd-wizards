@@ -1,3 +1,4 @@
+"use client";
 import StakeSection from "@/components/home/StakeSection";
 import Header from "@/components/layout/header";
 import Carousel from "@/components/Carausel";
@@ -6,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Footer } from "@/components/layout/footer";
 import GradualSpacing from "@/components/ui/gradual-spacing";
 import CustomGradualSpacing from "@/components/CustomGradouselSpacing";
+import Snowfall from 'react-snowfall';
 
 const imageList = [
   { src: "https://i.stargaze-apis.com/pZa0xBOtYOrxbFADavj6t8T8MVRUkeSDo9OvfpvDRXc/f:jpg/resize:fit:700:::/dpr:2/plain/ipfs://bafybeifpduio7sv3cy3ok76j3ldvrwan6owqv5uvrkk5xhuiuvhuy5eupe/558.jpg", alt: "German Shepherd #558", name: "Expedition" },
@@ -33,6 +35,11 @@ const imageList = [
 export default function Home() {
   return (
     <div className="relative bg-black w-full">
+      <div className="fixed inset-0 pointer-events-none z-[1000]">
+        <div className="relative w-full h-full">
+          <Snowfall snowflakeCount={24} speed={[0.5, 1]} wind={[-0.5, 1]} radius={[0.5, 4.5]} />
+        </div>
+      </div>
       <div className="relative">
         <Header />
         <div className="bg-[url('/images/wizard.gif')] md:!hidden bg-cover bg-center h-[500px] w-full" />
