@@ -53,11 +53,11 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                     <img src={data.imageGif} alt={data.name} className="h-full w-full hidden group-hover:flex object-cover" />
                 </Link>
             </div>
-            <div className="border border-white w-full p-4">
+            <div className="border-y border-white w-full p-4">
                 <h2 className="text-xl font-bold truncate">{data.name}</h2>
             </div>
             <div className="grid grid-cols-2 w-full">
-                <div className="p-4 border border-white w-full">
+                <div className="p-4 border-white w-full">
                     {
                         loading ? (
                             <Loading />
@@ -69,7 +69,7 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                         )
                     }
                 </div>
-                <div className="p-4 border border-white w-full">
+                <div className="p-4 border-l border-white w-full">
                     {
                         loading ? (
                             <Loading />
