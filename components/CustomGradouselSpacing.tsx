@@ -36,7 +36,7 @@ export default function GradualSpacing({
   return (
     <div 
       ref={ref}
-      className="flex justify-center"
+      className="flex justify-start"
     >
       <AnimatePresence>
         {isInView && text.split("").map((char, i) => (

@@ -58,7 +58,11 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
         return NextResponse.json(
             {
                 message: 'successfully',
-                data: user
+                data: { 
+                    user: user,
+                    staker: staker,
+                    // point:
+                }
             },
             { status: 200 }
         );

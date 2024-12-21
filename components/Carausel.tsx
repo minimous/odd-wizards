@@ -70,13 +70,13 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
               <img
                 src={image.src}
                 alt={image.alt}
-                className="w-[150px] h-[150px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg cursor-pointer hover:scale-110 transition-all duration-200 ease-in-out"
+                className="w-[150px] h-[150px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out"
               />
             </div>
           ))}
         </div>
       </div>
-      <div className="mb-6 md:mt-8 md:mb-12">
+      <div className="mb-6 md:mb-12">
         {/* <h1 className="text-[24px] md:text-[36px] font-bold mb-4 mx-auto">
         </h1> */}
         <p className="text-[13px] md:!text-lg text-gray-400 leading-relaxed">{images[currentIndex]["name"]} for {getOrdinal(currentIndex + 1)} winner</p>
