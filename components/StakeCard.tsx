@@ -126,7 +126,7 @@ const StakeCard: FC = () => {
         </div>
         <div className="flex gap-x-1">
           <p className="text-xs md:!text-lg text-gray-400 leading-tight line-clamp-1">ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
-          <span className="cursor-pointer text-green-500" onClick={() => { setInfoModal(true) }}>More</span>
+          <span className="cursor-pointer text-green-500" onClick={() => { setInfoModal(true) }}>more</span>
         </div>
         {/* <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p> */}
         <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-4">
@@ -144,7 +144,7 @@ const StakeCard: FC = () => {
                       ref={claimRef}
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
-                      className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                      className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-400 hover:text-black"
                     >Stake and Claim</Button>) :
                     (<StakeButton />)
                 }
@@ -152,7 +152,7 @@ const StakeCard: FC = () => {
                 <Button
                   variant={"ghost"}
                   disabled={true}
-                  className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-600 hover:text-black"
+                  className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-400 hover:text-black"
                 > <svg
                   className="animate-spin h-5 w-5 mr-3"
                   viewBox="0 0 24 24"
