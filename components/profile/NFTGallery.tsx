@@ -18,7 +18,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState<number>(0);
-  const limit = 22;
+  const limit = 16;
   const config = getConfig();
 
   useEffect(() => {
@@ -40,54 +40,60 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
 
   const renderGallery = (tokens: Token[]) => {
     const galleries = [];
-    const chunksCount = Math.ceil(tokens.length / 22);
+    const chunksCount = Math.ceil(tokens.length / 16);
 
     for (let chunk = 0; chunk < chunksCount; chunk++) {
-      const startIndex = chunk * 22;
-      const firstSevenTokens = tokens.slice(startIndex, startIndex + 7);
-      const firstFourTokens = tokens.slice(startIndex + 7, startIndex + 11);
-      const nextSevenTokens = tokens.slice(startIndex + 11, startIndex + 18);
-      const nextFourTokens = tokens.slice(startIndex + 18, startIndex + 22);
-
-      if (firstSevenTokens?.length > 0) {
-        galleries.push(
-          <Gallery1 
-            key={`gallery1-${chunk}`} 
-            tokens={firstSevenTokens} 
-          />
+        const startIndex = chunk * 16;
+        
+        // Create fixed-size arrays for each gallery section
+        const gallery1Tokens = tokens.slice(startIndex, startIndex + 3).concat(
+            Array(3 - Math.min(tokens.slice(startIndex, startIndex + 3).length, 3)).fill(null)
         );
-      }
-
-      if (firstFourTokens?.length > 0) {
-        galleries.push(
-          <Gallery2 
-            key={`gallery2-${chunk}`} 
-            tokens={firstFourTokens} 
-          />
+        
+        const gallery2Tokens = tokens.slice(startIndex + 3, startIndex + 4).concat(
+            Array(1 - Math.min(tokens.slice(startIndex + 3, startIndex + 4).length, 1)).fill(null)
         );
-      }
-
-      if (nextSevenTokens?.length > 0) {
-        galleries.push(
-          <Gallery3 
-            key={`gallery3-${chunk}`} 
-            tokens={nextSevenTokens} 
-          />
+        
+        const gallery3Tokens = tokens.slice(startIndex + 4, startIndex + 10).concat(
+            Array(6 - Math.min(tokens.slice(startIndex + 4, startIndex + 10).length, 6)).fill(null)
         );
-      }
-
-      if (nextFourTokens?.length > 0) {
-        galleries.push(
-          <Gallery4 
-            key={`gallery4-${chunk}`} 
-            tokens={nextFourTokens} 
-          />
+        
+        const gallery4Tokens = tokens.slice(startIndex + 10, startIndex + 16).concat(
+            Array(6 - Math.min(tokens.slice(startIndex + 10, startIndex + 16).length, 6)).fill(null)
         );
-      }
+
+        // Always push all galleries with their respective padded tokens
+        galleries.push(
+            <Gallery1 
+                key={`gallery1-${chunk}`} 
+                tokens={gallery1Tokens} 
+            />
+        );
+
+        galleries.push(
+            <Gallery2 
+                key={`gallery2-${chunk}`} 
+                tokens={gallery2Tokens} 
+            />
+        );
+
+        galleries.push(
+            <Gallery3 
+                key={`gallery3-${chunk}`} 
+                tokens={gallery3Tokens} 
+            />
+        );
+
+        galleries.push(
+            <Gallery4 
+                key={`gallery4-${chunk}`} 
+                tokens={gallery4Tokens} 
+            />
+        );
     }
 
     return galleries;
-  };
+};
 
   const loadMore = () => {
     if (hasMore) {
@@ -105,7 +111,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
           <Loading />
         </div>
       )}
-      {hasMore && !loading && (
+      {tokens.length > 0 && hasMore && !loading && (
         <div className="mt-5 text-center">
           <button
             onClick={loadMore}

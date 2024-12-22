@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
             staker = await prisma.mst_staker.create({
                 data: {
                     staker_address,
-                    staker_collection_id: collection.collection_id
+                    staker_collection_id: collection.collection_id,
+                    staker_total_points: 0
                 }
             });  
         } 

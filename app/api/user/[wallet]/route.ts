@@ -2,14 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
 import { DEFAULT_IMAGE_PROFILE } from '@/constants';
 import { OwnedTokensResponse, Token } from '@/types';
-import { fetchStargazeTokens } from '@/lib/utils';
-import { updateNftOwner } from '@/lib/soft-staking-service';
+import { fetchStargazeTokens, getAssosiatedName } from '@/lib/utils';
+import { getLeaderboard, updateNftOwner } from '@/lib/soft-staking-service';
 
 export async function GET(request: NextRequest, { params }: { params: { wallet: string } }) {
     try {
         const { wallet } = params;
         const { searchParams } = request.nextUrl;
         const collection_address = searchParams.get('collection_address');
+
+        if (!collection_address) {
+            return NextResponse.json(
+                { message: 'collection_address is required' },
+                { status: 400 }
+            );
+        }
 
         // Check if user exists
         let user = await prisma.mst_users.findUnique({
@@ -55,13 +62,27 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
             updateNftOwner(wallet, collection_address);
         }
 
+        const leaderboard = await getLeaderboard(collection_address, wallet, 0, 1);
+        // Handle BigInt serialization
+        const leaderboardWithBigIntAsString = leaderboard.map((item: any) => ({
+            ...item,
+            total_points: item.total_points.toString(),
+            ranking: item.ranking.toString()
+        }));
+
+        if(staker){
+            staker.staker_total_points = leaderboardWithBigIntAsString.length > 0 ? leaderboardWithBigIntAsString[0].total_points : 0;
+        }
+
+        const associatedName = await getAssosiatedName(wallet);
+
         return NextResponse.json(
             {
                 message: 'successfully',
                 data: { 
+                    associated: associatedName,
                     user: user,
                     staker: staker,
-                    // point:
                 }
             },
             { status: 200 }
