@@ -323,6 +323,107 @@ export async function getCollection(collection_address: string) {
   }
 }
 
+export async function getAssosiatedName(associated_address: string) {
+  if (!config) throw Error("Config not found");
+
+  const query = `
+    query AssociatedName($associatedAddr: String!) {
+      names(associatedAddr: $associatedAddr) {
+        names {
+          name
+          associatedAddr
+          ownerAddr
+          media {
+            ...MediaFields
+            __typename
+          }
+          records {
+            name
+            value
+            verified
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+    }
+
+    fragment MediaFields on Media {
+      type
+      url
+      height
+      width
+      visualAssets {
+        xs {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        sm {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        md {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        lg {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        xl {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }`;
+
+  try {
+    const response = await fetch(config.graphql_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          associatedAddr: associated_address
+        },
+        operationName: 'AssociatedName'
+      })
+    });
+
+    const data = await response.json();
+    return data.data.names;
+  } catch (error) {
+    console.error('Error fetching associated name:', error);
+    throw error;
+  }
+}
+
+
 export function formatToStars(value?: string | number): string {
   if (!value) return '0';
   let number = typeof value === 'string' ? parseFloat(value) : value;
