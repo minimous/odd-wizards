@@ -74,6 +74,8 @@ export async function getTotalPoints(address: string, collection_address: string
         filterForSale: 'UNLISTED'
     });
 
+    console.log("allTokens", allTokens.length);
+
     let attrreward: mst_attributes_reward[] = [];
     allTokens.forEach((nft) => {
         nft.traits.forEach(trait => {
