@@ -72,7 +72,7 @@ export default function ImageGalleryProfile({ token, size }: ImageGalleryProfile
                 alt={`Token ${token?.name || 'Character'}`}
                 className={cn("rounded-lg object-cover w-full h-full", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
             />
-            {renderImageButton(size)}
+            {token && renderImageButton(size)}
         </div>
     )
 }

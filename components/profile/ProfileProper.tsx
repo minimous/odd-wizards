@@ -60,7 +60,7 @@ const PoperProfile = ({
                 marginBottom: '2px'
             },
             bottom: {
-                top: '0',
+                top: '2px',
                 right: '0',
                 marginTop: '2px'
             },
