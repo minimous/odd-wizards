@@ -196,7 +196,8 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
   const {
     owner,
     collectionAddress,
-    sortBy = 'ACQUIRED_DESC'
+    sortBy = 'ACQUIRED_DESC',
+    filterForSale
   } = options;
 
   let allTokens: Token[] = [];
@@ -210,7 +211,8 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
       maxTokens: limit,
       sortBy,
       limit,
-      offset
+      offset,
+      filterForSale
     });
 
     // Add fetched tokens to the collection
