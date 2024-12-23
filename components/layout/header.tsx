@@ -11,13 +11,19 @@ import getConfig from "@/config/config";
 import { usePathname } from "next/navigation";
 import { cn, formatAddress } from "@/lib/utils";
 import { useNavbarMobile } from "@/hooks/useNavbarMobile";
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { StdSignDoc, AminoSignResponse } from "@cosmjs/amino";
+import { useToast } from "../ui/use-toast";
 
 export default function Header() {
-  const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
+  const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
   const { setUser } = useUser();
+  const { wallet } = useWallet();
   const config = getConfig();
   const path = usePathname();
   const { isOpened, setOpen } = useNavbarMobile();
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
 
@@ -31,6 +37,45 @@ export default function Header() {
     fetchData();
 
   }, [address]);
+
+  useEffect(() => {
+    if (isWalletConnected && address) {
+      handleAuthentication();
+    }
+  }, [isWalletConnected, address]);
+
+  const handleAuthentication = async () => {
+    if (!isWalletConnected || !address) {
+      alert("Please connect your wallet first!");
+      toast({
+        variant: 'destructive',
+        title: 'Ups! Something wrong.',
+        description: 'Please connect your wallet first!'
+      });
+
+      return;
+    }
+
+    setIsAuthenticating(true);
+
+    try {
+
+      // Kirim signature ke server untuk autentikasi
+      const result = await signIn("credentials", {
+        wallet: address,
+        // signature: JSON.stringify(signature),
+        // message: signMessage,
+        redirect: false,
+      });
+
+      console.log("Authentication successful!");
+    } catch (error) {
+      console.error("Authentication failed:", error);
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
 
   return (
     <nav className="absolute top-0 left-0 right-0 flex items-center justify-between md:px-10 py-5 bg-transparent z-50">
@@ -63,21 +108,21 @@ export default function Header() {
             <Link
               href="/about"
               className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/about" ? "text-white" : "text-gray-400"))}
-              // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               About
             </Link>
             <Link
               href="/gallery"
               className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/gallery" ? "text-white" : "text-gray-400"))}
-              // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Gallery
             </Link>
             <Link
               href="/stake"
               className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/stake" ? "text-white" : "text-gray-400"))}
-              // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Stake
             </Link>

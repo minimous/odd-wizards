@@ -1,12 +1,16 @@
+"use client";
 import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import { Button } from '../ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import { Token } from '@/types';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import axios, { AxiosResponse } from 'axios';
 
 type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 
 interface PopoverProps {
+    address: string
     token: Token
     children: ReactNode;
     position?: PopoverPosition;
@@ -25,6 +29,7 @@ interface PositionStyles {
 }
 
 const PoperProfile = ({
+    address,
     token,
     children,
     position = 'bottom',
@@ -33,6 +38,7 @@ const PoperProfile = ({
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
+    const { data: session } = useSession();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -77,6 +83,17 @@ const PoperProfile = ({
         return positions[position] || positions.bottom;
     };
 
+    const setPfp = async () => {
+        try {
+            let resp = await axios.post(`/api/user/update-pfp/${address}`, { 
+                token 
+            });
+            console.log("resp", resp.data);
+        } catch (error: AxiosResponse | any) {
+            console.log("error", error);
+        }
+    }
+
     return (
         <div className={`relative inline-block ${className}`}>
             <div
@@ -102,9 +119,11 @@ const PoperProfile = ({
                                 <ArrowUpRight />
                             </Button>
                         </Link>
-                        <Button variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
-                            <span className='text-xs'>Set as PFP</span>
-                        </Button>
+                        {
+                            session?.user?.name == address && <Button onClick={setPfp} variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
+                                <span className='text-xs'>Set as PFP</span>
+                            </Button>
+                        }
                     </div>
                 </div>
             )}

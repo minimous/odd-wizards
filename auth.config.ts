@@ -1,6 +1,7 @@
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
+// import jwt from 'jsonwebtoken';
 
 const authConfig = {
   providers: [
@@ -10,18 +11,29 @@ const authConfig = {
     }),
     CredentialProvider({
       credentials: {
-        email: {
-          type: 'email'
+        wallet: {
+          type: 'text'
         },
-        password: {
-          type: 'password'
-        }
       },
       async authorize(credentials, req) {
+
+        // const secretKey = process.env.JWT_SECRET || '';
+        // const payload = {
+        //   sub: credentials.wallet as string,
+        //   name: credentials.wallet as string, // Contoh data tambahan
+        //   iat: Math.floor(Date.now() / 1000), // Issued at
+        // };
+        // // Opsi token (24 jam)
+        // const options = {
+        //   expiresIn: '24h', // Token berlaku selama 24 jam
+        // };
+
+        // // Generate token
+        // const token = jwt.sign(payload, secretKey, options);
+
         const user = {
-          id: '1',
-          name: 'John',
-          email: credentials?.email as string
+          id: credentials.wallet as string,
+          name: credentials.wallet as string,
         };
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
