@@ -75,55 +75,11 @@ export default function Profile({ params }: { params: { address: string } }) {
         }
     }
 
-    const postToTwitter = (tweetData: { text: string }) => {
-        try {
-            // Encode the text for URL
-            const encodedText = encodeURIComponent(tweetData.text);
-            
-            // Create Twitter intent URL
-            // Using Twitter's Web Intent URL
-            const twitterIntentUrl = `https://x.com/intent/post?text=${encodedText}`;
-            
-            // Open in new window/tab
-            window.open(twitterIntentUrl, '_blank');
-            
-        } catch (error) {
-            console.error('Error posting to Twitter:', error);
-            throw error;
-        }
-    };
-
-    const doTweet = async () => {
-        try {
-            // Tweet text content
-            const tweetText = "Check out this amazing visualization! 📊\n" +
-                `${config?.base_url}/p/${params.address}`;
-
-            // Combine text and image for sharing
-            // Note: Implementation depends on your social media API/library
-            const tweetData = {
-                text: tweetText
-            };
-
-            // Here you would implement your actual tweet posting logic
-            // Example:
-            await postToTwitter(tweetData);
-
-            console.log('Tweet content prepared:', tweetData);
-            return tweetData;
-
-        } catch (error) {
-            console.error('Error creating tweet:', error);
-            throw error;
-        }
-    };
-
     return (
         <div className="relative">
-            <Header />
             <div ref={componentRef}>
-                <div className="w-full h-screen bg-[url('/images/Account.gif')] bg-cover bg-center">
-                    <div className="relative h-screen flex items-end pb-4">
+                <div className="w-full h-[300px] bg-[url('/images/Account.gif')] bg-cover bg-center">
+                    <div className="relative h-[300px] flex items-end pb-4">
                         <div className="absolute z-10 left-4 md:left-24 bottom-5">
 
                             <div className="flex gap-x-6 items-center">
@@ -176,7 +132,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                                                 <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
-                                                            <span className="cursor-pointer" onClick={doTweet}>
+                                                            <span className="cursor-pointer">
                                                                 <img src="/images/Icon/forward-arrow.png" className="w-[30px] md:w-[40px] hover:scale-105 transition-all duration-300 ease-in-out" />
                                                             </span>
                                                         </TooltipTrigger>
@@ -217,9 +173,6 @@ export default function Profile({ params }: { params: { address: string } }) {
                     <NFTGallery address={params.address} />
                 </div>
             </div>
-            <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center py-8">
-                <Footer className="my-0" />
-            </div>
-        </div >
+        </div>
     );
 }
