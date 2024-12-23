@@ -55,7 +55,6 @@
     "@uploadthing/react": "^5.7.0",
     "autoprefixer": "10.4.15",
     "axios": "^1.7.7",
-    "canvas": "^2.11.2",
     "canvas-confetti": "^1.9.3",
     "chain-registry": "^1.69.58",
     "class-variance-authority": "^0.7.0",
