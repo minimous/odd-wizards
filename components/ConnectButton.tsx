@@ -6,6 +6,7 @@ import { WalletStatus } from '@cosmos-kit/core';
 import { useUser } from "@/hooks/useUser";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
 import { cn, formatAddress } from "@/lib/utils";
+import Link from "next/link";
 
 export interface ConnectButtonProps {
     showProfile?: boolean,
@@ -48,12 +49,12 @@ export default function ConnectButton({ showProfile = true, className }: Connect
                         wallet.status == WalletStatus.Connecting ? (
                             <div className="flex items-center gap-2">
                                 <svg
-                                className="animate-spin h-5 w-5 mr-3"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                stroke="black" /* Menentukan warna hitam */
-                            >
+                                    className="animate-spin h-5 w-5 mr-3"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    stroke="black" /* Menentukan warna hitam */
+                                >
                                     <circle
                                         className="opacity-25"
                                         cx="12"
@@ -85,9 +86,11 @@ export default function ConnectButton({ showProfile = true, className }: Connect
                 >
                     <span className="text-sm md:!text-2xl font-black">{formatAddress(address)}</span>
                 </Button>
-                <img hidden={!showProfile} src={ user?.user_image_url ?? DEFAULT_IMAGE_PROFILE } onError={(e: any) => {
-                    e.target.src = DEFAULT_IMAGE_PROFILE;
-                }} className="w-[60px] h-[60px] rounded-full" />
+                <Link href={`/p/${address}`} >
+                    <img hidden={!showProfile} src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
+                        e.target.src = DEFAULT_IMAGE_PROFILE;
+                    }} className="w-[60px] h-[60px] rounded-full" />
+                </Link>
             </div>
         )}
     </div>)
