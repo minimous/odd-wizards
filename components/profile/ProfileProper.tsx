@@ -5,6 +5,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Token } from '@/types';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useChain } from '@cosmos-kit/react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { promiseToast, useToast } from "@/components/ui/use-toast";
 
@@ -36,6 +37,7 @@ const PoperProfile = ({
     position = 'bottom',
     className = ''
 }: PopoverProps): JSX.Element => {
+    const { isWalletConnected } = useChain("stargaze");
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
@@ -86,8 +88,8 @@ const PoperProfile = ({
 
     const setPfp = async () => {
         try {
-            promiseToast(axios.post(`/api/user/update-pfp/${address}`, { 
-                token 
+            promiseToast(axios.post(`/api/user/update-pfp/${address}`, {
+                token
             }), {
                 loading: {
                     title: "Processing...",
@@ -135,7 +137,7 @@ const PoperProfile = ({
                             </Button>
                         </Link>
                         {
-                            session?.user?.name == address && <Button onClick={setPfp} variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
+                            isWalletConnected && session?.user?.name == address && <Button onClick={setPfp} variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
                                 <span className='text-xs'>Set as PFP</span>
                             </Button>
                         }

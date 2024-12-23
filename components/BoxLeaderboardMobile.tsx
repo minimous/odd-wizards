@@ -45,7 +45,7 @@ export const BoxLeaderboardMobile = () => {
             </div>
             <div className="relative">
               <div className="flex items-center justify-center w-[50px] h-[50px] md:w-[105px] md:h-[105px] bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-white font-bold text-2xl text-center">
-              {leaderboard ? (rankEmojis[Number(leaderboard.ranking) - 1] || leaderboard.ranking) : "-"}
+                {leaderboard ? (rankEmojis[Number(leaderboard.ranking) - 1] || leaderboard.ranking) : "-"}
               </div>
               <img src="/images/Icon/Gift.png" className="w-[75px] md:w-[110px] max-w-max absolute -left-3 -bottom-10 md:!-bottom-12 md:!left-0" />
             </div>
@@ -53,14 +53,16 @@ export const BoxLeaderboardMobile = () => {
           <div className="flex flex-grow items-center justify-between p-4 px-2 md:!px-8 gap-2 w-[50px] h-[50px] md:w-[105px] md:h-[105px] md:w-full bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
             <div className="flex items-center gap-4">
               <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px]  bg-amber-200 rounded-full flex items-center justify-center">
-                <img
-                  src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
-                  alt={leaderboard?.staker_address ?? ""}
-                  className="rounded-full object-cover w-full h-full"
-                  onError={(e: any) => {
-                    e.target.src = DEFAULT_IMAGE_PROFILE;
-                  }}
-                />
+                <Link href={`/p/${leaderboard?.staker_address}`} >
+                  <img
+                    src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
+                    alt={leaderboard?.staker_address ?? ""}
+                    className="rounded-full object-cover w-full h-full"
+                    onError={(e: any) => {
+                      e.target.src = DEFAULT_IMAGE_PROFILE;
+                    }}
+                  />
+                </Link>
               </div>
               <Link href={`https://www.stargaze.zone/p/${leaderboard?.staker_address}`} target="_blank" className="text-center text-[#49ED4A]">
                 <p className="text-[10px] md:text-[20px] font-bold ">

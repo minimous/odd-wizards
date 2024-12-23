@@ -123,7 +123,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
         <div className="mt-5 text-center">
           <button
             onClick={loadMore}
-            className="text-[12px] text-gray-400 hover:text-white"
+            className="text-[13px] text-gray-400 hover:text-white"
           >
             Load More ...
           </button>
