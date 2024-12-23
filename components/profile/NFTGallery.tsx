@@ -68,6 +68,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
           address={address}
           key={`gallery1-${chunk}`}
           tokens={gallery1Tokens}
+          allTokens={tokens}
         />
       );
 
@@ -76,6 +77,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
           address={address}
           key={`gallery2-${chunk}`}
           tokens={gallery2Tokens}
+          allTokens={tokens}
         />
       );
 
@@ -84,6 +86,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
           address={address}
           key={`gallery3-${chunk}`}
           tokens={gallery3Tokens}
+          allTokens={tokens}
         />
       );
 
@@ -92,6 +95,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
           address={address}
           key={`gallery4-${chunk}`}
           tokens={gallery4Tokens}
+          allTokens={tokens}
         />
       );
     }

@@ -6,9 +6,10 @@ import ImageGalleryProfile from "./ImageGalleryProfile";
 export interface Gallery3Props {
     address: string
     tokens: Token[]
+    allTokens: Token[]
 }
 
-export default function Gallery3({ address, tokens }: Gallery3Props) {
+export default function Gallery3({ address, tokens, allTokens }: Gallery3Props) {
 
     // Get first 6 tokens for the grid
     const gridTokens = tokens.slice(0, 6);
@@ -18,7 +19,7 @@ export default function Gallery3({ address, tokens }: Gallery3Props) {
             {/* Grid of smaller images */}
             <div className="grid grid-cols-2 gap-2 md:gap-3">
                 {gridTokens.map((token, index) => (
-                    <ImageGalleryProfile address={address} key={token?.id || index} token={token} size="sm" />
+                    <ImageGalleryProfile allToken={allTokens} address={address} key={token?.id || index} token={token} size="sm" />
                 ))}
             </div>
         </div>

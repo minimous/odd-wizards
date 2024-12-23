@@ -94,6 +94,7 @@
     "typescript": "5.2.2",
     "uploadthing": "^5.7.4",
     "uuid": "^9.0.1",
+    "yet-another-react-lightbox": "^3.21.7",
     "zod": "^3.22.4",
     "zustand": "^4.4.6"
   },
