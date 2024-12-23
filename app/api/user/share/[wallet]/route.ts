@@ -8,7 +8,11 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
 
     try {
         // Launch browser
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        });
+
         const page = await browser.newPage();
 
         // Go to the provided URL
