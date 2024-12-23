@@ -4,10 +4,11 @@ import { Token } from "@/types";
 import ImageGalleryProfile from "./ImageGalleryProfile";
 
 export interface Gallery1Props {
+    address: string
     tokens: Token[]
 }
 
-export default function Gallery1({ tokens }: Gallery1Props) {
+export default function Gallery1({ address, tokens }: Gallery1Props) {
     // Get first token for the main large image
     const mainToken = tokens[0];
 
@@ -17,11 +18,11 @@ export default function Gallery1({ tokens }: Gallery1Props) {
     return (
         <div className="grid grid-cols-1 gap-2 md:gap-3 col-span-2">
             {/* Main large image */}
-            <ImageGalleryProfile token={mainToken} size="md" />
+            <ImageGalleryProfile address={address} token={mainToken} size="md" />
             {/* Grid of smaller images */}
             <div className="grid grid-cols-2 gap-2 md:gap-3">
                 {gridTokens.map((token, index) => (
-                    <ImageGalleryProfile key={token?.id || index} token={token} size="sm" />
+                    <ImageGalleryProfile address={address} key={token?.id || index} token={token} size="sm" />
                 ))}
             </div>
         </div>

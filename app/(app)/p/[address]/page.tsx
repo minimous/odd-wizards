@@ -18,11 +18,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/Loading";
+import { mst_users } from "@prisma/client";
 
 export default function Profile({ params }: { params: { address: string } }) {
     const config = getConfig();
-    const { user } = useUser();
-    const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
+    const [user, setUser] = useState<mst_users>();
     const [staker, setStaker] = useState<any>();
     const [associated, setAssociated] = useState<any>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -34,6 +34,7 @@ export default function Profile({ params }: { params: { address: string } }) {
             let resp = await axios.get(`/api/user/${params.address}?collection_address=${config?.collection_address}`);
             const data = resp.data.data;
             setStaker(data);
+            setUser(data.user);
             setAssociated(data.associated.names.length > 0 ? data.associated.names[0] : undefined);
             setLoading(false);
         }

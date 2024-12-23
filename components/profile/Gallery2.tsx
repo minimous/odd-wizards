@@ -4,10 +4,11 @@ import { Token } from "@/types";
 import ImageGalleryProfile from "./ImageGalleryProfile";
 
 export interface Gallery2Props {
+    address: string
     tokens: Token[]
 }
 
-export default function Gallery2({ tokens }: Gallery2Props) {
+export default function Gallery2({ address, tokens }: Gallery2Props) {
 
     // Get first token for the main large image, fallback to default if no tokens
     const mainToken = tokens[0];
@@ -15,7 +16,7 @@ export default function Gallery2({ tokens }: Gallery2Props) {
     return (
         <div className="grid grid-cols-1 gap-2 md:gap-3 col-span-3">
             {/* Main large image */}
-            <ImageGalleryProfile token={mainToken} size="lg" />
+            <ImageGalleryProfile address={address} token={mainToken} size="lg" />
         </div>
     )
 }
