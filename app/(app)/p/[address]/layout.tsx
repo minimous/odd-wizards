@@ -14,7 +14,7 @@ async function generateMetadata({ params }: { params: { address: string } }) {
 
   const address = params.address;
   const imageUrl = address 
-    ? `${config?.base_url}/api/user/share/${address}`
+    ? `https://utfs.io/f/Ae0rhpcXcgiTO1o5jUZpAXyvWkwSZlLUYuPTOxn7f59FGEoV`
     : 'https://www.oddsgarden.io/images/Odds-Garden.png';
 
   return {
