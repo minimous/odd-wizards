@@ -30,7 +30,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
         switch (size) {
             case "lg":
                 return (
-                    <div className="w-full hidden group-hover:flex group-hover:scale-105 p-2 absolute h-[75px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
+                    <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-2 absolute h-[75px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
                                 <Button variant={"ghost"} className="p-2 h-[20px] hover:bg-black/20" >
@@ -44,7 +44,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                 )
             case "md":
                 return (
-                    <div className="w-full hidden group-hover:flex group-hover:scale-105 p-1 absolute h-[65px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
+                    <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[65px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
                                 <Button variant={"ghost"} className="p-2 h-[20px] hover:bg-black/20" >
@@ -58,7 +58,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                 )
             case "sm":
                 return (
-                    <div className="w-full hidden group-hover:flex group-hover:scale-105 p-1 absolute h-[55px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
+                    <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[45px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
                                 <Button variant={"ghost"} className="p-1 h-[20px] hover:bg-black/20" >
@@ -77,10 +77,17 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     return (
         <div className="relative aspect-square group cursor-pointer">
             <img
-                onClick={() => {setOpen(true)}} 
+                onClick={() => {
+                    if(getImageUrl(token) != DEFAULT_IMAGE_PROFILE){
+
+                        let index = allToken.findIndex(item => item.collection.contractAddress == token.collection.contractAddress && item.tokenId == token.tokenId);
+                        setIndex(index);
+                        setOpen(true)
+                    }
+                }} 
                 src={getImageUrl(token)}
                 alt={`Token ${token?.name || 'Character'}`}
-                className={cn("rounded-lg object-cover w-full h-full group-hover:scale-105", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
+                className={cn("rounded-lg object-cover w-full h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
             />
             <Lightbox
                 index={index}

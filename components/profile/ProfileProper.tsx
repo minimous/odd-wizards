@@ -5,7 +5,8 @@ import { ArrowUpRight } from 'lucide-react';
 import { Token } from '@/types';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { promiseToast, useToast } from "@/components/ui/use-toast";
 
 type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -85,10 +86,24 @@ const PoperProfile = ({
 
     const setPfp = async () => {
         try {
-            let resp = await axios.post(`/api/user/update-pfp/${address}`, { 
+            promiseToast(axios.post(`/api/user/update-pfp/${address}`, { 
                 token 
+            }), {
+                loading: {
+                    title: "Processing...",
+                    description: "Please Wait"
+                },
+                success: (result) => {
+                    return {
+                        title: "Success!",
+                        description: "Update Pfp Successfully"
+                    };
+                },
+                error: (error: AxiosError | any) => ({
+                    title: "Ups! Something wrong.",
+                    description: error?.response?.data?.message || 'Internal server error.'
+                })
             });
-            console.log("resp", resp.data);
         } catch (error: AxiosResponse | any) {
             console.log("error", error);
         }
