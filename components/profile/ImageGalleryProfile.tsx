@@ -75,8 +75,9 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div onClick={() => {setOpen(true)}} className="relative aspect-square group cursor-pointer">
+        <div className="relative aspect-square group cursor-pointer">
             <img
+                onClick={() => {setOpen(true)}} 
                 src={getImageUrl(token)}
                 alt={`Token ${token?.name || 'Character'}`}
                 className={cn("rounded-lg object-cover w-full h-full group-hover:scale-105", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
