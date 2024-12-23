@@ -58,7 +58,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                 )
             case "sm":
                 return (
-                    <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[55px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
+                    <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[45px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
                                 <Button variant={"ghost"} className="p-1 h-[20px] hover:bg-black/20" >
