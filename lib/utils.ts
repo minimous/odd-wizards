@@ -94,17 +94,17 @@ export default function calculatePoint(
   }
 }
 
-export interface FetchStargazeTokensOptions {
+interface FetchStargazeTokensOptions {
   owner: string;
   collectionAddress?: string;
   maxTokens?: number;
   sortBy?: string;
   limit?: number;
   offset?: number;
+  filterForSale?: string; // Add this new option
 }
 
 export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): Promise<OwnedTokensResponse> {
-
   if (!config) throw Error("Config not found");
 
   const {
@@ -113,7 +113,8 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
     maxTokens = Infinity,
     sortBy = 'ACQUIRED_DESC',
     limit = 10,
-    offset = 0
+    offset = 0,
+    filterForSale // Extract the new option
   } = options;
 
   const query = `
@@ -122,7 +123,8 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
       $limit: Int, 
       $offset: Int, 
       $filterByCollectionAddrs: [String!], 
-      $sortBy: TokenSort
+      $sortBy: TokenSort,
+      $filterForSale: SaleType
     ) {
       tokens(
         ownerAddrOrName: $owner
@@ -130,6 +132,7 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
         offset: $offset
         filterByCollectionAddrs: $filterByCollectionAddrs
         sortBy: $sortBy
+        filterForSale: $filterForSale
       ) {
         tokens {
           id
@@ -165,7 +168,8 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
     limit: Math.min(limit, maxTokens),
     offset,
     filterByCollectionAddrs: collectionAddress ? [collectionAddress] : undefined,
-    sortBy
+    sortBy,
+    filterForSale // Add to variables
   };
 
   try {
@@ -192,7 +196,8 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
   const {
     owner,
     collectionAddress,
-    sortBy = 'ACQUIRED_DESC'
+    sortBy = 'ACQUIRED_DESC',
+    filterForSale
   } = options;
 
   let allTokens: Token[] = [];
@@ -206,7 +211,8 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
       maxTokens: limit,
       sortBy,
       limit,
-      offset
+      offset,
+      filterForSale
     });
 
     // Add fetched tokens to the collection
@@ -316,6 +322,107 @@ export async function getCollection(collection_address: string) {
     throw error;
   }
 }
+
+export async function getAssosiatedName(associated_address: string) {
+  if (!config) throw Error("Config not found");
+
+  const query = `
+    query AssociatedName($associatedAddr: String!) {
+      names(associatedAddr: $associatedAddr) {
+        names {
+          name
+          associatedAddr
+          ownerAddr
+          media {
+            ...MediaFields
+            __typename
+          }
+          records {
+            name
+            value
+            verified
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+    }
+
+    fragment MediaFields on Media {
+      type
+      url
+      height
+      width
+      visualAssets {
+        xs {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        sm {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        md {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        lg {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        xl {
+          type
+          url
+          height
+          width
+          staticUrl
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }`;
+
+  try {
+    const response = await fetch(config.graphql_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          associatedAddr: associated_address
+        },
+        operationName: 'AssociatedName'
+      })
+    });
+
+    const data = await response.json();
+    return data.data.names;
+  } catch (error) {
+    console.error('Error fetching associated name:', error);
+    throw error;
+  }
+}
+
 
 export function formatToStars(value?: string | number): string {
   if (!value) return '0';
