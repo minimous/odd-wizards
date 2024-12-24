@@ -55,7 +55,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div className="aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg"
+        <div className={cn("aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
             style={{ backgroundImage: `url(${getImageUrl(token)})` }}
             onClick={() => {
                 if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
@@ -69,7 +69,6 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                 }
             }}
         >
-            {getImageUrl(token) === DEFAULT_IMAGE_PROFILE && <div className="opacity-10 w-full h-full" />} 
             <Lightbox
                 index={index}
                 open={open}

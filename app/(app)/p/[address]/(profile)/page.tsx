@@ -62,7 +62,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Link href={`https://x.com/${item.value}`} target='_blank'>
-                                    <img src="/images/x.png" className="w-[30px] md:w-[35px] hover:scale-105 transition-all duration-300 ease-in-out" />
+                                    <img src="/images/x.png" className="w-[20px] md:w-[30px] hover:scale-105 transition-all duration-300 ease-in-out" />
                                 </Link>
                             </TooltipTrigger>
                             <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
@@ -165,7 +165,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <Link href={`https://www.stargaze.zone/p/${params.address}/tokens`} target='_blank'>
-                                                                <img src="/images/Icon/stargaze-white.png" className="w-[30px] md:w-[35px] hover:scale-105 transition-all duration-300 ease-in-out" />
+                                                                <img src="/images/Icon/stargaze-white.png" className="w-[20px] md:w-[30px] hover:scale-105 transition-all duration-300 ease-in-out" />
                                                             </Link>
                                                         </TooltipTrigger>
                                                         <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
