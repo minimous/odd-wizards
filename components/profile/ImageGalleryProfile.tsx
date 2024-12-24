@@ -56,7 +56,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
 
     return (
         <div 
-            className="relative aspect-square group cursor-pointer max-h-[250px] md:!max-h-none overflow-hidden bg-center bg-cover rounded-lg"
+            className="relative aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg"
             style={{ backgroundImage: `url(${getImageUrl(token)})` }}
             onClick={() => {
                 if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
