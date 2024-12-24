@@ -30,7 +30,8 @@ export default function Header() {
     async function fetchData() {
       if (address) {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
-        setUser(resp.data.data);
+        setUser(resp.data?.data?.user);
+        console.log("usersss", resp.data?.data?.user);
       }
     }
 
