@@ -138,23 +138,23 @@ const PoperProfile = ({
             {isOpen && (
                 <div
                     ref={popoverRef}
-                    className="absolute z-50 min-w-[120px] bg-black border border-[#323237] rounded-lg shadow-lg px-2 py-4"
+                    className="absolute z-50 min-w-[150px] bg-[#171717] border border-[#323237] rounded-lg shadow-lg px-2 py-4"
                     style={{
                         ...getPopoverPosition()
                     }}
                 >
                     <div className="grid gap-2">
                         <Link onClick={(e) => {e.stopPropagation()}} className='w-full' href={`https://www.stargaze.zone/m/${token.collection.contractAddress}/${token.tokenId}`} target="_blank" >
-                            <Button variant={"ghost"} className="h-[25px] w-full justify-between hover:bg-white/10 px-2">
-                                <span className='text-xs'>Trade</span>
-                                <ArrowUpRight />
+                            <Button variant={"ghost"} className="h-[25px] w-full justify-between text-[#A1A1AA] px-2 hover:bg-transparent">
+                                <span className='text-xs'>Trade on $STARS</span>
+                                <ArrowUpRight strokeWidth={1.25} />
                             </Button>
                         </Link>
                         {
                             isWalletConnected && session?.user?.name == address && <Button onClick={(e) => {
                                 e.stopPropagation();
                                 setPfp()
-                                }} variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
+                                }} variant={"ghost"} className="h-[25px] text-[#A1A1AA] justify-start px-2 hover:bg-transparent">
                                 <span className='text-xs'>Set as PFP</span>
                             </Button>
                         }
