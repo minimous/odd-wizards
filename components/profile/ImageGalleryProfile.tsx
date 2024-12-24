@@ -91,7 +91,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                 src={getImageUrl(token)}
                 alt={`Token ${token?.name || "Character"}`}
                 className={cn(
-                    "rounded-lg aspect-square overflow-hidden object-cover w-full h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out",
+                    "rounded-lg aspect-square overflow-hidden w-full h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out",
                     getImageUrl(token) === DEFAULT_IMAGE_PROFILE && "opacity-10"
                 )}
                 style={{ maxWidth: "100%", maxHeight: "100%" }}
