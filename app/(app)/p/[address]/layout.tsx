@@ -10,11 +10,9 @@ interface MainLayoutProps {
 
 async function generateMetadata({ params }: { params: { address: string } }) {
 
-  const config = getConfig();
-
   const address = params.address;
   const imageUrl = address 
-    ? `https://utfs.io/f/Ae0rhpcXcgiTO1o5jUZpAXyvWkwSZlLUYuPTOxn7f59FGEoV/1.png`
+    ? `https://imgur.com/wm6uQxb`
     : 'https://www.oddsgarden.io/images/Odds-Garden.png';
 
   return {
