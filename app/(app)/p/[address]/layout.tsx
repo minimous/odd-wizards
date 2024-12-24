@@ -12,7 +12,7 @@ async function generateMetadata({ params }: { params: { address: string } }) {
 
   const address = params.address;
   const imageUrl = address 
-    ? `https://imgur.com/wm6uQxb`
+    ? `https://i.imgur.com/wm6uQxb.png`
     : 'https://www.oddsgarden.io/images/Odds-Garden.png';
 
   return {
