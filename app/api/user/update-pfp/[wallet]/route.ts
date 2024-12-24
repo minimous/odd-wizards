@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
 import { Token } from '@/types';
 import { getToken } from 'next-auth/jwt';
+require('dotenv').config();
 
 export async function POST(request: NextRequest, { params }: { params: { wallet: string } }) {
     try {
