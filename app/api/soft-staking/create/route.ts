@@ -60,10 +60,14 @@ export async function POST(request: NextRequest) {
 
         updateNftOwner(staker_address, collection_address);
 
+        const stakerTotalPoints = staker.staker_total_points
+            ? staker.staker_total_points.toString()
+            : null;
+
         return NextResponse.json(
             {
                 message: 'Stake created successfully',
-                data: staker
+                data: { ...staker, staker_total_points: stakerTotalPoints },
             },
             { status: 201 }
         );

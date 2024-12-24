@@ -76,13 +76,21 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
 
         const associatedName = await getAssosiatedName(wallet);
 
+        const stakerTotalPoints = staker?.staker_total_points
+            ? staker.staker_total_points.toString()
+            : null;
+
+        const userTotalPoints = user?.user_total_points
+            ? user.user_total_points.toString()
+            : null;
+
         return NextResponse.json(
             {
                 message: 'successfully',
                 data: { 
                     associated: associatedName,
-                    user: user,
-                    staker: staker,
+                    user: { ...user, user_total_points: userTotalPoints},
+                    staker: { ...staker, staker_total_points: stakerTotalPoints },
                 }
             },
             { status: 200 }
