@@ -8,38 +8,30 @@ interface MainLayoutProps {
   children: ReactNode;
 }
 
-async function generateMetadata({ params }: { params: { address: string } }) {
-
-  const address = params.address;
-  const imageUrl = address 
-    ? `https://i.imgur.com/wm6uQxb.png`
-    : 'https://www.oddsgarden.io/images/Odds-Garden.png';
-
-  return {
+export const metadata = {
+  title: 'Odds Wizard',
+  description: 'Stake, Win, and LFGODDS!',
+  openGraph: {
+    type: "website",
+    url: "https://www.oddsgarden.io",
     title: 'Odds Wizard',
     description: 'Stake, Win, and LFGODDS!',
-    openGraph: {
-      type: "website",
-      url: "https://www.oddsgarden.io",
-      title: 'Odds Wizard',
-      description: 'Stake, Win, and LFGODDS!',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: 'Odd Wizard Share Image'
-        }
-      ]
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Odds Wizard',
-      description: 'Stake, Win, and LFGODDS!',
-      images: [imageUrl]
-    }
-  };
-}
+    images: [
+      {
+        url: 'https://utfs.io/f/Ae0rhpcXcgiTO1o5jUZpAXyvWkwSZlLUYuPTOxn7f59FGEoV',
+        width: 1200,
+        height: 630,
+        alt: 'Odd Wizard Share Image'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Odds Wizard',
+    description: 'Stake, Win, and LFGODDS!',
+    images: ['https://utfs.io/f/Ae0rhpcXcgiTO1o5jUZpAXyvWkwSZlLUYuPTOxn7f59FGEoV']
+  }
+};
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
@@ -57,5 +49,3 @@ export default function MainLayout({ children }: MainLayoutProps) {
     </div>
   );
 }
-
-export { generateMetadata };
