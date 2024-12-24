@@ -57,10 +57,14 @@ export async function POST(request: NextRequest, { params }: { params: { wallet:
             }
         });
 
+        const userTotalPoints = user?.user_total_points
+            ? user.user_total_points.toString()
+            : null;
+
         return NextResponse.json(
             {
                 message: 'Update Pfp successfully',
-                data: user
+                data: { ...user, user_total_points: userTotalPoints}
             },
             { status: 200 }
         );
