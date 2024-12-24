@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react';
 import { useChain } from '@cosmos-kit/react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { promiseToast, useToast } from "@/components/ui/use-toast";
+import { useUser } from '@/hooks/useUser';
 
 type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -42,6 +43,7 @@ const PoperProfile = ({
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const { data: session } = useSession();
+    const { setUser } = useUser();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -96,6 +98,9 @@ const PoperProfile = ({
                     description: "Please Wait"
                 },
                 success: (result) => {
+
+                    setUser(result.data.data);
+
                     return {
                         title: "Success!",
                         description: "Update Pfp Successfully"
