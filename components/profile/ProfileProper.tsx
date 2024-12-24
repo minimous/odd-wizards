@@ -16,7 +16,6 @@ type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 interface PopoverProps {
     address: string
     token: Token
-    // children: ReactNode;
     position?: PopoverPosition;
     className?: string;
 }
