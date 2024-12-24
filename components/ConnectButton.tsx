@@ -7,6 +7,7 @@ import { useUser } from "@/hooks/useUser";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
 import { cn, formatAddress } from "@/lib/utils";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export interface ConnectButtonProps {
     showProfile?: boolean,
@@ -15,9 +16,15 @@ export interface ConnectButtonProps {
 
 export default function ConnectButton({ showProfile = true, className }: ConnectButtonProps) {
     const wallet = useWallet();
-    const { user } = useUser();
+    const { user: dataUser } = useUser();
+    const [user, setUser] = useState(dataUser);
     const { connect, disconnect, address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
 
+
+    useEffect(() => {
+        setUser(dataUser);
+    }, [dataUser])
+    
     // Handle connecting the wallet
     const handleConnectWallet = async () => {
         try {
