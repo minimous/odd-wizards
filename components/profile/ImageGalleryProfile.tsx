@@ -75,7 +75,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div className="relative aspect-square group cursor-pointer">
+        <div className="relative aspect-square group cursor-pointer max-h-[200px] md:!max-h-none overflow-hidden">
             <img
                 onClick={() => {
                     if(getImageUrl(token) != DEFAULT_IMAGE_PROFILE){
