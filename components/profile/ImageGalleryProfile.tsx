@@ -33,7 +33,10 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                     <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-2 absolute h-[75px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
-                                <Button variant={"ghost"} className="p-2 h-[20px] hover:bg-black/20" >
+                                <Button 
+                                    variant={"ghost"} 
+                                    className="p-2 h-[20px] hover:bg-black/20" 
+                                    onClick={(e) => e.stopPropagation()}>
                                     <Dot size={8} strokeWidth={10} />
                                     <Dot size={8} strokeWidth={10} />
                                     <Dot size={8} strokeWidth={10} />
@@ -47,7 +50,10 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                     <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[65px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
-                                <Button variant={"ghost"} className="p-2 h-[20px] hover:bg-black/20" >
+                                <Button 
+                                    variant={"ghost"} 
+                                    className="p-2 h-[20px] hover:bg-black/20" 
+                                    onClick={(e) => e.stopPropagation()}>
                                     <Dot size={8} strokeWidth={10} />
                                     <Dot size={8} strokeWidth={10} />
                                     <Dot size={8} strokeWidth={10} />
@@ -61,7 +67,10 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                     <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[45px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
-                                <Button variant={"ghost"} className="p-1 h-[20px] hover:bg-black/20" >
+                                <Button 
+                                    variant={"ghost"} 
+                                    className="p-1 h-[20px] hover:bg-black/20" 
+                                    onClick={(e) => e.stopPropagation()}>
                                     <Dot size={8} strokeWidth={10} />
                                     <Dot size={8} strokeWidth={10} />
                                     <Dot size={8} strokeWidth={10} />
@@ -75,27 +84,22 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div className="relative aspect-square group cursor-pointer max-h-[225px] md:!max-h-none overflow-hidden">
-            <img
-                onClick={() => {
-                    if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
-                        let index = allToken.findIndex(
-                            (item) =>
-                                item.collection.contractAddress === token.collection.contractAddress &&
-                                item.tokenId === token.tokenId
-                        );
-                        setIndex(index);
-                        setOpen(true);
-                    }
-                }}
-                src={getImageUrl(token)}
-                alt={`Token ${token?.name || "Character"}`}
-                className={cn(
-                    "rounded-lg aspect-square object-fill overflow-hidden w-full h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out",
-                    getImageUrl(token) === DEFAULT_IMAGE_PROFILE && "opacity-10"
-                )}
-                style={{ maxWidth: "100%", maxHeight: "100%" }}
-            />
+        <div 
+            className="relative aspect-square group cursor-pointer max-h-[250px] md:!max-h-none overflow-hidden bg-center bg-cover rounded-lg"
+            style={{ backgroundImage: `url(${getImageUrl(token)})` }}
+            onClick={() => {
+                if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
+                    let index = allToken.findIndex(
+                        (item) =>
+                            item.collection.contractAddress === token.collection.contractAddress &&
+                            item.tokenId === token.tokenId
+                    );
+                    setIndex(index);
+                    setOpen(true);
+                }
+            }}
+        >
+            {getImageUrl(token) === DEFAULT_IMAGE_PROFILE && <div className="opacity-10 w-full h-full" />} 
             <Lightbox
                 index={index}
                 open={open}
