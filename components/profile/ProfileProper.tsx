@@ -9,13 +9,14 @@ import { useChain } from '@cosmos-kit/react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { promiseToast, useToast } from "@/components/ui/use-toast";
 import { useUser } from '@/hooks/useUser';
+import { Dot } from "lucide-react";
 
 type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 
 interface PopoverProps {
     address: string
     token: Token
-    children: ReactNode;
+    // children: ReactNode;
     position?: PopoverPosition;
     className?: string;
 }
@@ -34,7 +35,6 @@ interface PositionStyles {
 const PoperProfile = ({
     address,
     token,
-    children,
     position = 'bottom',
     className = ''
 }: PopoverProps): JSX.Element => {
@@ -123,7 +123,17 @@ const PoperProfile = ({
                 onClick={() => setIsOpen(!isOpen)}
                 className="cursor-pointer"
             >
-                {children}
+                <Button
+                    variant={"ghost"}
+                    className="p-2 h-[20px] hover:bg-black/20"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpen(!isOpen);
+                    }}>
+                    <Dot size={8} strokeWidth={10} />
+                    <Dot size={8} strokeWidth={10} />
+                    <Dot size={8} strokeWidth={10} />
+                </Button>
             </div>
 
             {isOpen && (
@@ -135,14 +145,17 @@ const PoperProfile = ({
                     }}
                 >
                     <div className="grid gap-2">
-                        <Link className='w-full' href={`https://www.stargaze.zone/m/${token.collection.contractAddress}/${token.tokenId}`} target="_blank" >
+                        <Link onClick={(e) => {e.stopPropagation()}} className='w-full' href={`https://www.stargaze.zone/m/${token.collection.contractAddress}/${token.tokenId}`} target="_blank" >
                             <Button variant={"ghost"} className="h-[25px] w-full justify-between hover:bg-white/10 px-2">
                                 <span className='text-xs'>Trade</span>
                                 <ArrowUpRight />
                             </Button>
                         </Link>
                         {
-                            isWalletConnected && session?.user?.name == address && <Button onClick={setPfp} variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
+                            isWalletConnected && session?.user?.name == address && <Button onClick={(e) => {
+                                e.stopPropagation();
+                                setPfp()
+                                }} variant={"ghost"} className="h-[25px] justify-start hover:bg-white/10 px-2">
                                 <span className='text-xs'>Set as PFP</span>
                             </Button>
                         }
