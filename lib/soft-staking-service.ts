@@ -109,6 +109,7 @@ export async function getLeaderboard(collection_address: string, staker_address:
                     mc.collection_address,
                     ms.staker_address,
                     ms.staker_nft_staked,
+                    ms.staker_red_flag,
                     mu.user_image_url,
                     SUM(tp.point_amount) as total_points
                 FROM trn_point tp
@@ -117,7 +118,7 @@ export async function getLeaderboard(collection_address: string, staker_address:
                 LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
                 WHERE mc.collection_address = ${collection_address}
                 AND ms.staker_nft_staked > 0
-                GROUP BY mc.collection_address, ms.staker_address, ms.staker_nft_staked, mu.user_image_url
+                GROUP BY mc.collection_address, ms.staker_address, ms.staker_nft_staked, ms.staker_red_flag, mu.user_image_url
             ),
             ranked_leaderboard AS (
                 SELECT 
@@ -132,6 +133,7 @@ export async function getLeaderboard(collection_address: string, staker_address:
                 collection_address,
                 staker_address,
                 staker_nft_staked,
+                staker_red_flag,
                 user_image_url,
                 total_points,
                 ranking
