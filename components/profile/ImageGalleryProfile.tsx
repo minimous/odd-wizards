@@ -75,7 +75,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div className="relative aspect-square group cursor-pointer max-h-[200px] md:!max-h-none overflow-hidden">
+        <div className="relative aspect-square group cursor-pointer max-h-[225px] md:!max-h-none overflow-hidden">
             <img
                 onClick={() => {
                     if(getImageUrl(token) != DEFAULT_IMAGE_PROFILE){
@@ -87,7 +87,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                 }} 
                 src={getImageUrl(token)}
                 alt={`Token ${token?.name || 'Character'}`}
-                className={cn("rounded-lg aspect-square max-h-[200px] md:!max-h-none overflow-hidden object-cover w-full h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
+                className={cn("rounded-lg aspect-square overflow-hidden object-cover h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
             />
             <Lightbox
                 index={index}
