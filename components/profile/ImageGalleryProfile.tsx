@@ -2,8 +2,6 @@
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
 import { cn } from "@/lib/utils";
 import { Token } from "@/types";
-import { Dot } from "lucide-react";
-import { Button } from "../ui/button";
 import ProfilePoper from "./ProfileProper";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -33,14 +31,6 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                     <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-2 absolute h-[75px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
-                                <Button 
-                                    variant={"ghost"} 
-                                    className="p-2 h-[20px] hover:bg-black/20" 
-                                    onClick={(e) => e.stopPropagation()}>
-                                    <Dot size={8} strokeWidth={10} />
-                                    <Dot size={8} strokeWidth={10} />
-                                    <Dot size={8} strokeWidth={10} />
-                                </Button>
                             </ProfilePoper>
                         </div>
                     </div>
@@ -50,14 +40,6 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                     <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[65px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
-                                <Button 
-                                    variant={"ghost"} 
-                                    className="p-2 h-[20px] hover:bg-black/20" 
-                                    onClick={(e) => e.stopPropagation()}>
-                                    <Dot size={8} strokeWidth={10} />
-                                    <Dot size={8} strokeWidth={10} />
-                                    <Dot size={8} strokeWidth={10} />
-                                </Button>
                             </ProfilePoper>
                         </div>
                     </div>
@@ -67,14 +49,6 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
                     <div className="w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[45px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
                         <div className="w-full flex justify-end text-white">
                             <ProfilePoper address={address} token={token} position="bottom">
-                                <Button 
-                                    variant={"ghost"} 
-                                    className="p-1 h-[20px] hover:bg-black/20" 
-                                    onClick={(e) => e.stopPropagation()}>
-                                    <Dot size={8} strokeWidth={10} />
-                                    <Dot size={8} strokeWidth={10} />
-                                    <Dot size={8} strokeWidth={10} />
-                                </Button>
                             </ProfilePoper>
                         </div>
 
