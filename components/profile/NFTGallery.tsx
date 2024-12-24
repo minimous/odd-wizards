@@ -111,7 +111,7 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
 
   return (
     <div className="px-4 md:px-24 mx-auto">
-      <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-3">
+      <div className="grid grid-cols-10 gap-2 md:gap-3">
         {renderGallery(tokens)}
       </div>
       {loading && (
