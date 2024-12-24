@@ -78,30 +78,34 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
         <div className="relative aspect-square group cursor-pointer max-h-[225px] md:!max-h-none overflow-hidden">
             <img
                 onClick={() => {
-                    if(getImageUrl(token) != DEFAULT_IMAGE_PROFILE){
-
-                        let index = allToken.findIndex(item => item.collection.contractAddress == token.collection.contractAddress && item.tokenId == token.tokenId);
+                    if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
+                        let index = allToken.findIndex(
+                            (item) =>
+                                item.collection.contractAddress === token.collection.contractAddress &&
+                                item.tokenId === token.tokenId
+                        );
                         setIndex(index);
-                        setOpen(true)
+                        setOpen(true);
                     }
-                }} 
+                }}
                 src={getImageUrl(token)}
-                alt={`Token ${token?.name || 'Character'}`}
-                className={cn("rounded-lg aspect-square overflow-hidden object-cover h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
+                alt={`Token ${token?.name || "Character"}`}
+                className={cn(
+                    "rounded-lg aspect-square overflow-hidden object-cover w-full h-full group-hover:scale-[1.02] transition-all duration-200 ease-in-out",
+                    getImageUrl(token) === DEFAULT_IMAGE_PROFILE && "opacity-10"
+                )}
+                style={{ maxWidth: "100%", maxHeight: "100%" }}
             />
             <Lightbox
                 index={index}
                 open={open}
                 close={() => setOpen(false)}
-                slides={allToken.map(item => {
-                    return { src: item.media.url, alt: item.name }
+                slides={allToken.map((item) => {
+                    return { src: item.media.url, alt: item.name };
                 })}
-                // render={{
-                //     buttonPrev: () => null,
-                //     buttonNext: () => null,
-                // }}
             />
             {token && renderImageButton(size)}
         </div>
+
     )
 }
