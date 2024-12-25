@@ -3,6 +3,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import getConfig from '@/config/config';
 import ChainProviderWrapper from '@/providers/chain-provider-wrapper';
 import type { ReactNode } from 'react';
+import prisma from '@/prisma/prisma';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,7 +11,12 @@ interface MainLayoutProps {
 
 async function generateMetadata({ params }: { params: { address: string } }) {
   
-  const imageUrl = 'https://www.oddsgarden.io/images/Odds-Garden.png';
+  const user = await prisma.mst_users.findUnique({
+    where: {
+      user_address: params.address
+    }
+  });
+  const imageUrl = user?.user_image_preview ?? 'https://www.oddsgarden.io/images/Odds-Garden.png';
 
   return {
     title: 'Odds Wizard',
