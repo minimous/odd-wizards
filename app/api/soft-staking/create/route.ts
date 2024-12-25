@@ -52,17 +52,22 @@ export async function POST(request: NextRequest) {
             staker = await prisma.mst_staker.create({
                 data: {
                     staker_address,
-                    staker_collection_id: collection.collection_id
+                    staker_collection_id: collection.collection_id,
+                    staker_total_points: 0
                 }
             });  
         } 
 
         updateNftOwner(staker_address, collection_address);
 
+        const stakerTotalPoints = staker.staker_total_points
+            ? staker.staker_total_points.toString()
+            : null;
+
         return NextResponse.json(
             {
                 message: 'Stake created successfully',
-                data: staker
+                data: { ...staker, staker_total_points: stakerTotalPoints },
             },
             { status: 201 }
         );

@@ -58,16 +58,21 @@ export async function POST(request: NextRequest) {
                 where: { staker_id: staker.staker_id },
                 data: {
                     staker_lastclaim_date: new Date(),
-                    staker_nft_staked: resp.totalNft
+                    staker_nft_staked: resp.totalNft,
+                    staker_total_points: (staker.staker_total_points ?? 0) + resp.point
                 }
             });    
         }
+
+        const stakerTotalPoints = staker.staker_total_points
+            ? staker.staker_total_points.toString()
+            : null;
 
         return NextResponse.json(
             {
                 message: 'Claim successfully',
                 data: {
-                    staker: staker,
+                    staker: { ...staker, staker_total_points: stakerTotalPoints },
                     point: resp.point
                 }
             },

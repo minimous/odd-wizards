@@ -2,14 +2,15 @@
 
 import getConfig from "@/config/config";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { formatAddress, formatDecimal } from "@/lib/utils";
+import { cn, formatAddress, formatDecimal } from "@/lib/utils";
 import { LeaderboardItem } from "@/types/leaderboard";
 import axios from "axios";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 const Leaderboard = () => {
   const rankEmojis = ["🥇", "🥈", "🥉"];
@@ -82,20 +83,22 @@ const Leaderboard = () => {
             key={index}
             className="flex gap-2 md:!gap-6 items-center justify-center w-full mt-2 px-0 md:px-12 lg:px-16"
           >
-            <div className="flex items-center justify-center w-[60px] h-[68px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-sm md:!text-xl text-center p-4">
+            <div className={cn(rankEmojis[index] ? "text-xl md:!text-4xl" : "text-sm md:!text-xl", "flex items-center justify-center w-[60px] h-[68px] md:w-[105px] md:h-[105px] bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA] font-bold text-center p-4")}>
               {rankEmojis[index] || item.ranking}
             </div>
             <div className="grid grid-cols-3 p-4 px-4 md:!px-8 gap-2 w-full h-[68px]  md:h-[105px] md:w-full bg-neutral-900 border border-[#323237] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4 col-span-2 md:col-span-1">
                 <div className="shrink-0 w-[35px] h-[35px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
-                  <img
-                    src={item?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
-                    alt={item?.staker_address ?? ""}
-                    className="rounded-full object-cover w-full h-full"
-                    onError={(e: any) => {
-                      e.target.src = DEFAULT_IMAGE_PROFILE;
-                    }}
-                  />
+                  <Link href={`/p/${item?.staker_address}`} >
+                    <img
+                      src={item?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
+                      alt={item?.staker_address ?? ""}
+                      className="rounded-full object-cover w-full h-full"
+                      onError={(e: any) => {
+                        e.target.src = DEFAULT_IMAGE_PROFILE;
+                      }}
+                    />
+                  </Link>
                 </div>
                 <div>
                   <Link href={`https://www.stargaze.zone/p/${item?.staker_address}`} target="_blank" className="text-left text-[#DB2877]">
@@ -114,12 +117,35 @@ const Leaderboard = () => {
                 </p>
               </div>
               <div className="flex items-center justify-end text-center">
-                <p className="text-[12px] hidden md:!block md:text-[20px] font-bold">
-                  {item.staker_nft_staked} NFTs Staked
-                </p>
-                <div className="md:!hidden">
-                  <p className="text-[12px] md:text-[20px] font-bold">{item?.staker_nft_staked} NFTs</p>
-                  <p className="text-[12px] md:text-[20px] font-bold">Staked</p>
+                <div className="flex items-center justify-between gap-x-2">
+                  <div className="w-full">
+                    <p className="text-[12px] hidden md:!block md:text-[20px] font-bold">
+                      {item.staker_nft_staked} NFTs Staked
+                    </p>
+                    <div className="md:!hidden">
+                      <p className="text-[12px] md:text-[20px] font-bold">{item?.staker_nft_staked} NFTs</p>
+                      <p className="text-[12px] md:text-[20px] font-bold">Staked</p>
+                    </div>
+                  </div>
+                  <div hidden={item.staker_red_flag != 'Y'}>
+                    <div data-tooltip-id="flag-tooltip" className="flex items-center gap-2" data-tip="This account may be detected manipulating data, we will temporarily flag this account.">
+                      <img src="/images/Icon/red-flag.png" className="h-[30px] md:!h-[40px]" />
+                    </div>
+                    <Tooltip
+                      id="flag-tooltip"
+                      place="top-end"
+                      style={{ backgroundColor: "#B70A0B", color: "#FFF", borderRadius: '10px' }}
+                    >
+                      <div className="gird">
+                        <p className="text-xs">
+                          This account may be detected manipulating data,
+                        </p>
+                        <p className="text-xs">
+                          we will temporarily flag this account.
+                        </p>
+                      </div>
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
             </div>

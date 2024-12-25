@@ -8,14 +8,14 @@ export async function GET(request: NextRequest) {
         const collection_address = searchParams.get('collection_address');
         const staker_address = searchParams.get('wallet_address');
 
-        if(!staker_address){
+        if (!staker_address) {
             return NextResponse.json(
                 { message: 'wallet_address is required' },
                 { status: 400 }
             );
         }
 
-        if(!collection_address){
+        if (!collection_address) {
             return NextResponse.json(
                 { message: 'collection_address is required' },
                 { status: 400 }
@@ -49,18 +49,23 @@ export async function GET(request: NextRequest) {
 
         const resp = await getTotalPoints(staker_address, collection_address);
 
-        if(resp.point == 0){
+        if (resp.point == 0) {
             return NextResponse.json(
                 { message: 'No points available to claim' },
                 { status: 400 }
             );
         }
+
+        const stakerTotalPoints = staker.staker_total_points
+            ? staker.staker_total_points.toString()
+            : null;
+
         return NextResponse.json(
             {
                 message: 'Get points successfully',
                 data: {
-                    staker: staker,
-                    points: resp.point 
+                    staker: { ...staker, staker_total_points: stakerTotalPoints },
+                    points: resp.point
                 }
             },
             { status: 200 }

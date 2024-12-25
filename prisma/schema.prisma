@@ -13,7 +13,8 @@ model mst_users {
   user_twitter_url       String?
   user_image_url         String?
   user_created_date      DateTime?  
-  
+  user_total_points      Int?
+  user_image_preview     String?
   // Relasi dengan Staker
   mst_staker mst_staker[]
 }
@@ -38,6 +39,8 @@ model mst_staker {
   staker_nft_staked       Int?
   created_date            DateTime? @default(now())
   updated_date            DateTime? @updatedAt
+  staker_total_points     Int?
+  staker_red_flag         String?
   
   // Relasi dengan Collection dan Point
   collection mst_collection? @relation(fields: [staker_collection_id], references: [collection_id])
@@ -50,7 +53,7 @@ model trn_point {
   point_id            Int       @id @default(autoincrement())
   point_amount        Int?
   point_claim_date    DateTime?
-  point_nft_staked   Int?
+  point_nft_staked    Int?
   point_staker_id     Int?
   
   // Relasi dengan Staker
