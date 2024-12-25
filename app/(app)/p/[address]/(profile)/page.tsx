@@ -7,7 +7,7 @@ import { useChain } from "@cosmos-kit/react";
 import { formatAddress, formatDecimal } from "@/lib/utils";
 import NFTGallery from "@/components/profile/NFTGallery";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import getConfig from "@/config/config";
 import Link from "next/link";
 import {
@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/Loading";
+import { promiseToast } from "@/components/ui/use-toast";
 import { mst_users } from "@prisma/client";
-import { toPng } from 'html-to-image';
 
 export default function Profile({ params }: { params: { address: string } }) {
     const config = getConfig();
@@ -28,6 +28,7 @@ export default function Profile({ params }: { params: { address: string } }) {
     const [associated, setAssociated] = useState<any>();
     const [loading, setLoading] = useState<boolean>(true);
     const componentRef = useRef<HTMLDivElement>(null);
+    const [html2pdf, setHtml2pdf] = useState<any>(null);
 
     useEffect(() => {
 
@@ -44,6 +45,13 @@ export default function Profile({ params }: { params: { address: string } }) {
         fetchData();
 
     }, []);
+
+    useEffect(() => {
+        import('html2pdf.js').then((module) => {
+            setHtml2pdf(() => module.default);
+        });
+    }, []);
+
 
     const renderSocmed = (item: any) => {
 
@@ -75,53 +83,123 @@ export default function Profile({ params }: { params: { address: string } }) {
         }
     }
 
-    const postToTwitter = (tweetData: { text: string }) => {
+    const doTweet = () => {
+        promiseToast(prepareTweet(), {
+          loading: {
+            title: "Processing...",
+            description: "Please Wait"
+          },
+          success: () => {
+            const tweetText = `Check out my Wizard Profile! 🧙‍♂️\n${config?.base_url}/p/${params.address}`;
+            const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+            
+            // Create temporary link element
+            const link = document.createElement('a');
+            link.href = tweetUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer'; // Security best practice for target="_blank"
+            document.body.appendChild(link);
+            
+            // Trigger click and remove element
+            link.click();
+            document.body.removeChild(link);
+            
+            return {
+              title: "Success!",
+              description: "Share Success"
+            };
+          },
+          error: (error: AxiosError | any) => ({
+            title: "Ups! Something wrong.",
+            description: error?.response?.data?.message || 'Internal server error.'
+          })
+        });
+      };
+
+    const prepareTweet = async () => {
         try {
-            // Encode the text for URL
-            const encodedText = encodeURIComponent(tweetData.text);
-            
-            // Create Twitter intent URL
-            // Using Twitter's Web Intent URL
-            const twitterIntentUrl = `https://x.com/intent/post?text=${encodedText}`;
-            
-            // Open in new window/tab
-            window.open(twitterIntentUrl, '_blank');
-            
+            // Export image
+            const img = await exportToImage();
+            if (!img) throw new Error('Failed to generate image');
+
+            // Convert data URI to Blob and create File
+            const blob = dataURItoBlob(img);
+            const file = new File([blob], params.address + ".png", { type: "image/png" });
+
+            // Create FormData
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Upload using UploadThing endpoint
+            const response = await fetch(`/api/share/${params.address}`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Upload failed');
+            }
         } catch (error) {
-            console.error('Error posting to Twitter:', error);
+            console.error('Tweet failed:', error);
             throw error;
         }
     };
 
-    const doTweet = async () => {
-        try {
-            // Tweet text content
-            const tweetText = "Check out this amazing visualization! 📊\n" +
-                `${config?.base_url}/p/${params.address}`;
+    // Helper function to convert Data URI to Blob
+    const dataURItoBlob = (dataURI: string) => {
+        const byteString = atob(dataURI.split(',')[1]);
+        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
 
-            // Combine text and image for sharing
-            // Note: Implementation depends on your social media API/library
-            const tweetData = {
-                text: tweetText
-            };
-
-            // Here you would implement your actual tweet posting logic
-            // Example:
-            await postToTwitter(tweetData);
-
-            console.log('Tweet content prepared:', tweetData);
-            return tweetData;
-
-        } catch (error) {
-            console.error('Error creating tweet:', error);
-            throw error;
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
         }
+
+        return new Blob([ab], { type: mimeString });
+    };
+
+    const exportToImage = async (): Promise<string> => {
+        const element = componentRef.current;
+        await waitForImages(element);
+
+        const opt = {
+            margin: 0,
+            filename: params.address,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: true
+            },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        const img = await html2pdf()
+            .set(opt)
+            .from(element)
+            .outputImg();
+
+        return img.src;
+    };
+
+    const waitForImages = async (element: any) => {
+        const images = element.getElementsByTagName('img');
+        const promises = Array.from(images).map((img: any) => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        });
+        await Promise.all(promises);
     };
 
     return (
         <div className="relative">
             <Header />
-            <div ref={componentRef}>
+            <div>
                 <div className="w-full h-screen bg-[url('/images/Account.gif')] bg-cover bg-center">
                     <div className="relative h-screen flex items-end pb-4">
                         <div className="absolute z-10 left-4 md:left-24 bottom-5">
@@ -173,7 +251,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </TooltipProvider>
-                                                {/* <TooltipProvider>
+                                                <TooltipProvider>
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <span className="cursor-pointer" onClick={doTweet}>
@@ -184,7 +262,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                                                             <p>Share Your Account</p>
                                                         </TooltipContent>
                                                     </Tooltip>
-                                                </TooltipProvider> */}
+                                                </TooltipProvider>
                                             </div>
                                             {/* <span className="md:!text-md text-gray-400 hover:text-white">Edit Profile</span> */}
                                         </div>
@@ -219,6 +297,97 @@ export default function Profile({ params }: { params: { address: string } }) {
             </div>
             <div className="bg-[url('/images/bg-line-grid.png')] bg-cover bg-center py-8">
                 <Footer className="my-0" />
+            </div>
+
+            <div className="hidden">
+                <div ref={componentRef}>
+                    <div className="w-full h-[300px] bg-[url('/images/Account.gif')] bg-cover bg-center">
+                        <div className="relative h-[300px] flex items-end pb-4">
+                            <div className="absolute z-10 left-4 md:left-24 bottom-5">
+
+                                <div className="flex gap-x-6 items-center">
+                                    <div className="shrink-0">
+                                        <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
+                                            e.target.src = DEFAULT_IMAGE_PROFILE;
+                                        }} className="w-[100px] h-[100px] md:!w-[125px] md:!h-[125px] rounded-full" />
+                                    </div>
+                                    {
+                                        loading ? <Loading /> : (
+                                            <div className="flex flex-col gap-y-3">
+                                                {
+                                                    associated?.name ? (
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    {/* <Link href={`https://www.stargaze.zone/p/${params.address}/tokens`} target='_blank'> */}
+                                                                    <span className='text-xl md:!text-3xl font-black'>{associated.name}</span>
+                                                                    {/* </Link> */}
+                                                                </TooltipTrigger>
+                                                                <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
+                                                                    <p>{formatAddress(params.address)}</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    ) : (
+                                                        <Link href={`https://www.stargaze.zone/p/${params.address}/tokens`} target='_blank'>
+                                                            <span className="text-sm md:!text-3xl font-black">{formatAddress(params.address)}</span>
+                                                        </Link>
+                                                    )
+                                                }
+                                                <div style={{ marginTop: "15px" }} className="flex items-center gap-x-3">
+                                                    {
+                                                        associated?.records?.map((item: any) => {
+                                                            return renderSocmed(item);
+                                                        })
+                                                    }
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Link href={`https://www.stargaze.zone/p/${params.address}/tokens`} target='_blank'>
+                                                                    <img src="/images/Icon/stargaze-white.png" className="w-[20px] md:w-[30px] hover:scale-105 transition-all duration-300 ease-in-out" />
+                                                                </Link>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
+                                                                <p>Go to Stargaze Account</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span className="cursor-pointer">
+                                                                    <img src="/images/Icon/forward-arrow.png" className="w-[20px] md:w-[30px] hover:scale-105 transition-all duration-300 ease-in-out" />
+                                                                </span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
+                                                                <p>Share Your Account</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                </div>
+                                                {/* <span className="md:!text-md text-gray-400 hover:text-white">Edit Profile</span> */}
+                                            </div>
+                                        )
+                                    }
+                                </div>
+
+                                <div className="mt-8 px-2">
+                                    <span className="text-gray-400">Token</span>
+                                    <div className="mt-4 gap-x-4">
+                                        <div className="p-4 bg-[#18181B] border border-[#323237] rounded-2xl font-bold max-w-max flex items-center gap-x-4">
+                                            <img src="/images/Icon/wzrd.png" className="w-8 h-8" />
+                                            <span className="-mt-3 text-[13px] md:text-base">{staker?.staker?.staker_nft_staked ?? 0} NFTs/{formatDecimal(staker?.staker?.staker_total_points ?? 0)} $WZRD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="absolute left-0 bottom-0 z-1 w-full h-[350px] bg-gradient-to-b from-transparent to-black" />
+                        </div >
+                    </div>
+                    <div className="bg-black">
+                        <NFTGallery address={params.address} />
+                    </div>
+                </div>
             </div>
         </div >
     );
