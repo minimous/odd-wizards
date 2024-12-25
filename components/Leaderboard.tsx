@@ -25,21 +25,35 @@ const Leaderboard = () => {
 
   // Fungsi untuk mengambil data leaderboard
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+  
     async function fetchData() {
       setLoading(true);
       try {
-        const resp = await axios.get(`/api/soft-staking/leaderboard?collection_address=${config?.collection_address}&page=${page}`);
+        const resp = await axios.get(`/api/soft-staking/leaderboard?collection_address=${config?.collection_address}&page=${page}`, {
+          signal,
+        });
         const data = resp.data.data ?? [];
         setLeaderboard((prev) => [...prev, ...data]); // Menambahkan data baru ke data yang sudah ada
         setHasMore(data.length > 0); // Jika tidak ada data, set hasMore ke false
       } catch (error) {
-        console.error("Error fetching leaderboard data:", error);
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+        } else {
+          console.error("Error fetching leaderboard data:", error);
+        }
       }
       setLoading(false);
     }
-
+  
     fetchData();
+  
+    return () => {
+      controller.abort(); // Membatalkan request saat komponen dibersihkan
+    };
   }, [page]);
+  
 
   useEffect(() => {
     async function fetchData() {
