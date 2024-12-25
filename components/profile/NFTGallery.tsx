@@ -45,59 +45,111 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
     for (let chunk = 0; chunk < chunksCount; chunk++) {
       const startIndex = chunk * 16;
 
-      // Create fixed-size arrays for each gallery section
-      const gallery1Tokens = tokens.slice(startIndex, startIndex + 3).concat(
-        Array(3 - Math.min(tokens.slice(startIndex, startIndex + 3).length, 3)).fill(null)
-      );
+      if (chunk % 2 == 0) {
+        // Create fixed-size arrays for each gallery section
+        const gallery1Tokens = tokens.slice(startIndex, startIndex + 3).concat(
+          Array(3 - Math.min(tokens.slice(startIndex, startIndex + 3).length, 3)).fill(null)
+        );
 
-      const gallery2Tokens = tokens.slice(startIndex + 3, startIndex + 4).concat(
-        Array(1 - Math.min(tokens.slice(startIndex + 3, startIndex + 4).length, 1)).fill(null)
-      );
+        const gallery2Tokens = tokens.slice(startIndex + 3, startIndex + 4).concat(
+          Array(1 - Math.min(tokens.slice(startIndex + 3, startIndex + 4).length, 1)).fill(null)
+        );
 
-      const gallery3Tokens = tokens.slice(startIndex + 4, startIndex + 10).concat(
-        Array(6 - Math.min(tokens.slice(startIndex + 4, startIndex + 10).length, 6)).fill(null)
-      );
+        const gallery3Tokens = tokens.slice(startIndex + 4, startIndex + 10).concat(
+          Array(6 - Math.min(tokens.slice(startIndex + 4, startIndex + 10).length, 6)).fill(null)
+        );
 
-      const gallery4Tokens = tokens.slice(startIndex + 10, startIndex + 16).concat(
-        Array(6 - Math.min(tokens.slice(startIndex + 10, startIndex + 16).length, 6)).fill(null)
-      );
+        const gallery4Tokens = tokens.slice(startIndex + 10, startIndex + 16).concat(
+          Array(6 - Math.min(tokens.slice(startIndex + 10, startIndex + 16).length, 6)).fill(null)
+        );
 
-      // Always push all galleries with their respective padded tokens
-      galleries.push(
-        <Gallery1
-          address={address}
-          key={`gallery1-${chunk}`}
-          tokens={gallery1Tokens}
-          allTokens={tokens}
-        />
-      );
+        // Always push all galleries with their respective padded tokens
+        galleries.push(
+          <Gallery1
+            address={address}
+            key={`gallery1-${chunk}`}
+            tokens={gallery1Tokens}
+            allTokens={tokens}
+          />
+        );
 
-      galleries.push(
-        <Gallery2
-          address={address}
-          key={`gallery2-${chunk}`}
-          tokens={gallery2Tokens}
-          allTokens={tokens}
-        />
-      );
+        galleries.push(
+          <Gallery2
+            address={address}
+            key={`gallery2-${chunk}`}
+            tokens={gallery2Tokens}
+            allTokens={tokens}
+          />
+        );
 
-      galleries.push(
-        <Gallery3
-          address={address}
-          key={`gallery3-${chunk}`}
-          tokens={gallery3Tokens}
-          allTokens={tokens}
-        />
-      );
+        galleries.push(
+          <Gallery3
+            address={address}
+            key={`gallery3-${chunk}`}
+            tokens={gallery3Tokens}
+            allTokens={tokens}
+          />
+        );
 
-      galleries.push(
-        <Gallery4
-          address={address}
-          key={`gallery4-${chunk}`}
-          tokens={gallery4Tokens}
-          allTokens={tokens}
-        />
-      );
+        galleries.push(
+          <Gallery4
+            address={address}
+            key={`gallery4-${chunk}`}
+            tokens={gallery4Tokens}
+            allTokens={tokens}
+          />
+        );
+      } else {
+        // Create fixed-size arrays for each gallery section
+
+
+        const gallery3Tokens = tokens.slice(startIndex + 4, startIndex + 10).concat(
+          Array(6 - Math.min(tokens.slice(startIndex + 4, startIndex + 10).length, 6)).fill(null)
+        );
+        const gallery4Tokens = tokens.slice(startIndex + 10, startIndex + 16).concat(
+          Array(6 - Math.min(tokens.slice(startIndex + 10, startIndex + 16).length, 6)).fill(null)
+        );
+        const gallery1Tokens = tokens.slice(startIndex, startIndex + 3).concat(
+          Array(3 - Math.min(tokens.slice(startIndex, startIndex + 3).length, 3)).fill(null)
+        );
+        const gallery2Tokens = tokens.slice(startIndex + 3, startIndex + 4).concat(
+          Array(1 - Math.min(tokens.slice(startIndex + 3, startIndex + 4).length, 1)).fill(null)
+        );
+
+        // Always push all galleries with their respective padded tokens
+        galleries.push(
+          <Gallery3
+            address={address}
+            key={`gallery3-${chunk}`}
+            tokens={gallery3Tokens}
+            allTokens={tokens}
+          />
+        );
+        galleries.push(
+          <Gallery4
+            address={address}
+            key={`gallery4-${chunk}`}
+            tokens={gallery4Tokens}
+            allTokens={tokens}
+          />
+        );
+        galleries.push(
+          <Gallery1
+            address={address}
+            key={`gallery1-${chunk}`}
+            tokens={gallery1Tokens}
+            allTokens={tokens}
+          />
+        );
+        galleries.push(
+          <Gallery2
+            address={address}
+            key={`gallery2-${chunk}`}
+            tokens={gallery2Tokens}
+            allTokens={tokens}
+          />
+        );
+      }
     }
 
     return galleries;
