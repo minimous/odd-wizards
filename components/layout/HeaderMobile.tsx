@@ -134,7 +134,7 @@ export default function HeaderMobile() {
                                     </Button>
                                 ) : (
                                     <div className="grid gap-y-3">
-                                        <Link href={`/p/${address}`} >
+                                        <Link onClick={() => setOpen(false)} href={`/p/${address}`} >
                                             <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
                                                 e.target.src = DEFAULT_IMAGE_PROFILE;
                                             }} className="w-[75px] h-[75px] rounded-[25px] mx-auto" />
