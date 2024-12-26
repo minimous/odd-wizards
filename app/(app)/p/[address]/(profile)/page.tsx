@@ -90,7 +90,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                 description: "Please Wait"
             },
             success: () => {
-                const tweetText = `Check out my Wizard Profile! 🧙‍♂️\n${config?.base_url}/p/${params.address}`;
+                const tweetText = `Check out my Odds Wizard collection! How cool is that😎✨\n${config?.base_url}/p/${params.address}\n\nShare yours! 🧙‍♂`;
                 const encodedTweetText = encodeURIComponent(tweetText);
                 const mobileTweetUrl = `twitter://post?message=${encodedTweetText}`; // Mobile app scheme
                 const webTweetUrl = `https://x.com/intent/tweet?text=${encodedTweetText}`;
