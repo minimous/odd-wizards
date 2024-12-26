@@ -85,36 +85,45 @@ export default function Profile({ params }: { params: { address: string } }) {
 
     const doTweet = () => {
         promiseToast(prepareTweet(), {
-          loading: {
-            title: "Processing...",
-            description: "Please Wait"
-          },
-          success: () => {
-            const tweetText = `Check out my Wizard Profile! 🧙‍♂️\n${config?.base_url}/p/${params.address}`;
-            const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-            
-            // Create temporary link element
-            const link = document.createElement('a');
-            link.href = tweetUrl;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer'; // Security best practice for target="_blank"
-            document.body.appendChild(link);
-            
-            // Trigger click and remove element
-            link.click();
-            document.body.removeChild(link);
-            
-            return {
-              title: "Success!",
-              description: "Share Success"
-            };
-          },
-          error: (error: AxiosError | any) => ({
-            title: "Ups! Something wrong.",
-            description: error?.response?.data?.message || 'Internal server error.'
-          })
+            loading: {
+                title: "Processing...",
+                description: "Please Wait"
+            },
+            success: () => {
+                const tweetText = `Check out my Wizard Profile! 🧙‍♂️\n${config?.base_url}/p/${params.address}`;
+                const encodedTweetText = encodeURIComponent(tweetText);
+                const mobileTweetUrl = `twitter://post?message=${encodedTweetText}`; // Mobile app scheme
+                const webTweetUrl = `https://x.com/intent/tweet?text=${encodedTweetText}`;
+    
+                // Detect if the user is on mobile
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+                if (isMobile) {
+                    window.location.href = mobileTweetUrl;
+                } else {
+                    // Create temporary link element for web
+                    const link = document.createElement('a');
+                    link.href = webTweetUrl;
+                    link.target = '_blank';
+                    // link.rel = 'noopener noreferrer'; // Security best practice for target="_blank"
+                    document.body.appendChild(link);
+    
+                    // Trigger click and remove element
+                    link.click();
+                    document.body.removeChild(link);
+                }
+    
+                return {
+                    title: "Success!",
+                    description: "Share Success"
+                };
+            },
+            error: (error: AxiosError | any) => ({
+                title: "Ups! Something wrong.",
+                description: error?.response?.data?.message || 'Internal server error.'
+            })
         });
-      };
+    };    
 
     const prepareTweet = async () => {
         try {
