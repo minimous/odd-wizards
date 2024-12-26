@@ -134,9 +134,11 @@ export default function HeaderMobile() {
                                     </Button>
                                 ) : (
                                     <div className="grid gap-y-3">
-                                        <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
-                                            e.target.src = DEFAULT_IMAGE_PROFILE;
-                                        }} className="w-[75px] h-[75px] rounded-[25px] mx-auto" />
+                                        <Link href={`/p/${address}`} >
+                                            <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
+                                                e.target.src = DEFAULT_IMAGE_PROFILE;
+                                            }} className="w-[75px] h-[75px] rounded-[25px] mx-auto" />
+                                        </Link>
                                         <Button
                                             variant={"ghost"}
                                             className="px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black hover:animate-shake"
