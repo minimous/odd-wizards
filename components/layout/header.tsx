@@ -105,7 +105,7 @@ export default function Header() {
           </div>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:!flex space-x-8">
             <Link
               href="/about"
               className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/about" ? "text-white" : "text-gray-400"))}
@@ -131,7 +131,7 @@ export default function Header() {
         </div>
 
         {/* Connect Wallet Button */}
-        <div className="hidden md:block">
+        <div className="hidden md:!block">
           <ConnectButton />
         </div>
         {/* Mobile Menu Button */}
