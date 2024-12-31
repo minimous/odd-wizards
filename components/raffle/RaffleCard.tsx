@@ -33,7 +33,7 @@ const RaffleCard = () => {
                 </div>
             </div>
             <div className="flex items-center gap-x-2 py-2">
-                <Input className="bg-stone-800 text-white font-black text-lg text-center border-none focus:border-none hover:border-none focus-visible:ring-0 rounded-[10px] w-[100px]" value={100} readOnly />
+                <Input className="bg-stone-800 text-white font-black text-lg text-center border-none focus:border-none hover:border-none focus-visible:ring-0 rounded-[10px] w-[100px]" value={100} />
                 <Button variant={"ghost"} className="w-full bg-green-500 hover:bg-green-400 font-black text-lg text-black hover:text-black rounded-[10px]" >Buy</Button>
             </div>
             <div className="flex items-center justify-center text-sm gap-x-1">
