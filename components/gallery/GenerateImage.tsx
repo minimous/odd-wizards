@@ -281,7 +281,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                 </ScrollArea>
                             </CardContent>
                         </Card>
-                        <div className="hidden md:flex items-center gap-x-2 mt-4">
+                        <div className="hidden md:!flex items-center gap-x-2 mt-4">
                             <Button
                                 variant={"ghost"}
                                 className="px-8 py-3 h-max font-black border border-[#323237] text-[#A1A1AA] rounded-xl bg-[#18181B] hover:bg-[#18181B] hover:text-[#A1A1AA]"

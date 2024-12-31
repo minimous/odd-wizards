@@ -17,7 +17,7 @@ import { useToast } from "../ui/use-toast";
 
 export default function Header() {
   const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
-  const { setUser } = useUser();
+  const { setUser, setStaker } = useUser();
   const { wallet } = useWallet();
   const config = getConfig();
   const path = usePathname();
@@ -31,7 +31,7 @@ export default function Header() {
       if (address) {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         setUser(resp.data?.data?.user);
-        console.log("usersss", resp.data?.data?.user);
+        setStaker(resp.data?.data?.staker);
       }
     }
 
@@ -126,6 +126,13 @@ export default function Header() {
             // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Stake
+            </Link>
+            <Link
+              href="/raffle"
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/raffle" ? "text-white" : "text-gray-400"))}
+            // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            >
+              Raffle
             </Link>
           </div>
         </div>
