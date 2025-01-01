@@ -33,13 +33,15 @@ const RaffleCard = () => {
                 <div className="flex items-center text-xs gap-x-2">
                     <span className="text-gray-400">Price: </span>
                     <span className="font-bold">
-                        <NumberTicker value={100 ?? 0} decimalPlaces={2} /> $SMKR | <NumberTicker value={25000 ?? 0} decimalPlaces={2} /> Ticket Sold
+                        {/* <NumberTicker value={100 ?? 0} decimalPlaces={2} /> $SMKR | <NumberTicker value={25000 ?? 0} decimalPlaces={2} /> Ticket Sold */}
+                        {100 ?? 0} $SMKR | {25000 ?? 0} Ticket Sold
                     </span>
                 </div>
                 <div className="flex items-center text-xs gap-x-2">
                     <span className="text-gray-400">Bought: </span>
                     <span className="font-bold text-green-500">
-                        <NumberTicker className="text-green-500" value={100 ?? 0} decimalPlaces={2} /> $SMKR | <NumberTicker className="text-green-500" value={25000 ?? 0} decimalPlaces={2} /> Ticket
+                        {/* <NumberTicker className="text-green-500" value={100 ?? 0} decimalPlaces={2} /> $SMKR | <NumberTicker className="text-green-500" value={25000 ?? 0} decimalPlaces={2} /> Ticket */}
+                        {100 ?? 0} $SMKR | {25000 ?? 0} Ticket
                     </span>
                 </div>
             </div>

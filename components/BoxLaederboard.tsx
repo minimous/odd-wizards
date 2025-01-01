@@ -85,7 +85,8 @@ export const BoxLeaderboard = () => {
               <div className="hidden md:!block">
                 <span className="text-[12px] md:text-[20px] text-white">Token</span>
                 <p className="text-[10px] md:text-[20px] font-bold text-white">
-                  <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD
+                  {/* <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD */}
+                  {leaderboard?.total_points ?? 0} $WZRD
                 </p>
               </div>
             </div>
@@ -96,7 +97,8 @@ export const BoxLeaderboard = () => {
               <div className="text-left">
                 <span className="text-[12px] md:text-[20px] text-white">NFT</span>
                 <p className="text-[12px] text-white hidden md:!block md:text-[20px] font-bold">
-                  <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> Staked
+                  {/* <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> Staked */}
+                  {leaderboard?.staker_nft_staked ?? 0} Staked
                 </p>
               </div>
             </div>
@@ -110,7 +112,8 @@ export const BoxLeaderboard = () => {
             <div className="text-center">
               <span className="text-[12px] md:text-[20px] text-white">Token</span>
               <p className="text-[13px] md:text-[20px] font-bold text-white">
-                <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD
+                {/* <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD */}
+                {leaderboard?.total_points ?? 0} $WZRD
               </p>
             </div>
           </div>
@@ -121,7 +124,8 @@ export const BoxLeaderboard = () => {
             <div className="text-center">
               <span className="text-[12px] md:text-[20px] text-white">NFT</span>
               <p className="text-[13px] text-white md:text-[20px] font-bold">
-                <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> Staked
+                {/* <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> Staked */}
+                {leaderboard?.staker_nft_staked ?? 0} Staked
               </p>
             </div>
           </div>

@@ -82,7 +82,8 @@ export default function Stake() {
                             <div className="block">
                                 <span className="text-[12px] md:text-[20px] text-white">Token</span>
                                 <p className="text-[10px] md:text-[20px] font-bold text-white">
-                                    <NumberTicker value={staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD
+                                    {/* <NumberTicker value={staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD */}
+                                    {staker?.staker_total_points ?? 0} $WZRD
                                 </p>
                             </div>
                         </div>

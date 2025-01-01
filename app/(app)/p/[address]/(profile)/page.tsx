@@ -288,7 +288,8 @@ export default function Profile({ params }: { params: { address: string } }) {
                                             <div className="p-4 bg-[#18181B] border border-[#323237] rounded-2xl font-bold max-w-max flex items-center gap-x-4">
                                                 <img src="/images/Icon/wzrd.png" className="w-6 h-6" />
                                                 <span className="text-[13px] md:text-base">
-                                                    <NumberTicker value={staker?.staker?.staker_nft_staked ?? 0} decimalPlaces={2} /> NFTs/<NumberTicker value={staker?.staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD
+                                                    {/* <NumberTicker value={staker?.staker?.staker_nft_staked ?? 0} decimalPlaces={2} /> NFTs/<NumberTicker value={staker?.staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD */}
+                                                    {staker?.staker?.staker_nft_staked ?? 0} NFTs/{staker?.staker?.staker_total_points ?? 0} $WZRD
                                                 </span>
                                             </div>
                                             {/* <div className="p-4 bg-[#18181B] border border-[#323237] rounded-2xl font-bold w-[200px] flex items-center gap-x-4 blur-[1.5px]">
