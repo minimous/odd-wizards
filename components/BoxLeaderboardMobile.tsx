@@ -73,13 +73,13 @@ export const BoxLeaderboardMobile = () => {
             </div>
             <div className="text-center text-[#49ED4A]">
               <p className="text-[10px] md:text-[20px] font-bold">
-                <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} /> $WZRD
+                <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD
               </p>
             </div>
 
             <div className="text-center text-[#49ED4A] ">
               <p className="text-[10px] md:text-[20px] font-bold">
-                <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} /> NFT Staked
+                <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> NFT Staked
               </p>
             </div>
           </div>
