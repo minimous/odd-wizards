@@ -15,6 +15,7 @@ model mst_users {
   user_created_date      DateTime?  
   user_total_points      Int?
   user_image_preview     String?
+  user_trigger_event     String?
   // Relasi dengan Staker
   mst_staker mst_staker[]
 }

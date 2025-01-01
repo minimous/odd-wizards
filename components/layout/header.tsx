@@ -12,8 +12,8 @@ import { usePathname } from "next/navigation";
 import { cn, formatAddress } from "@/lib/utils";
 import { useNavbarMobile } from "@/hooks/useNavbarMobile";
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { StdSignDoc, AminoSignResponse } from "@cosmjs/amino";
 import { useToast } from "../ui/use-toast";
+import confetti from "canvas-confetti";
 
 export default function Header() {
   const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
@@ -77,6 +77,63 @@ export default function Header() {
     }
   };
 
+  // Check for complete page load
+  useEffect(() => {
+    if (address) {
+      // Wait for the window load event
+      const handleLoad = async () => {
+        let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
+        const user = resp.data?.data?.user;
+        if (user.user_trigger_event != "Y") {
+          // Add a small delay to ensure all components are rendered
+          setTimeout(() => {
+            triggerConffeti();
+            axios.post("/api/user/trigger-event", {
+              wallet_address: address
+            })
+          }, 500); // Half second delay to ensure everything is rendered
+        }
+      };
+
+      // If the page is already loaded
+      if (document.readyState === 'complete') {
+        handleLoad();
+      } else {
+        window.addEventListener('load', handleLoad);
+        // Cleanup
+        return () => window.removeEventListener('load', handleLoad);
+      }
+    }
+  }, [address]);
+
+  const triggerConffeti = () => {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 500, ticks: 100, zIndex: 9999 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 75 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 1000);
+  };
 
   return (
     <nav className="absolute top-0 left-0 right-0 flex items-center justify-between md:px-10 py-5 bg-transparent z-50">
@@ -101,7 +158,6 @@ export default function Header() {
                 className="hidden group-hover:block object-contain"
               />
             </Link>
-            <img src="/images/santa-hat.png" className="absolute -top-3 -left-3 md:-top-4 md:-left-4 h-[40px] md:h-[50px]" />
           </div>
 
           {/* Navigation Links */}
