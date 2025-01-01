@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react";
 import Loading from "./Loading";
+import NumberTicker from "./ui/number-ticker";
 
 export interface CollectionCardType {
     id: string
@@ -17,10 +18,11 @@ export interface CollectionCardType {
 }
 
 export interface CollectionCardProps {
-    data: CollectionCardType
+    data: CollectionCardType,
+    index: number
 }
 
-const CollectionCard = ({ data }: CollectionCardProps) => {
+const CollectionCard = ({ data, index }: CollectionCardProps) => {
 
     const [stat, setStat] = useState<CollectionStat>();
     const [loading, setLoading] = useState<boolean>(false);
@@ -63,7 +65,9 @@ const CollectionCard = ({ data }: CollectionCardProps) => {
                             <Loading />
                         ) : (
                             <div>
-                                <p className="font-bold">{data.id ? formatToStars(stat?.floor.amount) : 0} {stat?.floor.symbol}</p>
+                                <p className="font-bold">
+                                <NumberTicker value={formatToStars(stat?.floor?.amount)} decimalPlaces={2} skipAnimation={true} /> {stat?.floor.symbol}
+                                </p>
                                 <span>Floor</span>
                             </div>
                         )

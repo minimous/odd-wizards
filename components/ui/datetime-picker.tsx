@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { format, parse } from 'date-fns';
+import moment from 'moment';
 import { CalendarIcon, Clock } from 'lucide-react';
 import { z } from 'zod';
 
@@ -24,12 +24,7 @@ import {
 
 export const dateTimeSchema = z.string().refine(
   (value) => {
-    try {
-      parse(value, 'yyyy-MM-dd h:mm a', new Date());
-      return true;
-    } catch {
-      return false;
-    }
+    return moment(value, 'YYYY-MM-DD h:mm A', true).isValid();
   },
   { message: 'Invalid datetime format' }
 );
@@ -48,21 +43,27 @@ export function DateTimePicker({
   disabled,
   ...props
 }: DateTimePickerProps) {
+  const [hours, setHours] = React.useState('12');
+  const [minutes, setMinutes] = React.useState('00');
   const [isTimeInvalid, setIsTimeInvalid] = React.useState(false);
 
   // Parse the existing value or use current date/time as default
-  const currentDateTime =
-    value && typeof value === 'string'
-      ? parse(value as string, 'yyyy-MM-dd h:mm a', new Date())
-      : new Date();
+  const currentDateTime = value && typeof value === 'string'
+    ? moment(value, 'YYYY-MM-DD h:mm A')
+    : moment();
+
+  // Initialize hours and minutes when component mounts or value changes
+  React.useEffect(() => {
+    setHours(currentDateTime.format('h'));
+    setMinutes(currentDateTime.format('mm'));
+  }, [value]);
 
   const handleDateChange = (newDate: Date | undefined) => {
     if (newDate) {
-      const formattedTime = format(currentDateTime, 'h:mm a');
-      const combinedDateTime =
-        format(newDate, 'yyyy-MM-dd') + ' ' + formattedTime;
+      const momentDate = moment(newDate);
+      const currentTime = `${hours}:${minutes} ${currentDateTime.format('A')}`;
+      const combinedDateTime = momentDate.format('YYYY-MM-DD') + ' ' + currentTime;
 
-      // Call both onChange and onChangeDateTime if provided
       if (onChange) {
         (onChange as React.ChangeEventHandler<HTMLInputElement>)({
           target: { name, value: combinedDateTime }
@@ -75,15 +76,13 @@ export function DateTimePicker({
     }
   };
 
-  const handleTimeChange = (newTime: string) => {
-    setIsTimeInvalid(false);
+  const updateTime = (newHours: string, newMinutes: string) => {
+    const timeString = `${newHours}:${newMinutes} ${currentDateTime.format('A')}`;
+    const updatedDateTime = currentDateTime.format('YYYY-MM-DD') + ' ' + timeString;
 
-    try {
-      const updatedDateTime =
-        format(currentDateTime, 'yyyy-MM-dd') + ' ' + newTime;
-      parse(updatedDateTime, 'yyyy-MM-dd h:mm a', new Date());
-
-      // Call both onChange and onChangeDateTime if provided
+    if (moment(updatedDateTime, 'YYYY-MM-DD h:mm A', true).isValid()) {
+      setIsTimeInvalid(false);
+      
       if (onChange) {
         (onChange as React.ChangeEventHandler<HTMLInputElement>)({
           target: { name, value: updatedDateTime }
@@ -93,9 +92,57 @@ export function DateTimePicker({
       if (onChangeDateTime) {
         onChangeDateTime(updatedDateTime);
       }
-    } catch (error) {
+    } else {
       setIsTimeInvalid(true);
     }
+  };
+
+  const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let newHours = e.target.value.replace(/\D/g, '');
+    if (newHours === '') {
+      setHours('');
+      return;
+    }
+
+    const numericHours = parseInt(newHours);
+    if (numericHours > 12) {
+      newHours = '12';
+    } else if (numericHours < 1) {
+      newHours = '1';
+    } else {
+      newHours = numericHours.toString();
+    }
+
+    setHours(newHours);
+    updateTime(newHours, minutes);
+  };
+
+  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let newMinutes = e.target.value.replace(/\D/g, '');
+    if (newMinutes === '') {
+      setMinutes('');
+      return;
+    }
+
+    const numericMinutes = parseInt(newMinutes);
+    if (numericMinutes > 59) {
+      newMinutes = '59';
+    } else {
+      newMinutes = numericMinutes.toString().padStart(2, '0');
+    }
+
+    setMinutes(newMinutes);
+    updateTime(hours, newMinutes);
+  };
+
+  const handleTimeBlur = () => {
+    // Format hours and minutes properly when input loses focus
+    const formattedHours = hours ? Math.max(1, Math.min(12, parseInt(hours))).toString() : '12';
+    const formattedMinutes = minutes ? minutes.padStart(2, '0') : '00';
+    
+    setHours(formattedHours);
+    setMinutes(formattedMinutes);
+    updateTime(formattedHours, formattedMinutes);
   };
 
   return (
@@ -110,11 +157,10 @@ export function DateTimePicker({
             !value && 'text-muted-foreground',
             className
           )}
-          // {...props}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {value && typeof value === 'string' ? (
-            format(currentDateTime, 'PPP h:mm a')
+            currentDateTime.format('MMMM D, YYYY h:mm A')
           ) : (
             <span>{props.placeholder}</span>
           )}
@@ -123,40 +169,47 @@ export function DateTimePicker({
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={currentDateTime}
+          selected={currentDateTime.toDate()}
           onSelect={handleDateChange}
           initialFocus
         />
         <div className="flex items-center space-x-2 border-t p-3">
           <Clock className="h-4 w-4" />
-          <Input
-            type="text"
-            value={format(currentDateTime, 'h:mm')}
-            onChange={(e) => {
-              const [hours, minutes] = e.target.value.split(':');
-              const newHours = hours
-                ? Math.min(Math.max(parseInt(hours), 1), 12).toString()
-                : '';
-              const newMinutes = minutes
-                ? Math.min(Math.max(parseInt(minutes), 0), 59)
-                    .toString()
-                    .padStart(2, '0')
-                : '00';
-              const newTime = `${newHours}:${newMinutes} ${format(
-                currentDateTime,
-                'a'
-              )}`;
-              handleTimeChange(newTime);
-            }}
-            placeholder="hh:mm"
-            disabled={disabled}
-            className={cn('w-[4.5rem]', isTimeInvalid && 'border-red-500')}
-          />
+          <div className="flex items-center">
+            <Input
+              type="text"
+              value={hours}
+              onChange={handleHoursChange}
+              onBlur={handleTimeBlur}
+              placeholder="hh"
+              disabled={disabled}
+              className={cn('w-[3rem] text-center', isTimeInvalid && 'border-red-500')}
+              maxLength={2}
+            />
+            <span className="mx-1">:</span>
+            <Input
+              type="text"
+              value={minutes}
+              onChange={handleMinutesChange}
+              onBlur={handleTimeBlur}
+              placeholder="mm"
+              disabled={disabled}
+              className={cn('w-[3rem] text-center', isTimeInvalid && 'border-red-500')}
+              maxLength={2}
+            />
+          </div>
           <Select
-            value={format(currentDateTime, 'a')}
+            value={currentDateTime.format('A')}
             onValueChange={(newPeriod) => {
-              const currentTime = format(currentDateTime, 'h:mm');
-              handleTimeChange(`${currentTime} ${newPeriod}`);
+              const updatedDateTime = currentDateTime.format('YYYY-MM-DD') + ' ' + `${hours}:${minutes} ${newPeriod}`;
+              if (onChange) {
+                (onChange as React.ChangeEventHandler<HTMLInputElement>)({
+                  target: { name, value: updatedDateTime }
+                } as React.ChangeEvent<HTMLInputElement>);
+              }
+              if (onChangeDateTime) {
+                onChangeDateTime(updatedDateTime);
+              }
             }}
             disabled={disabled}
           >

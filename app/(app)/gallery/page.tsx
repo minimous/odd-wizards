@@ -65,6 +65,7 @@ export default function Gallery() {
                             <CollectionCard
                                 key={index}
                                 data={item}
+                                index={index}
                             />
                         </div>
                     ))}
