@@ -21,12 +21,12 @@ export async function POST(request: NextRequest) {
 
     const raffle = await prisma.trn_raffle.create({
       data: {
-        raffle_price: price,
+        raffle_price: Number(price),
         raffle_created_by: wallet_address,
         raffle_created_date: new Date(),
         raffle_start: start_date,
         raffle_end: end_date,
-        raffle_max_ticket: max_ticket,
+        raffle_max_ticket: Number(max_ticket),
         raffle_price_type: type,
       }
     });

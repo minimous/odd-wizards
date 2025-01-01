@@ -5,28 +5,104 @@ import { useEffect, useState } from "react";
 import Snowfall from 'react-snowfall';
 import CustomGradualSpacing from "@/components/CustomGradouselSpacing";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { formatAddress, formatDecimal } from "@/lib/utils";
+import { cn, formatAddress, formatDecimal } from "@/lib/utils";
 import Link from "next/link";
 import getConfig from "@/config/config";
 import { useUser } from "@/hooks/useUser";
 import RaffleCard from "@/components/raffle/RaffleCard";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import NumberTicker from "@/components/ui/number-ticker";
+import { Raffle } from "@/types/raflles";
+import Loading from "@/components/Loading";
+import { useChain } from "@cosmos-kit/react";
+import { promiseToast, useToast } from "@/components/ui/use-toast";
 
 export default function Stake() {
     const config = getConfig();
     const { user, staker } = useUser();
     const [loading, setLoading] = useState<boolean>(true);
-    const [raffles, setRaffles] = useState([]);
+    const [loadingMore, setLoadingMore] = useState<boolean>(false);
+    const [raffles, setRaffles] = useState<Raffle[]>([]);
+    const [page, setPage] = useState<number>(1);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const { address } = useChain("stargaze");
+    const { toast } = useToast();
+    const LIMIT = 8;
+
+    const fetchRaffles = async (pageNum: number, append: boolean = false) => {
+        try {
+            const resp = await axios.get(`/api/raffle/list?page=${pageNum}&limit=${LIMIT}`);
+            const { data, pagination } = resp.data;
+
+            if (append) {
+                setRaffles(prev => [...prev, ...data]);
+            } else {
+                setRaffles(data);
+            }
+
+            setHasMore(pageNum < pagination.totalPages);
+            return data;
+        } catch (error) {
+            console.error('Error fetching raffles:', error);
+            return [];
+        }
+    };
+
+    const loadMore = async () => {
+        if (loadingMore) return;
+        setLoadingMore(true);
+        const nextPage = page + 1;
+        await fetchRaffles(nextPage, true);
+        setPage(nextPage);
+        setLoadingMore(false);
+    };
 
     useEffect(() => {
-        async function fetchData() {
-            const resp = await axios.get("/api/raffle/list");
-            setRaffles(resp.data.data);
+        async function fetchInitialData() {
+            setLoading(true);
+            await fetchRaffles(1);
+            setLoading(false);
+        }
+        fetchInitialData();
+    }, [user]);
+
+    const onBuy = (amount: number, raffle_id: number) => {
+
+        if(!address) {
+            toast({
+                variant: "destructive",
+                title: "Please Login first",
+                description: "You must be logged in to buy tickets. Please login to your account to proceed."
+            })
+            return;
         }
 
-        fetchData();
-    }, [user]);
+        promiseToast(doBuy(amount, raffle_id), {
+            loading: {
+                title: "Processing...",
+                description: "Please Wait"
+            },
+            success: () => {
+                setLoading(false);
+                return {
+                    title: "Success!",
+                    description: "Buy Ticket Success"
+                };
+            },
+            error: (error: AxiosError | any) => ({
+                title: "Ups! Something wrong.",
+                description: error?.response?.data?.message || 'Internal server error.'
+            })
+        });
+    }
+
+    const doBuy = async (amount: number, raffle_id: number) => {
+        await axios.post("/api/raffle/buy", {
+            raffle_id,
+            wallet_address: address,
+            amount
+        })
+    }
 
     return (
         <div className="relative bg-black w-full">
@@ -48,67 +124,80 @@ export default function Stake() {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center mt-8 px-4">
-                <div className="w-full md:!w-[750px]">
-                    <div className="grid grid-cols-2 gap-x-4">
-                        <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-                            <div className="flex items-center gap-4">
-                                <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
-                                    <Link href={`/p/${user?.user_address}`} >
-                                        <img
-                                            src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
-                                            alt={user?.user_address ?? ""}
-                                            className="rounded-full object-cover w-full h-full"
-                                            onError={(e: any) => {
-                                                e.target.src = DEFAULT_IMAGE_PROFILE;
-                                            }}
-                                        />
-                                    </Link>
-                                </div>
-                                <div>
-                                    <span className="text-[13px] md:text-[20px] text-white">Address</span>
-                                    <Link href={`https://www.stargaze.zone/p/${user?.user_address}`} target="_blank" className="text-center text-[#DB2877]">
-                                        <p className="text-[12px] md:text-[20px] font-bold ">
-                                            {formatAddress(user?.user_address)}
-                                        </p>
-                                    </Link>
+            {loading ? (
+                <div className="flex justify-center">
+                    <Loading />
+                </div>
+            ) : (
+                <div>
+                    {address && (
+                        <div className="flex justify-center mt-8 px-4">
+                            <div className="w-full md:!w-[750px]">
+                                <div className="grid grid-cols-2 gap-x-4">
+                                    <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
+                                                <Link href={`/p/${user?.user_address}`}>
+                                                    <img
+                                                        src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
+                                                        alt={user?.user_address ?? ""}
+                                                        className="rounded-full object-cover w-full h-full"
+                                                        onError={(e: any) => {
+                                                            e.target.src = DEFAULT_IMAGE_PROFILE;
+                                                        }}
+                                                    />
+                                                </Link>
+                                            </div>
+                                            <div>
+                                                <span className="text-[13px] md:text-[20px] text-white">Address</span>
+                                                <Link href={`https://www.stargaze.zone/p/${user?.user_address}`} target="_blank" className="text-center text-[#DB2877]">
+                                                    <p className="text-[12px] md:text-[20px] font-bold">
+                                                        {formatAddress(user?.user_address)}
+                                                    </p>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+                                        <div>
+                                            <img src="/images/Icon/wzrd.png" className="h-[55px]" alt="WZRD Token" />
+                                        </div>
+                                        <div className="block">
+                                            <span className="text-[12px] md:text-[20px] text-white">Token</span>
+                                            <p className="text-[10px] md:text-[20px] font-bold text-white">
+                                                {formatDecimal(staker?.staker_total_points ?? 0, 2)} $WZRD
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-                            <div>
-                                <img src="/images/Icon/wzrd.png" className="h-[55px]" />
-                            </div>
-                            <div className="block">
-                                <span className="text-[12px] md:text-[20px] text-white">Token</span>
-                                <p className="text-[10px] md:text-[20px] font-bold text-white">
-                                    {/* <NumberTicker value={staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD */}
-                                    {formatDecimal(staker?.staker_total_points ?? 0, 2)} $WZRD
-                                </p>
-                            </div>
+                    )}
+                    <div className="mt-24 px-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
+                            {raffles.map((item, index) => (
+                                <div key={item.raffle_id} className={cn((index + 1) % 2 === 0 || (index + 1) % 3 === 0 ? "-mt-12" : "")}>
+                                    <RaffleCard data={item} onBuy={onBuy} />
+                                </div>
+                            ))}
                         </div>
                     </div>
+                    {hasMore && !loading && (
+                        <div className="mt-8 mb-4 text-center">
+                            <button
+                                onClick={loadMore}
+                                disabled={loadingMore}
+                                className="px-6 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                            >
+                                {loadingMore ? "Loading..." : "Load More"}
+                            </button>
+                        </div>
+                    )}
                 </div>
-            </div>
-            <div className="mt-24 px-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
-                    <div>
-                        <RaffleCard />
-                    </div>
-                    <div className="-mt-12">
-                        <RaffleCard />
-                    </div>
-                    <div className="-mt-12">
-                        <RaffleCard />
-                    </div>
-                    <div>
-                        <RaffleCard />
-                    </div>
-                </div>
-            </div>
+            )}
             <div className="h-full py-12 md:py-16">
                 <Footer className="my-0" />
             </div>
-        </div >
+        </div>
     );
 }

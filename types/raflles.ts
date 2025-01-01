@@ -8,6 +8,7 @@ export type RaffleBase = {
     raffle_max_ticket: number | null;
     raffle_created_by: string | null;
     raffle_created_date: Date | null;
+    reward: RaffleRewardBase
   };
   
   export type RaffleRewardBase = {
