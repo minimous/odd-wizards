@@ -15,6 +15,7 @@ model mst_users {
   user_created_date      DateTime?  
   user_total_points      Int?
   user_image_preview     String?
+  user_trigger_event     String?
   // Relasi dengan Staker
   mst_staker mst_staker[]
 }
@@ -68,4 +69,40 @@ model mst_attributes_reward {
   attr_periode        String?
   attr_collection_id  Int?
   collection  mst_collection?  @relation(fields: [attr_collection_id], references: [collection_id])
+}
+
+model trn_raffle {
+  raffle_id           Int       @id @default(autoincrement())
+  raffle_start        DateTime?
+  raffle_end          DateTime?
+  raffle_price        Int?
+  raffle_price_type   String?
+  raffle_max_ticket   Int?
+  raffle_created_by   String?
+  raffle_created_date DateTime?
+  rewards  mst_raffle_reward[]
+  participants trn_participant[]
+}
+
+model mst_raffle_reward {
+  reward_id           Int       @id @default(autoincrement())
+  reward_type         String?
+  reward_amount       Int?
+  reward_name         String?
+  reward_collection   String?
+  reward_token_id     Int?
+  reward_token_img    String?
+  reward_win_address  String?
+  reward_inject_win_address String?
+  reward_raffle_id    Int?
+  raffle  trn_raffle?   @relation(fields: [reward_raffle_id], references: [raffle_id])
+}
+
+model trn_participant {
+  participant_id      Int     @id @default(autoincrement())
+  participant_address String?
+  participant_amount  Int?
+  participant_raffle_id Int?
+  participant_created_date DateTime?
+  raffle  trn_raffle?   @relation(fields: [participant_raffle_id], references: [raffle_id])
 }

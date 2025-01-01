@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
+import NumberTicker from "./ui/number-ticker";
 
 export const BoxLeaderboard = () => {
 
@@ -83,7 +84,10 @@ export const BoxLeaderboard = () => {
               </div>
               <div className="hidden md:!block">
                 <span className="text-[12px] md:text-[20px] text-white">Token</span>
-                <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+                <p className="text-[10px] md:text-[20px] font-bold text-white">
+                  {/* <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD */}
+                  {formatDecimal(leaderboard?.total_points ?? 0, 2)} $WZRD
+                </p>
               </div>
             </div>
             <div className="hidden md:!flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center p-4 px-8 gap-8 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
@@ -92,7 +96,10 @@ export const BoxLeaderboard = () => {
               </div>
               <div className="text-left">
                 <span className="text-[12px] md:text-[20px] text-white">NFT</span>
-                <p className="text-[12px] text-white hidden md:!block md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
+                <p className="text-[12px] text-white hidden md:!block md:text-[20px] font-bold">
+                  {/* <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> Staked */}
+                  {formatDecimal(leaderboard?.staker_nft_staked ?? 0, 2)} Staked
+                </p>
               </div>
             </div>
           </div>
@@ -104,7 +111,10 @@ export const BoxLeaderboard = () => {
             </div> */}
             <div className="text-center">
               <span className="text-[12px] md:text-[20px] text-white">Token</span>
-              <p className="text-[13px] md:text-[20px] font-bold text-white">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+              <p className="text-[13px] md:text-[20px] font-bold text-white">
+                {/* <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD */}
+                {formatDecimal(leaderboard?.total_points ?? 0, 2)} $WZRD
+              </p>
             </div>
           </div>
           <div className="flex bg-[url('/images/Lab.gif')] bg-cover bg-center flex-grow items-center justify-center p-4 px-8 gap-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
@@ -113,7 +123,10 @@ export const BoxLeaderboard = () => {
             </div> */}
             <div className="text-center">
               <span className="text-[12px] md:text-[20px] text-white">NFT</span>
-              <p className="text-[13px] text-white md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} Staked</p>
+              <p className="text-[13px] text-white md:text-[20px] font-bold">
+                {/* <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} skipAnimation={true} /> Staked */}
+                {formatDecimal(leaderboard?.staker_nft_staked ?? 0, 2)} Staked
+              </p>
             </div>
           </div>
         </div>
