@@ -10,23 +10,26 @@ import Link from "next/link";
 import getConfig from "@/config/config";
 import { useUser } from "@/hooks/useUser";
 import RaffleCard from "@/components/raffle/RaffleCard";
+import axios from "axios";
+import NumberTicker from "@/components/ui/number-ticker";
 
 export default function Stake() {
     const config = getConfig();
     const { user, staker } = useUser();
     const [loading, setLoading] = useState<boolean>(true);
+    const [raffles, setRaffles] = useState([]);
 
     useEffect(() => {
+        async function fetchData() {
+            const resp = await axios.get("/api/raffle/list");
+            setRaffles(resp.data.data);
+        }
 
+        fetchData();
     }, [user]);
 
     return (
         <div className="relative bg-black w-full">
-            <div className="fixed inset-0 pointer-events-none z-[1000]">
-                <div className="relative w-full h-full">
-                    <Snowfall snowflakeCount={24} speed={[0.5, 1]} wind={[-0.5, 1]} radius={[0.5, 4.5]} />
-                </div>
-            </div>
             <Header />
             <div>
                 <div className="grid">
@@ -78,14 +81,16 @@ export default function Stake() {
                             </div>
                             <div className="block">
                                 <span className="text-[12px] md:text-[20px] text-white">Token</span>
-                                <p className="text-[10px] md:text-[20px] font-bold text-white">{formatDecimal(staker?.staker_total_points, 2)} $WZRD</p>
+                                <p className="text-[10px] md:text-[20px] font-bold text-white">
+                                    <NumberTicker value={staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="mt-24 px-6">
-                <div className="grid grid-cols-4 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
                     <div>
                         <RaffleCard />
                     </div>

@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
+import NumberTicker from "./ui/number-ticker";
 
 export const BoxLeaderboardMobile = () => {
 
@@ -71,11 +72,15 @@ export const BoxLeaderboardMobile = () => {
               </Link>
             </div>
             <div className="text-center text-[#49ED4A]">
-              <p className="text-[10px] md:text-[20px] font-bold">{formatDecimal(leaderboard?.total_points, 2)} $WZRD</p>
+              <p className="text-[10px] md:text-[20px] font-bold">
+                <NumberTicker value={leaderboard?.total_points ?? 0} decimalPlaces={2} /> $WZRD
+              </p>
             </div>
 
             <div className="text-center text-[#49ED4A] ">
-              <p className="text-[10px] md:text-[20px] font-bold">{leaderboard?.staker_nft_staked} NFT Staked</p>
+              <p className="text-[10px] md:text-[20px] font-bold">
+                <NumberTicker value={leaderboard?.staker_nft_staked ?? 0} decimalPlaces={2} /> NFT Staked
+              </p>
             </div>
           </div>
         </div>

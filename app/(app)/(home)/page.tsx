@@ -35,11 +35,6 @@ const imageList = [
 export default function Home() {
   return (
     <div className="relative bg-black w-full">
-      <div className="fixed inset-0 pointer-events-none z-[1000]">
-        <div className="relative w-full h-full">
-          <Snowfall snowflakeCount={24} speed={[0.5, 1]} wind={[-0.5, 1]} radius={[0.5, 4.5]} />
-        </div>
-      </div>
       <div className="relative">
         <Header />
         <div className="bg-[url('/images/wizard.gif')] md:!hidden bg-cover bg-center h-[500px] w-full" />
