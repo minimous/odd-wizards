@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
+import { useEffect, useRef, useState, forwardRef } from "react";
 import { useInView, useMotionValue, useSpring } from "motion/react";
 import { cn, formatDecimal } from "@/lib/utils";
 
@@ -40,14 +40,14 @@ const NumberTicker = forwardRef<
   });
   const isInView = useInView(elementRef, { once: true, margin: "0px" });
 
-  useImperativeHandle(ref, () => ({
-    start: () => setShouldAnimate(true),
-    reset: () => {
-      setShouldAnimate(false);
-      motionValue.set(direction === "down" ? value : 0);
-    },
-    skipToEnd: () => motionValue.set(direction === "down" ? 0 : value),
-  }));
+  // useImperativeHandle(ref, () => ({
+  //   start: () => setShouldAnimate(true),
+  //   reset: () => {
+  //     setShouldAnimate(false);
+  //     motionValue.set(direction === "down" ? value : 0);
+  //   },
+  //   skipToEnd: () => motionValue.set(direction === "down" ? 0 : value),
+  // }));
 
   useEffect(() => {
     if (skipAnimation) {
