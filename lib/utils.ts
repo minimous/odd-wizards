@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import { FetchAllStargazeTokensOptions, OwnedTokensResponse, Token } from "@/types";
 import getConfig from '@/config/config';
 import { mst_attributes_reward } from '@prisma/client';
+import moment from 'moment';
 
 const config = getConfig();
 
@@ -589,13 +590,14 @@ export async function getToken(collectionAddr: string, tokenId: string) {
 }
 
 
-export function formatToStars(value?: string | number): string {
-  if (!value) return '0';
+export function formatToStars(value?: string | number): number {
+  if (!value) return 0;
   let number = typeof value === 'string' ? parseFloat(value) : value;
 
   number /= 1000000;
 
-  return formatDecimal(number, 2);
+  // return formatDecimal(number, 2);
+  return number;
 }
 
 export function formatDecimal(value?: string | number | null | undefined, decimal: number = 2): string {
@@ -608,10 +610,15 @@ export function formatDecimal(value?: string | number | null | undefined, decima
     return `${(number / 1_000).toFixed(decimal)}K`;
   }
 
-  return `${number.toFixed(decimal)}`;
+  return `${number.toFixed(0)}`;
 }
 
 export function formatAddress(address: string | undefined) {
   if (!address) return '';
   return `${address.substring(5, 9)}...${address.substring(address.length - 4)}`
+}
+
+export function formatDate(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
+  if (date == null) return;
+  return moment(date).format(format);
 }
