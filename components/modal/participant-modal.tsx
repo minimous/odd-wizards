@@ -51,7 +51,7 @@ export default function ParticipantsModal({
                         <div className='grid gap-y-2 mt-2 px-6 pb-4'>
                             {
                                 Object.values(summedParticipants).map((item, index) => {
-                                    return (<div className='flex justify-between text-xl'>
+                                    return (<div key={index} className='flex justify-between text-xl'>
                                         <Link href={`https://www.stargaze.zone/p/${item.participant_address}/tokens`} >
                                             <span className='font-bold'>{formatAddress(item.participant_address ?? undefined)}</span>
                                         </Link>
