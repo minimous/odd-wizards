@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 import { useEffect, useState } from "react";
 import getConfig from "@/config/config";
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,14 +30,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { formatDate } from "@/lib/utils";
 import moment from 'moment';
+import { promiseToast } from "@/components/ui/use-toast";
+import { useChain } from "@cosmos-kit/react";
 
 export default function Stake() {
     const config = getConfig();
     const { user, staker } = useUser();
     const [loading, setLoading] = useState<boolean>(false);
     const [raffles, setRaffles] = useState([]);
+    const { address } = useChain("stargaze");
 
     const defaultValues = {
         startDate: new Date(),
@@ -66,8 +68,40 @@ export default function Stake() {
     });
 
     const onSubmit = (data: FormValue) => {
-        console.log("data", data)
+        setLoading(true);
+        promiseToast(createRaffle(data), {
+            loading: {
+                title: "Processing...",
+                description: "Please Wait"
+            },
+            success: () => {
+                window.location.reload();
+                setLoading(false);
+                return {
+                    title: "Success!",
+                    description: "Create Raffle Success"
+                };
+            },
+            error: (error: AxiosError | any) => ({
+                title: "Ups! Something wrong.",
+                description: error?.response?.data?.message || 'Internal server error.'
+            })
+        });
     };
+
+    const createRaffle = async (data: FormValue) => {
+        await axios.post("/api/raffle/create", {
+            price: data.price,
+            wallet_address: address,
+            start_date: data.startDate,
+            end_date: data.endDate,
+            max_ticket: data.maxTicket,
+            type: data.priceType,
+            win_address: data.winner,
+            collection_address: data.collection,
+            token_id: data.tokenId
+        });
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -324,6 +358,7 @@ export default function Stake() {
                                         </div>
                                     </div>
                                     <Button
+                                        disabled={loading}
                                         variant={'ghost'}
                                         className="h-14 w-full rounded-full bg-gradient-to-r from-yellow-400 via-green-400 to-cyan-400 text-2xl font-bold text-black hover:text-black"
                                     >
