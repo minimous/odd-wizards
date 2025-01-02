@@ -183,13 +183,13 @@ export default function Header() {
             >
               Stake
             </Link>
-            {/* <Link
+            <Link
               href="/raffle"
               className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/raffle" ? "text-white" : "text-gray-400"))}
             // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Raffle
-            </Link> */}
+            </Link>
           </div>
         </div>
 
