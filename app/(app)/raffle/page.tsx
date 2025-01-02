@@ -15,6 +15,7 @@ import NumberTicker from "@/components/ui/number-ticker";
 import { Raffle } from "@/types/raflles";
 import Loading from "@/components/Loading";
 import { useChain } from "@cosmos-kit/react";
+import Particles from "@/components/ui/particles";
 
 export default function Stake() {
     const config = getConfig();
@@ -65,7 +66,7 @@ export default function Stake() {
     }, [user]);
 
     return (
-        <div className="relative bg-black w-full">
+        <div className="relative bg-black w-full md:px-10">
             <Header />
             <div>
                 <div className="grid">
@@ -89,9 +90,9 @@ export default function Stake() {
                     <Loading />
                 </div>
             ) : (
-                <div>
+                <div className="container">
                     {address && user && (
-                        <div className="flex justify-center mt-8 px-4">
+                        <div className="flex justify-center mt-8">
                             <div className="w-full md:!w-[750px]">
                                 <div className="grid grid-cols-2 gap-x-4">
                                     <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
@@ -133,11 +134,13 @@ export default function Stake() {
                             </div>
                         </div>
                     )}
-                    <div className="mt-24 px-6">
+                    <div className="mt-24 px-10">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
                             {raffles.map((item, index) => (
-                                <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
-                                    <RaffleCard data={item} />
+                                <div className="my-4">
+                                    <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
+                                        <RaffleCard data={item} />
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -158,6 +161,13 @@ export default function Stake() {
             <div className="h-full py-12 md:py-16">
                 <Footer className="my-0" />
             </div>
+            <Particles
+                className="absolute inset-0 z-0"
+                quantity={100}
+                ease={80}
+                color={"#ffffff"}
+                refresh
+            />
         </div>
     );
 }
