@@ -135,7 +135,7 @@ export default function Stake() {
                     )}
                     <div className="mt-24 px-6">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
-                            {[...raffles, ...raffles, ...raffles, ...raffles].map((item, index) => (
+                            {raffles.map((item, index) => (
                                 <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
                                     <RaffleCard data={item} />
                                 </div>
