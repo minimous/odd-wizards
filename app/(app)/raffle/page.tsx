@@ -15,7 +15,6 @@ import NumberTicker from "@/components/ui/number-ticker";
 import { Raffle } from "@/types/raflles";
 import Loading from "@/components/Loading";
 import { useChain } from "@cosmos-kit/react";
-import { promiseToast, useToast } from "@/components/ui/use-toast";
 
 export default function Stake() {
     const config = getConfig();
@@ -26,7 +25,6 @@ export default function Stake() {
     const [page, setPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const { address } = useChain("stargaze");
-    const { toast } = useToast();
     const LIMIT = 8;
 
     const fetchRaffles = async (pageNum: number, append: boolean = false) => {
@@ -66,44 +64,6 @@ export default function Stake() {
         fetchInitialData();
     }, [user]);
 
-    const onBuy = (amount: number, raffle_id: number) => {
-
-        if(!address) {
-            toast({
-                variant: "destructive",
-                title: "Please Login first",
-                description: "You must be logged in to buy tickets. Please login to your account to proceed."
-            })
-            return;
-        }
-
-        promiseToast(doBuy(amount, raffle_id), {
-            loading: {
-                title: "Processing...",
-                description: "Please Wait"
-            },
-            success: () => {
-                setLoading(false);
-                return {
-                    title: "Success!",
-                    description: "Buy Ticket Success"
-                };
-            },
-            error: (error: AxiosError | any) => ({
-                title: "Ups! Something wrong.",
-                description: error?.response?.data?.message || 'Internal server error.'
-            })
-        });
-    }
-
-    const doBuy = async (amount: number, raffle_id: number) => {
-        await axios.post("/api/raffle/buy", {
-            raffle_id,
-            wallet_address: address,
-            amount
-        })
-    }
-
     return (
         <div className="relative bg-black w-full">
             <Header />
@@ -130,7 +90,7 @@ export default function Stake() {
                 </div>
             ) : (
                 <div>
-                    {address && (
+                    {address && user && (
                         <div className="flex justify-center mt-8 px-4">
                             <div className="w-full md:!w-[750px]">
                                 <div className="grid grid-cols-2 gap-x-4">
@@ -175,9 +135,9 @@ export default function Stake() {
                     )}
                     <div className="mt-24 px-6">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
-                            {raffles.map((item, index) => (
-                                <div key={item.raffle_id} className={cn((index + 1) % 2 === 0 || (index + 1) % 3 === 0 ? "-mt-12" : "")}>
-                                    <RaffleCard data={item} onBuy={onBuy} />
+                            {[...raffles, ...raffles, ...raffles, ...raffles].map((item, index) => (
+                                <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
+                                    <RaffleCard data={item} />
                                 </div>
                             ))}
                         </div>
