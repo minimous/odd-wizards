@@ -269,17 +269,17 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                     </div>
                 </div>
             case 'expired':
-                return raffle.rewards[0].reward_win_address ? (
+                return raffle?.rewards[0]?.reward_win_address ? (
                     <div className="grid gap-y-2 mt-4">
                         <h1 className="text-lg font-bold text-center">🥳 Raffle Winner 🥳</h1>
-                        <Link href={`https://www.stargaze.zone/p/${raffle.rewards[0].reward_win_address}/tokens`} target="_blank" >
+                        <Link href={`https://www.stargaze.zone/p/${raffle?.rewards[0]?.reward_win_address}/tokens`} target="_blank" >
                             <Button
                                 variant="ghost"
                                 className={cn(
                                     "w-full font-black text-lg text-black rounded-[10px] h-[45px]",
                                     "bg-green-500 hover:bg-green-400 hover:text-black"
                                 )}>
-                                <span className='font-bold'>{formatAddress(raffle.rewards[0].reward_win_address ?? undefined)}</span>
+                                <span className='font-bold'>{formatAddress(raffle?.rewards[0]?.reward_win_address ?? undefined)}</span>
                             </Button>
                         </Link>
                     </div>
