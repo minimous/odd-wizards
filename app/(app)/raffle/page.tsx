@@ -134,7 +134,7 @@ export default function Stake() {
                             </div>
                         </div>
                     )}
-                    <div className="mt-24 px-10">
+                    <div className="mt-24">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
                             {raffles.map((item, index) => (
                                 <div className="my-4">

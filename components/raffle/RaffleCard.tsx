@@ -287,7 +287,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                     <Button
                         variant="ghost"
                         className={cn(
-                            "w-full font-black text-lg text-black rounded-[10px]  h-[45px]",
+                            "w-full font-black text-lg text-black rounded-[10px] h-[45px] mt-6",
                             "bg-green-500 hover:bg-green-400 hover:text-black"
                         )}
                         disabled={loading}
@@ -398,7 +398,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                                 <span className={cn("text-gray-400", statusStyles.fontBold)}>{statusStyles.text}</span>
                                 <span className="font-bold">{timeLeft}</span>
                             </div>
-                            <div className="p-2 border-t-2 border-[#323237]">
+                            <div className="p-2 pb-0 border-t-2 border-[#323237]">
                                 {data?.rewards?.[0] && (
                                     <Link href={`https://www.stargaze.zone/m/${raffle.rewards[0].reward_collection}/${raffle.rewards[0].reward_token_id}`}>
                                         <div className="flex items-center justify-between">
@@ -407,7 +407,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                                         </div>
                                     </Link>
                                 )}
-                                <div className="h-[410px]">
+                                <div className="h-full">
                                     <div className="py-2">
                                         <div className={cn("w-full bg-cover bg-center aspect-square rounded-xl")}
                                             style={{ backgroundImage: `url(${raffle.rewards?.[0]?.reward_token_img})` }}>
@@ -416,7 +416,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                                     {renderButton()}
                                 </div>
                             </div>
-                            <div className="flex items-center justify-center text-sm gap-x-1 mt-2">
+                            <div className="flex items-center justify-center text-sm gap-x-1 pb-2">
                                 <Button
                                     onClick={() => setIsFlipped(true)}
                                     variant="ghost"
