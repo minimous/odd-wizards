@@ -137,7 +137,7 @@ export default function Stake() {
                     <div className="mt-24">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
                             {raffles.map((item, index) => (
-                                <div className="my-4">
+                                <div key={index} className="my-4">
                                     <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
                                         <RaffleCard data={item} />
                                     </div>
