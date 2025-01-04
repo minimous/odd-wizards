@@ -18,7 +18,7 @@ const LoadingPage = () => {
     }, [isLoading]);
 
     return (
-        <div className={cn(isLoading ? "absolute inset-0 flex items-center justify-center bg-black/50 z-[999999]" : "hidden")}>
+        <div className={cn(isLoading ? "absolute inset-0 flex items-center justify-center bg-black/90 z-[999999]" : "hidden")}>
             <MorphingText texts={texts} />;
         </div>
 
