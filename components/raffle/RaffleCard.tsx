@@ -91,7 +91,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
             case 'not_started':
                 return {
                     fontBold: "font-base",
-                    bgColor: "bg-yellow-700/20",
+                    bgColor: "bg-yellow-700/20 justify-center",
                     dotBg: "bg-green-500/50",
                     dot: "bg-green-500",
                     text: "Starts in:"
@@ -100,16 +100,16 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                 return {
                     fontBold: "font-bold !text-white",
                     bgColor: "bg-red-700/20 justify-center",
-                    dotBg: "bg-green-500/50",
-                    dot: "bg-green-500",
+                    dotBg: "bg-red-500/50",
+                    dot: "bg-red-500",
                     text: "Ended!"
                 };
             default:
                 return {
                     fontBold: "font-base",
-                    bgColor: "bg-lime-700/20",
-                    dotBg: "bg-green-500/50",
-                    dot: "bg-green-500",
+                    bgColor: "bg-lime-700/20 justify-center",
+                    dotBg: "bg-lime-500/50",
+                    dot: "bg-lime-500",
                     text: "Ends in:"
                 };
         }
@@ -205,13 +205,13 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
             case 'not_started':
                 return <div>
                     <div className="grid gap-y-2 py-2">
-                        <div className="flex items-center text-xs gap-x-2">
+                        <div className="flex items-center text-sm gap-x-2">
                             <span className="text-gray-400">Price: </span>
                             <span className="font-bold">
                                 {formatDecimal(raffle.raffle_price, 2)} ${raffle.raffle_price_type} | {formatDecimal(totalTickets, 2)} Ticket Sold
                             </span>
                         </div>
-                        {status == 'active' && address && <div className="flex items-center text-xs gap-x-2">
+                        {status == 'active' && address && <div className="flex items-center text-sm gap-x-2">
                             <span className="text-gray-400">Bought: </span>
                             <span className="font-bold text-green-500">
                                 {formatDecimal(userTickets * (raffle.raffle_price || 0), 2)} ${raffle.raffle_price_type} | {formatDecimal(userTickets, 2)} Ticket
@@ -287,7 +287,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                     <Button
                         variant="ghost"
                         className={cn(
-                            "w-full font-black text-lg text-black rounded-[10px] h-[45px] mt-6",
+                            "w-full font-black text-lg text-black rounded-[10px] h-[45px] mt-12",
                             "bg-green-500 hover:bg-green-400 hover:text-black"
                         )}
                         disabled={loading}
@@ -330,25 +330,25 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
     const renderParticipants = () => {
         return (
             <div className="h-full flex flex-col">
-                <div className={cn("flex items-center gap-2 p-2 px-2 text-sm", statusStyles.bgColor)}>
+                <div className={cn("flex items-center gap-2 p-2 px-42 text-sm", statusStyles.bgColor)}>
                     <div className={cn("w-4 h-4 flex items-center justify-center rounded-full blinker", statusStyles.dotBg)}>
                         <div className={cn("w-2 h-2 rounded-full", statusStyles.dot)} />
                     </div>
                     <span className={cn("text-gray-400", statusStyles.fontBold)}>{statusStyles.text}</span>
                     <span className="font-bold">{timeLeft}</span>
                 </div>
-                <div className="py-2 border-t-2 border-[#323237]">
+                <div className="py-2 border-t-2 px-4 border-[#323237]">
                     {data?.rewards?.[0] && (
                         <Link href={`https://www.stargaze.zone/m/${raffle.rewards[0].reward_collection}/${raffle.rewards[0].reward_token_id}`}>
-                            <div className="flex items-center justify-between px-4">
-                                <h1 className="font-bold text-xl truncate">{raffle.rewards[0].reward_name}</h1>
+                            <div className="flex items-center justify-between px-2">
+                                <h1 className="font-semibold text-lg truncate">{raffle.rewards[0].reward_name}</h1>
                                 <ArrowUp className="rotate-45" />
                             </div>
                         </Link>
                     )}
                     <div className="py-2">
-                        <span className="opacity-50 my-2 mx-4">Raffle Participants</span>
-                        <ScrollArea className="h-[380px] flex-1 overflow-y-auto px-4">
+                        <span className="opacity-50 my-2 mx-2">Raffle Participants</span>
+                        <ScrollArea className="h-[380px] flex-1 overflow-y-auto px-2">
                             {Object.values(summedParticipants)?.map((item, index) => (
                                 <div key={index} className="flex justify-between items-center my-2 text-lg">
                                     <Link href={`https://www.stargaze.zone/p/${item.participant_address}/tokens`} target="_blank">
@@ -356,7 +356,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                                             {formatAddress(item.participant_address ?? undefined)}
                                         </span>
                                     </Link>
-                                    <span className="text-lg">
+                                    <span className="text-sm">
                                         {formatDecimal(item.total_amount, 2)} Ticket
                                     </span>
                                 </div>
@@ -371,7 +371,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
     return (
         <div className="relative">
             <div className={cn(
-                "relative w-full h-[550px]",
+                "relative w-full h-[545px]",
                 "transform-gpu transition-transform duration-700",
                 "[perspective:1000px]"
             )}>
@@ -391,18 +391,18 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                             className="w-full h-full"
                             gradientColor={"#262626"}
                         >
-                            <div className={cn("flex items-center gap-2 p-2 px-2 text-sm", statusStyles.bgColor)}>
+                            <div className={cn("flex items-center gap-2 p-2 px-6 text-sm", statusStyles.bgColor)}>
                                 <div className={cn("w-4 h-4 flex items-center justify-center rounded-full blinker", statusStyles.dotBg)}>
                                     <div className={cn("w-2 h-2 rounded-full", statusStyles.dot)} />
                                 </div>
                                 <span className={cn("text-gray-400", statusStyles.fontBold)}>{statusStyles.text}</span>
                                 <span className="font-bold">{timeLeft}</span>
                             </div>
-                            <div className="p-2 pb-0 border-t-2 border-[#323237]">
+                            <div className="h-full p-2 border-t-2 border-[#323237] px-6">
                                 {data?.rewards?.[0] && (
                                     <Link href={`https://www.stargaze.zone/m/${raffle.rewards[0].reward_collection}/${raffle.rewards[0].reward_token_id}`}>
                                         <div className="flex items-center justify-between">
-                                            <h1 className="font-bold text-xl truncate">{raffle.rewards[0].reward_name}</h1>
+                                            <h1 className="font-semibold text-lg truncate">{raffle.rewards[0].reward_name}</h1>
                                             <ArrowUp className="rotate-45" />
                                         </div>
                                     </Link>
@@ -415,16 +415,6 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
                                     </div>
                                     {renderButton()}
                                 </div>
-                            </div>
-                            <div className="flex items-center justify-center text-sm gap-x-1 pb-2">
-                                <Button
-                                    onClick={() => setIsFlipped(true)}
-                                    variant="ghost"
-                                    className="hover:bg-transparent italic gap-x-2 opacity-50 hover:opacity-60"
-                                >
-                                    <Eye size={20} />
-                                    <span>See Participants</span>
-                                </Button>
                             </div>
                         </MagicCard>
                     </div>
@@ -447,7 +437,23 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
 
             {/* Back button outside the card */}
             <div className={cn(
-                "absolute left-1/2 bottom-4 -translate-x-1/2",
+                "absolute left-1/2 bottom-3 mt-1 -translate-x-1/2",
+                "transition-all duration-300",
+                isFlipped
+                    ? "opacity-0 translate-y-4 pointer-events-none"
+                    : "opacity-100 translate-y-0"
+            )}>
+                <Button
+                    onClick={() => setIsFlipped(true)}
+                    variant="ghost"
+                    className="hover:bg-transparent italic gap-x-2 opacity-50 hover:opacity-60"
+                >
+                    <Eye size={20} />
+                    <span>See Participants</span>
+                </Button>
+            </div>
+            <div className={cn(
+                "absolute left-1/2 bottom-3 -translate-x-1/2",
                 "transition-all duration-300",
                 isFlipped
                     ? "opacity-100 translate-y-0"
