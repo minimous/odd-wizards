@@ -64,7 +64,11 @@ export default function Stake() {
             setLoading(false);
         }
         fetchInitialData();
-    }, [user]);
+    }, []);
+
+    useEffect(() => {
+
+    }, [user])
 
     return (
         <div className="relative bg-black w-full">
