@@ -76,11 +76,11 @@ export default function Stake() {
                             <div className="flex justify-center">
                                 <CustomGradualSpacing
                                     className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
-                                    text="Fortune on your side"
+                                    text="Fortune on Your Side"
                                 />
                             </div>
                             <div className="text-center mx-auto">
-                                <p className="text-sm md:!text-xl text-gray-400 leading-tight">Buy as many tickets as possible, and win the draw</p>
+                                <p className="text-sm md:!text-xl text-gray-400 leading-tight">Buy as many tickets as possible and win the raffle.</p>
                             </div>
                         </div>
                     </div>
