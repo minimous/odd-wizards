@@ -412,8 +412,13 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                         )}
                         <div>
                             <div className="py-2">
-                                <div className={cn("w-full bg-cover bg-center aspect-square rounded-xl")}
-                                    style={{ backgroundImage: `url(${raffle.rewards?.[0]?.reward_token_img})` }}>
+                                <div className="w-full bg-center aspect-square rounded-xl overflow-hidden">
+                                    <div
+                                        className="w-full h-full bg-cover transition-transform duration-300 hover:scale-105"
+                                        style={{
+                                            backgroundImage: `url(${raffle.rewards?.[0]?.reward_token_img})`,
+                                        }}
+                                    ></div>
                                 </div>
                             </div>
                             {renderButton()}
