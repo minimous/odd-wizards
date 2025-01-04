@@ -12,11 +12,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
 import { MagicCard } from "../ui/magic-card";
 import ReactCardFlip from 'react-card-flip';
+import { useUser } from "@/hooks/useUser";
+import getConfig from "@/config/config";
 
 export interface RaffleCardCustomProps {
     data: Raffle;
 }
 
+const config = getConfig();
 const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
 
     const summed = data.participants?.reduce((acc, participant) => {
@@ -42,6 +45,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const { address } = useChain("stargaze");
     const { toast } = useToast();
+    const { setUser, setStaker } = useUser();
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -325,6 +329,10 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 p.participant_address == address ? sum + (p.participant_amount || 0) : sum, 0) || 0;
             setUserTickets(userTickets);
         }
+        
+        let respUser = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
+        setUser(respUser.data?.data?.user);
+        setStaker(respUser.data?.data?.staker);
 
     }
 
