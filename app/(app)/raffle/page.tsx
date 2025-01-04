@@ -99,7 +99,7 @@ export default function Stake() {
                     {address && user && (
                         <div className="flex justify-center mt-8">
                             <div className="w-full md:!w-[750px]">
-                                <div className="grid grid-cols-2 gap-x-4">
+                                <div className="grid grid-cols-1 md:!grid-cols-2 gap-x-4 gap-y-4">
                                     <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
                                         <div className="flex items-center gap-4">
                                             <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
@@ -124,7 +124,7 @@ export default function Stake() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] md:w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+                                    <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
                                         <div>
                                             <img src="/images/Icon/wzrd.png" className="h-[55px]" alt="WZRD Token" />
                                         </div>
@@ -140,10 +140,10 @@ export default function Stake() {
                         </div>
                     )}
                     <div className="mt-24">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-6 md:gap-8 lg:gap-10">
                             {raffles.map((item, index) => (
                                 <div key={index} className="my-4">
-                                    <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
+                                    <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "md:!-mt-12" : "")}>
                                         <RaffleCardCustom data={item} />
                                     </div>
                                 </div>
