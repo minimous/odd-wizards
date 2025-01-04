@@ -142,15 +142,17 @@ export default function Stake() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-                                        <div>
-                                            <img src="/images/Icon/wzrd.png" className="h-[35px] md:!h-[55px]" alt="WZRD Token" />
-                                        </div>
-                                        <div className="block">
-                                            <span className="text-[12px] md:text-[20px] text-white">Token</span>
-                                            <p className="text-[10px] md:text-[20px] font-bold text-white">
-                                                {formatDecimal(staker?.staker_total_points ?? 0, 2)} $WZRD
-                                            </p>
+                                    <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
+                                        <div className="flex items-center gap-4">
+                                            <div>
+                                                <img src="/images/Icon/wzrd.png" className="h-[35px] md:!h-[55px]" alt="WZRD Token" />
+                                            </div>
+                                            <div className="block">
+                                                <span className="text-[12px] md:text-[20px] text-white">Token</span>
+                                                <p className="text-[10px] md:text-[20px] font-bold text-white">
+                                                    {formatDecimal(staker?.staker_total_points ?? 0, 2)} $WZRD
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
