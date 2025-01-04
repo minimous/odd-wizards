@@ -75,16 +75,34 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-16 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
+                    <div className="px-10 mt-20 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
                         <div>
-                            <div className="flex justify-center">
+                            <div className="hidden md:!flex justify-center">
                                 <CustomGradualSpacing
                                     className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
                                     text="Fortune on Your Side"
                                 />
                             </div>
-                            <div className="text-center mx-auto">
+                            <div className="grid justify-center md:!hidden">
+                                <div className="flex justify-center">
+                                    <CustomGradualSpacing
+                                        className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
+                                        text="Fortune on"
+                                    />
+                                </div>
+                                <div className="flex justify-center">
+                                    <CustomGradualSpacing
+                                        className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
+                                        text="Your Side"
+                                    />
+                                </div>
+                            </div>
+                            <div className="text-center mx-auto hidden md:!block">
                                 <p className="text-sm md:!text-xl text-gray-400 leading-tight">Buy as many tickets as possible and win the raffle.</p>
+                            </div>
+                            <div className="text-center mx-auto md:!hidden">
+                                <p className="text-sm md:!text-xl text-gray-400 leading-tight">Buy as many tickets as possible</p>
+                                <p className="text-sm md:!text-xl text-gray-400 leading-tight">and win the raffle.</p>
                             </div>
                         </div>
                     </div>
@@ -139,7 +157,7 @@ export default function Stake() {
                             </div>
                         </div>
                     )}
-                    <div className="mt-24">
+                    <div className="mt-14 md:!mt-24">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-6 md:gap-8 lg:gap-10">
                             {raffles.map((item, index) => (
                                 <div key={index} className="my-4">
