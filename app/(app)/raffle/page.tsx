@@ -16,6 +16,7 @@ import { Raffle } from "@/types/raflles";
 import Loading from "@/components/Loading";
 import { useChain } from "@cosmos-kit/react";
 import Particles from "@/components/ui/particles";
+import RaffleCardCustom from "@/components/raffle/RaffleCardCustom";
 
 export default function Stake() {
     const config = getConfig();
@@ -66,7 +67,7 @@ export default function Stake() {
     }, [user]);
 
     return (
-        <div className="relative bg-black w-full md:px-10">
+        <div className="relative bg-black w-full">
             <Header />
             <div>
                 <div className="grid">
@@ -139,7 +140,7 @@ export default function Stake() {
                             {raffles.map((item, index) => (
                                 <div key={index} className="my-4">
                                     <div key={item.raffle_id} className={cn(((index + 1) % 4 === 2 || (index + 1) % 4 === 3) ? "-mt-12" : "")}>
-                                        <RaffleCard data={item} />
+                                        <RaffleCardCustom data={item} />
                                     </div>
                                 </div>
                             ))}
