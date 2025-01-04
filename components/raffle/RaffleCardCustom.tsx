@@ -357,7 +357,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                     )}
                     <div className="py-2">
                         <span className="opacity-50 my-2">Raffle Participants</span>
-                        <ScrollArea className="h-[350px] md:!h-[345px]"> {/* Fixed height to match front card image */}
+                        <ScrollArea className="h-[355px] md:!h-[345px]"> {/* Fixed height to match front card image */}
                             <div className="px-2">
                                 {Object.values(summedParticipants)?.map((item, index) => (
                                     <div key={index} className="flex justify-between items-center my-2 text-lg">
@@ -401,7 +401,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 className="w-full"
                 gradientColor={"#262626"}
             >
-                <div className="h-[525px] md:!h-[520px]">
+                <div className="h-[530px] md:!h-[520px]">
                     <div className={cn("flex items-center gap-2 p-2 px-6 text-sm", statusStyles.bgColor)}>
                         <div className={cn("w-4 h-4 flex items-center justify-center rounded-full blinker", statusStyles.dotBg)}>
                             <div className={cn("w-2 h-2 rounded-full", statusStyles.dot)} />
@@ -409,7 +409,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                         <span className={cn("text-gray-400", statusStyles.fontBold)}>{statusStyles.text}</span>
                         <span className="font-bold">{timeLeft}</span>
                     </div>
-                    <div className="h-[435px] md:!h-[430px] border-t-2 border-[#323237] p-2 px-6">
+                    <div className="h-[440px] md:!h-[430px] border-t-2 border-[#323237] p-2 px-6">
                         {data?.rewards?.[0] && (
                             <Link target="_blank" href={`https://www.stargaze.zone/m/${raffle.rewards[0].reward_collection}/${raffle.rewards[0].reward_token_id}`}>
                                 <div className="flex items-center justify-between">
@@ -454,7 +454,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 className="w-full"
                 gradientColor={"#262626"}
             >
-                <div className="h-[525px] md:!h-[520px]">
+                <div className="h-[530px] md:!h-[520px]">
                     {renderParticipants()}
                 </div>
             </MagicCard>
