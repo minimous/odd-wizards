@@ -371,7 +371,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
     return (
         <div className="relative">
             <div className={cn(
-                "relative w-full h-[545px]",
+                "relative w-full h-[515px]",
                 "transform-gpu transition-transform duration-700",
                 "[perspective:1000px]"
             )}>
@@ -437,7 +437,7 @@ const RaffleCard = ({ data }: RaffleCardProps) => {
 
             {/* Back button outside the card */}
             <div className={cn(
-                "absolute left-1/2 bottom-3 mt-1 -translate-x-1/2",
+                "absolute left-1/2 bottom-3 -translate-x-1/2",
                 "transition-all duration-300",
                 isFlipped
                     ? "opacity-0 translate-y-4 pointer-events-none"
