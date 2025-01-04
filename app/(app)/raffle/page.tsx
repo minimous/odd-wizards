@@ -75,7 +75,7 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-20 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
+                    <div className="px-10 mt-24 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
                         <div>
                             <div className="hidden md:!flex justify-center">
                                 <CustomGradualSpacing

@@ -207,7 +207,7 @@ export default function Header() {
           <button
             onClick={() => setOpen(true)}
             aria-label="Open Menu"
-            className="text-black focus:outline-none bg-white p-2 rounded-lg"
+            className="text-black focus:outline-none bg-white p-2 rounded-[5px]"
           >
             <svg
               className="w-6 h-5"
