@@ -143,8 +143,8 @@ export default function Stake() {
                                         </div>
                                     </div>
                                     <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 gap-6 w-[60px] h-[68px] md:w-[105px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
-                                        <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
-                                            <img src="/images/Icon/wzrd.png" className="h-[55px]" alt="WZRD Token" />
+                                        <div>
+                                            <img src="/images/Icon/wzrd.png" className="h-[35px] md:!h-[55px]" alt="WZRD Token" />
                                         </div>
                                         <div className="block">
                                             <span className="text-[12px] md:text-[20px] text-white">Token</span>
