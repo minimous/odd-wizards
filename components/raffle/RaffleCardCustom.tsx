@@ -205,7 +205,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
             case 'active':
             case 'not_started':
                 return <div>
-                    <div className="grid gap-y-2 py-2">
+                    <div className={cn("grid gap-y-2 py-2", status == "not_started" && "mt-5")}>
                         <div className="flex items-center text-sm gap-x-2">
                             <span className="text-gray-400">Price: </span>
                             <span className="font-bold">
@@ -412,8 +412,13 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                         )}
                         <div>
                             <div className="py-2">
-                                <div className={cn("w-full bg-cover bg-center aspect-square rounded-xl")}
-                                    style={{ backgroundImage: `url(${raffle.rewards?.[0]?.reward_token_img})` }}>
+                                <div className="w-full bg-center aspect-square rounded-xl overflow-hidden">
+                                    <div
+                                        className="w-full h-full bg-cover transition-transform duration-300 hover:scale-105"
+                                        style={{
+                                            backgroundImage: `url(${raffle.rewards?.[0]?.reward_token_img})`,
+                                        }}
+                                    ></div>
                                 </div>
                             </div>
                             {renderButton()}

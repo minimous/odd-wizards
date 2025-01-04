@@ -14,6 +14,7 @@ import { useNavbarMobile } from "@/hooks/useNavbarMobile";
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useToast } from "../ui/use-toast";
 import confetti from "canvas-confetti";
+import { useLoading } from "@/hooks/useLoading";
 
 export default function Header() {
   const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
@@ -25,14 +26,18 @@ export default function Header() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { toast } = useToast();
 
+  const { showLoading, hideLoading } = useLoading();
+
   useEffect(() => {
 
     async function fetchData() {
+      showLoading();
       if (address) {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         setUser(resp.data?.data?.user);
         setStaker(resp.data?.data?.staker);
       }
+      hideLoading();
     }
 
     fetchData();
