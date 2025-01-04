@@ -43,10 +43,16 @@ export default function Stake() {
     const { user, staker } = useUser();
     const [loading, setLoading] = useState<boolean>(false);
     const [raffles, setRaffles] = useState([]);
-    const { address } = useChain("stargaze");
+    const { address, isWalletConnecting, isWalletConnected } = useChain("stargaze");
     const [timeLeft, setTimeLeft] = useState<string>("");
     const [status, setStatus] = useState<'not_started' | 'active' | 'expired'>('active');
     const [token, setToken] = useState<any>();
+
+    useEffect(() => {
+        if (config && address && !config.owners.includes(address)) {
+            window.location.href = '/raffle';
+        }
+    }, [address]);
 
     const defaultValues = {
         startDate: new Date(),
@@ -223,316 +229,324 @@ export default function Stake() {
             <div>
                 <div className="grid">
                     <div className="px-10 mt-16 px-4 md:!px-10 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left flex flex-col items-center">
-                        <div>
-                            <div className="flex justify-center">
-                                <h1 className="font-display text-[36px] md:!text-4xl font-black">
-                                    Create Raffle
-                                </h1>
-                            </div>
-                        </div>
-                        {/* <div className="grid grid-cols-1 gap-10"> */}
-                        <div>
-                            <Form {...form}>
-                                <form
-                                    onSubmit={form.handleSubmit(onSubmit)}
-                                    className="w-full space-y-4"
-                                >
-                                    <div className="flex gap-x-8">
-                                        <div className="grid">
-                                            <div className="my-4">
-                                                <h1 className="mr-4 font-londrina text-xl text-green-500 font-bold md:text-2xl xl:text-2xl">
-                                                    Raffle Details:
-                                                </h1>
-                                                <div className="my-2 grid grid-cols-2">
-                                                    <div className="col-span-2">
-                                                        <FormField
-                                                            control={form.control}
-                                                            name="priceUrl"
-                                                            render={({ field }) => (
-                                                                <FormItem>
-                                                                    <FormLabel className="flex items-center">
-                                                                        <div className="h-1 w-1 rounded-full bg-white mr-2" /> Prize Link: <span className="text-green-500">*</span>
-                                                                    </FormLabel>
-                                                                    <div className="relative ml-auto flex-1 md:grow-0">
-                                                                        <FormControl>
-                                                                            <Input
-                                                                                type="text"
-                                                                                disabled={loading}
-                                                                                placeholder="https://www.stargaze.zone/m/oddswizard/5263"
-                                                                                className="w-full"
-                                                                                {...field}
-                                                                            />
-                                                                        </FormControl>
-                                                                    </div>
-                                                                    <FormMessage />
-                                                                </FormItem>
-                                                            )}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="my-4">
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="priceType"
-                                                        render={({ field }) => (
-                                                            <FormItem>
-                                                                <FormLabel className="flex items-center">
-                                                                    <div className="h-1 w-1 rounded-full bg-white mr-2" /> Choose Token: <span className="text-green-500">*</span>
-                                                                </FormLabel>
-                                                                <div className="relative ml-auto flex-1 md:grow-0">
-                                                                    <FormControl>
-                                                                        <Select onValueChange={field.onChange}
-                                                                            value={field.value?.toString()}
-                                                                            defaultValue={field.value?.toString()}
-                                                                            disabled={loading}>
-                                                                            <SelectTrigger className="w-full">
-                                                                                <SelectValue defaultValue={field.value?.toString()} placeholder="--Select--" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent>
-                                                                                <SelectGroup>
-                                                                                    <SelectLabel>Choose Token</SelectLabel>
-                                                                                    <SelectItem value="WZRD">$WZRD</SelectItem>
-                                                                                </SelectGroup>
-                                                                            </SelectContent>
-                                                                        </Select>
-                                                                    </FormControl>
-                                                                </div>
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                </div>
-                                                <div className="my-4">
-                                                    <div className="my-2 grid grid-cols-2 gap-y-4">
-                                                        <div className="mr-4">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="startDate"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-                                                                        <FormLabel className="flex items-center">
-                                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> Start Date: <span className="text-green-500">*</span>
-                                                                        </FormLabel>
-                                                                        <div className="relative ml-auto flex-1 md:grow-0">
-                                                                            <FormControl>
-                                                                                <DateTimePicker
-                                                                                    className="w-full"
-                                                                                    placeholder="MMMM DD, YYYY h:mm A ..."
-                                                                                    value={moment(field.value).format("YYYY-MM-DD HH:mm:ss")}
-                                                                                    onChangeDateTime={(value) => {
-                                                                                        const date = new Date(moment(value, "YYYY-MM-DD h:mm A").format());
-                                                                                        field.onChange(date);
-                                                                                        field.value = date;
-                                                                                    }}
-                                                                                />
-                                                                            </FormControl>
-                                                                        </div>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}
-                                                            />
-                                                        </div>
-                                                        <div className="ml-4">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="price"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-                                                                        <FormLabel className="flex items-center">
-                                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> Entry Price : <span className="text-green-500">*</span>
-                                                                        </FormLabel>
-                                                                        <div className="relative ml-auto flex-1 md:grow-0">
-                                                                            <FormControl>
-                                                                                <Input
-                                                                                    min={1}
-                                                                                    type="number"
-                                                                                    disabled={loading}
-                                                                                    placeholder="100 ..."
-                                                                                    {...field}
-                                                                                />
-                                                                            </FormControl>
-                                                                        </div>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}
-                                                            />
-                                                        </div>
-                                                        <div className="mr-4">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="endDate"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-                                                                        <FormLabel className="flex items-center">
-                                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> End Date: <span className="text-green-500">*</span>
-                                                                        </FormLabel>
-                                                                        <div className="relative ml-auto flex-1 md:grow-0">
-                                                                            <FormControl>
-                                                                                <DateTimePicker
-                                                                                    className="w-full"
-                                                                                    placeholder="MMMM DD, YYYY h:mm A ..."
-                                                                                    value={moment(field.value).format("YYYY-MM-DD HH:mm:ss")}
-                                                                                    onChangeDateTime={(value) => {
-                                                                                        const date = new Date(moment(value, "YYYY-MM-DD h:mm A").format());
-                                                                                        field.onChange(date);
-                                                                                        field.value = date;
-                                                                                    }}
-                                                                                />
-                                                                            </FormControl>
-                                                                        </div>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}
-                                                            />
-                                                        </div>
-                                                        <div className="ml-4">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="maxTicket"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-                                                                        <FormLabel className="flex items-center">
-                                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> Entry Limit : <span className="text-green-500">*</span>
-                                                                        </FormLabel>
-                                                                        <div className="relative ml-auto flex-1 md:grow-0">
-                                                                            <FormControl>
-                                                                                <Input
-                                                                                    min={1}
-                                                                                    type="number"
-                                                                                    disabled={loading}
-                                                                                    placeholder="2500 ..."
-                                                                                    {...field}
-                                                                                />
-                                                                            </FormControl>
-                                                                        </div>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}
-                                                            />
-                                                        </div>
-                                                        <div className="col-span-2">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="winner"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-                                                                        <FormLabel className="flex items-center">
-                                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> Winner:
-                                                                        </FormLabel>
-                                                                        <div className="relative ml-auto flex-1 md:grow-0">
-                                                                            <FormControl>
-                                                                                <Input
-                                                                                    type="text"
-                                                                                    disabled={loading}
-                                                                                    placeholder="Starsxx ..."
-                                                                                    {...field}
-                                                                                />
-                                                                            </FormControl>
-                                                                        </div>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="py-6">
-                                            <MagicCard
-                                                className="w-[275px] h-full"
-                                                gradientColor={"#262626"}
-                                            >
-                                                <div className={cn("flex items-center gap-2 p-2 px-2 text-sm", statusStyles.bgColor)}>
-                                                    <div className={cn("w-4 h-4 flex items-center justify-center rounded-full blinker", statusStyles.dotBg)}>
-                                                        <div className={cn("w-2 h-2 rounded-full", statusStyles.dot)} />
-                                                    </div>
-                                                    <span className={cn("text-gray-400", statusStyles.fontBold)}>{statusStyles.text}</span>
-                                                    <span className="font-bold">{timeLeft}</span>
-                                                </div>
-                                                <div className="px-4 pb-2 border-t-2 border-[#323237]">
-                                                    <div className="p-2">
-                                                        {token && (
-                                                            <Link href={`${form.watch("priceUrl")}`}>
-                                                                <div className="flex items-center justify-between">
-                                                                    <h1 className="font-bold text-xl truncate">{token?.name}</h1>
-                                                                    <ArrowUp className="rotate-45" />
-                                                                </div>
-                                                            </Link>
-                                                        )}
-                                                        <div>
-                                                            <div className="py-2">
-                                                                <div className={cn("w-full bg-cover bg-center aspect-square rounded-xl")}
-                                                                    style={{ backgroundImage: `url(${token?.media?.url})` }}>
-                                                                </div>
-                                                            </div>
-                                                            <div className="grid gap-y-2 py-2">
-                                                                <div className="flex items-center text-xs gap-x-2">
-                                                                    <span className="text-gray-400">Price: </span>
-                                                                    <span className="font-bold">
-                                                                        {formatDecimal(form.watch("price"), 2)} $${form.watch("priceType")} | {formatDecimal(form.watch("maxTicket"), 2)} Ticket Sold
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-x-2 py-2">
-                                                        <div className="relative group">
-                                                            <input
-                                                                className="bg-stone-800 text-white font-black text-lg text-center border-none focus:border-none hover:border-none focus-visible:ring-0 rounded-[10px] w-[80px] h-[45px] no-spinner"
-                                                                value={100}
-                                                                type="number"
-                                                                min={1}
-                                                                max={form.watch("maxTicket")}
-                                                                disabled={status !== 'active'}
-                                                                style={{
-                                                                    WebkitAppearance: "none", // Chrome, Safari, Edge
-                                                                    MozAppearance: "textfield", // Firefox
-                                                                }}
-                                                            />
-                                                            <div className="absolute right-2 top-0 h-full flex flex-col justify-center opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
-                                                                <button
-                                                                    className="text-white hover:text-gray-300 focus:outline-none -mb-1 opacity-50"
-                                                                    disabled={status !== 'active'}
-                                                                >
-                                                                    <ChevronUp className="h-4 w-4" />
-                                                                </button>
-                                                                <button
-                                                                    className="text-white hover:text-gray-300 focus:outline-none -mt-1 opacity-50"
-                                                                    disabled={status !== 'active'}
-                                                                >
-                                                                    <ChevronDown className="h-4 w-4" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <Button
-                                                            variant="ghost"
-                                                            className={cn(
-                                                                "w-full font-black text-lg text-black rounded-[10px] h-[45px]",
-                                                                "bg-green-500 hover:bg-green-400 hover:text-black"
-                                                            )}
-                                                            disabled={status !== 'active' || loading}
-                                                        >
-                                                            Buy
-                                                        </Button>
-                                                    </div>
-                                                    <div className="flex items-center justify-center text-sm gap-x-1 mt-2">
-                                                        <span className="opacity-50">*Just Preview</span>
-                                                    </div>
-                                                </div>
-                                            </MagicCard>
+                        {
+                            !address ? (
+                                <div className="w-full h-[350px] flex justify-center items-center">
+                                    <h1 className="text-4xl font-bold">Please Login</h1>
+                                </div>
+                            ) : (
+                                <div>
+                                    <div>
+                                        <div className="flex justify-center">
+                                            <h1 className="font-display text-[36px] md:!text-4xl font-black">
+                                                Create Raffle
+                                            </h1>
                                         </div>
                                     </div>
-                                    <Button
-                                        disabled={loading}
-                                        variant={'ghost'}
-                                        className="h-12 bg-green-500 w-full rounded-full text-2xl font-bold text-black hover:bg-green-500 hover:text-black"
-                                    >
-                                        Create Raffle
-                                    </Button>
-                                </form>
-                            </Form>
-                        </div>
+                                    {/* <div className="grid grid-cols-1 gap-10"> */}
+                                    <Form {...form}>
+                                        <form
+                                            onSubmit={form.handleSubmit(onSubmit)}
+                                            className="w-full space-y-4"
+                                        >
+                                            <div className="flex gap-x-8">
+                                                <div className="grid">
+                                                    <div className="my-4">
+                                                        <h1 className="mr-4 font-londrina text-xl text-green-500 font-bold md:text-2xl xl:text-2xl">
+                                                            Raffle Details:
+                                                        </h1>
+                                                        <div className="my-2 grid grid-cols-2">
+                                                            <div className="col-span-2">
+                                                                <FormField
+                                                                    control={form.control}
+                                                                    name="priceUrl"
+                                                                    render={({ field }) => (
+                                                                        <FormItem>
+                                                                            <FormLabel className="flex items-center">
+                                                                                <div className="h-1 w-1 rounded-full bg-white mr-2" /> Prize Link: <span className="text-green-500">*</span>
+                                                                            </FormLabel>
+                                                                            <div className="relative ml-auto flex-1 md:grow-0">
+                                                                                <FormControl>
+                                                                                    <Input
+                                                                                        type="text"
+                                                                                        disabled={loading}
+                                                                                        placeholder="https://www.stargaze.zone/m/oddswizard/5263"
+                                                                                        className="w-full"
+                                                                                        {...field}
+                                                                                    />
+                                                                                </FormControl>
+                                                                            </div>
+                                                                            <FormMessage />
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="my-4">
+                                                            <FormField
+                                                                control={form.control}
+                                                                name="priceType"
+                                                                render={({ field }) => (
+                                                                    <FormItem>
+                                                                        <FormLabel className="flex items-center">
+                                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> Choose Token: <span className="text-green-500">*</span>
+                                                                        </FormLabel>
+                                                                        <div className="relative ml-auto flex-1 md:grow-0">
+                                                                            <FormControl>
+                                                                                <Select onValueChange={field.onChange}
+                                                                                    value={field.value?.toString()}
+                                                                                    defaultValue={field.value?.toString()}
+                                                                                    disabled={loading}>
+                                                                                    <SelectTrigger className="w-full">
+                                                                                        <SelectValue defaultValue={field.value?.toString()} placeholder="--Select--" />
+                                                                                    </SelectTrigger>
+                                                                                    <SelectContent>
+                                                                                        <SelectGroup>
+                                                                                            <SelectLabel>Choose Token</SelectLabel>
+                                                                                            <SelectItem value="WZRD">$WZRD</SelectItem>
+                                                                                        </SelectGroup>
+                                                                                    </SelectContent>
+                                                                                </Select>
+                                                                            </FormControl>
+                                                                        </div>
+                                                                        <FormMessage />
+                                                                    </FormItem>
+                                                                )}
+                                                            />
+                                                        </div>
+                                                        <div className="my-4">
+                                                            <div className="my-2 grid grid-cols-2 gap-y-4">
+                                                                <div className="mr-4">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name="startDate"
+                                                                        render={({ field }) => (
+                                                                            <FormItem>
+                                                                                <FormLabel className="flex items-center">
+                                                                                    <div className="h-1 w-1 rounded-full bg-white mr-2" /> Start Date: <span className="text-green-500">*</span>
+                                                                                </FormLabel>
+                                                                                <div className="relative ml-auto flex-1 md:grow-0">
+                                                                                    <FormControl>
+                                                                                        <DateTimePicker
+                                                                                            className="w-full"
+                                                                                            placeholder="MMMM DD, YYYY h:mm A ..."
+                                                                                            value={moment(field.value).format("YYYY-MM-DD HH:mm:ss")}
+                                                                                            onChangeDateTime={(value) => {
+                                                                                                const date = new Date(moment(value, "YYYY-MM-DD h:mm A").format());
+                                                                                                field.onChange(date);
+                                                                                                field.value = date;
+                                                                                            }}
+                                                                                        />
+                                                                                    </FormControl>
+                                                                                </div>
+                                                                                <FormMessage />
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                                <div className="ml-4">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name="price"
+                                                                        render={({ field }) => (
+                                                                            <FormItem>
+                                                                                <FormLabel className="flex items-center">
+                                                                                    <div className="h-1 w-1 rounded-full bg-white mr-2" /> Entry Price : <span className="text-green-500">*</span>
+                                                                                </FormLabel>
+                                                                                <div className="relative ml-auto flex-1 md:grow-0">
+                                                                                    <FormControl>
+                                                                                        <Input
+                                                                                            min={1}
+                                                                                            type="number"
+                                                                                            disabled={loading}
+                                                                                            placeholder="100 ..."
+                                                                                            {...field}
+                                                                                        />
+                                                                                    </FormControl>
+                                                                                </div>
+                                                                                <FormMessage />
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                                <div className="mr-4">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name="endDate"
+                                                                        render={({ field }) => (
+                                                                            <FormItem>
+                                                                                <FormLabel className="flex items-center">
+                                                                                    <div className="h-1 w-1 rounded-full bg-white mr-2" /> End Date: <span className="text-green-500">*</span>
+                                                                                </FormLabel>
+                                                                                <div className="relative ml-auto flex-1 md:grow-0">
+                                                                                    <FormControl>
+                                                                                        <DateTimePicker
+                                                                                            className="w-full"
+                                                                                            placeholder="MMMM DD, YYYY h:mm A ..."
+                                                                                            value={moment(field.value).format("YYYY-MM-DD HH:mm:ss")}
+                                                                                            onChangeDateTime={(value) => {
+                                                                                                const date = new Date(moment(value, "YYYY-MM-DD h:mm A").format());
+                                                                                                field.onChange(date);
+                                                                                                field.value = date;
+                                                                                            }}
+                                                                                        />
+                                                                                    </FormControl>
+                                                                                </div>
+                                                                                <FormMessage />
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                                <div className="ml-4">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name="maxTicket"
+                                                                        render={({ field }) => (
+                                                                            <FormItem>
+                                                                                <FormLabel className="flex items-center">
+                                                                                    <div className="h-1 w-1 rounded-full bg-white mr-2" /> Entry Limit : <span className="text-green-500">*</span>
+                                                                                </FormLabel>
+                                                                                <div className="relative ml-auto flex-1 md:grow-0">
+                                                                                    <FormControl>
+                                                                                        <Input
+                                                                                            min={1}
+                                                                                            type="number"
+                                                                                            disabled={loading}
+                                                                                            placeholder="2500 ..."
+                                                                                            {...field}
+                                                                                        />
+                                                                                    </FormControl>
+                                                                                </div>
+                                                                                <FormMessage />
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                                <div className="col-span-2">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name="winner"
+                                                                        render={({ field }) => (
+                                                                            <FormItem>
+                                                                                <FormLabel className="flex items-center">
+                                                                                    <div className="h-1 w-1 rounded-full bg-white mr-2" /> Winner:
+                                                                                </FormLabel>
+                                                                                <div className="relative ml-auto flex-1 md:grow-0">
+                                                                                    <FormControl>
+                                                                                        <Input
+                                                                                            type="text"
+                                                                                            disabled={loading}
+                                                                                            placeholder="Starsxx ..."
+                                                                                            {...field}
+                                                                                        />
+                                                                                    </FormControl>
+                                                                                </div>
+                                                                                <FormMessage />
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="py-6">
+                                                    <MagicCard
+                                                        className="w-[275px] h-full"
+                                                        gradientColor={"#262626"}
+                                                    >
+                                                        <div className={cn("flex items-center gap-2 p-2 px-2 text-sm", statusStyles.bgColor)}>
+                                                            <div className={cn("w-4 h-4 flex items-center justify-center rounded-full blinker", statusStyles.dotBg)}>
+                                                                <div className={cn("w-2 h-2 rounded-full", statusStyles.dot)} />
+                                                            </div>
+                                                            <span className={cn("text-gray-400", statusStyles.fontBold)}>{statusStyles.text}</span>
+                                                            <span className="font-bold">{timeLeft}</span>
+                                                        </div>
+                                                        <div className="px-4 pb-2 border-t-2 border-[#323237]">
+                                                            <div className="p-2">
+                                                                {token && (
+                                                                    <Link href={`${form.watch("priceUrl")}`}>
+                                                                        <div className="flex items-center justify-between">
+                                                                            <h1 className="font-bold text-xl truncate">{token?.name}</h1>
+                                                                            <ArrowUp className="rotate-45" />
+                                                                        </div>
+                                                                    </Link>
+                                                                )}
+                                                                <div>
+                                                                    <div className="py-2">
+                                                                        <div className={cn("w-full bg-cover bg-center aspect-square rounded-xl")}
+                                                                            style={{ backgroundImage: `url(${token?.media?.url})` }}>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="grid gap-y-2 py-2">
+                                                                        <div className="flex items-center text-xs gap-x-2">
+                                                                            <span className="text-gray-400">Price: </span>
+                                                                            <span className="font-bold">
+                                                                                {formatDecimal(form.watch("price"), 2)} $${form.watch("priceType")} | {formatDecimal(form.watch("maxTicket"), 2)} Ticket Sold
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-x-2 py-2">
+                                                                <div className="relative group">
+                                                                    <input
+                                                                        className="bg-stone-800 text-white font-black text-lg text-center border-none focus:border-none hover:border-none focus-visible:ring-0 rounded-[10px] w-[80px] h-[45px] no-spinner"
+                                                                        value={100}
+                                                                        type="number"
+                                                                        min={1}
+                                                                        max={form.watch("maxTicket")}
+                                                                        disabled={status !== 'active'}
+                                                                        style={{
+                                                                            WebkitAppearance: "none", // Chrome, Safari, Edge
+                                                                            MozAppearance: "textfield", // Firefox
+                                                                        }}
+                                                                    />
+                                                                    <div className="absolute right-2 top-0 h-full flex flex-col justify-center opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+                                                                        <button
+                                                                            className="text-white hover:text-gray-300 focus:outline-none -mb-1 opacity-50"
+                                                                            disabled={status !== 'active'}
+                                                                        >
+                                                                            <ChevronUp className="h-4 w-4" />
+                                                                        </button>
+                                                                        <button
+                                                                            className="text-white hover:text-gray-300 focus:outline-none -mt-1 opacity-50"
+                                                                            disabled={status !== 'active'}
+                                                                        >
+                                                                            <ChevronDown className="h-4 w-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className={cn(
+                                                                        "w-full font-black text-lg text-black rounded-[10px] h-[45px]",
+                                                                        "bg-green-500 hover:bg-green-400 hover:text-black"
+                                                                    )}
+                                                                    disabled={status !== 'active' || loading}
+                                                                >
+                                                                    Buy
+                                                                </Button>
+                                                            </div>
+                                                            <div className="flex items-center justify-center text-sm gap-x-1 mt-2">
+                                                                <span className="opacity-50">*Just Preview</span>
+                                                            </div>
+                                                        </div>
+                                                    </MagicCard>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                disabled={loading}
+                                                variant={'ghost'}
+                                                className="h-12 bg-green-500 w-full rounded-full text-2xl font-bold text-black hover:bg-green-500 hover:text-black"
+                                            >
+                                                Create Raffle
+                                            </Button>
+                                        </form>
+                                    </Form>
+                                </div>
+                            )
+                        }
                     </div>
                 </div>
             </div >

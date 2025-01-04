@@ -3,6 +3,7 @@ import prisma from '@/prisma/prisma';
 
 interface DrawWinnerRequest {
   raffle_id: number;
+  wallet_address: string;
 }
 
 // Fisher-Yates shuffle algorithm with secure random
@@ -35,7 +36,14 @@ function secureRandomNumber(min: number, max: number): number {
 export async function POST(request: NextRequest) {
   try {
     const body: DrawWinnerRequest = await request.json();
-    const { raffle_id } = body;
+    const { raffle_id, wallet_address } = body;
+
+    if (!wallet_address) {
+      return NextResponse.json(
+        { message: 'Wallet address is required' },
+        { status: 400 }
+      );
+    }
 
     // Validate raffle existence and status
     const raffle = await prisma.trn_raffle.findUnique({
@@ -52,6 +60,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { message: 'Raffle not found' },
         { status: 404 }
+      );
+    }
+
+    if (raffle.raffle_created_by != wallet_address) {
+      return NextResponse.json(
+        { message: 'Only the raffle creator can draw the winner' },
+        { status: 403 }
       );
     }
 
