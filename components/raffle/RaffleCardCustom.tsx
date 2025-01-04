@@ -205,7 +205,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
             case 'active':
             case 'not_started':
                 return <div>
-                    <div className="grid gap-y-2 py-2">
+                    <div className={cn("grid gap-y-2 py-2", status == "not_started" && "mt-5")}>
                         <div className="flex items-center text-sm gap-x-2">
                             <span className="text-gray-400">Price: </span>
                             <span className="font-bold">
