@@ -41,15 +41,15 @@ export default function InfoModal({
 
             toast({
                 title: 'Success',
-                variant: 'default',
-                description: 'Image has been copied to clipboard'
+                variant: 'success',
+                description: 'Address has been copied to clipboard'
             });
         } catch (error) {
             console.error(error);
             toast({
                 title: 'Error',
                 variant: 'destructive',
-                description: 'Failed to copy image to clipboard'
+                description: 'Failed to copy Address to clipboard'
             });
         }
     }
