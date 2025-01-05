@@ -24,7 +24,7 @@ export default function ConnectButton({ showProfile = true, className }: Connect
     useEffect(() => {
         setUser(dataUser);
     }, [dataUser])
-    
+
     // Handle connecting the wallet
     const handleConnectWallet = async () => {
         try {
@@ -93,11 +93,13 @@ export default function ConnectButton({ showProfile = true, className }: Connect
                 >
                     <span className="text-sm md:!text-2xl font-black">{formatAddress(address)}</span>
                 </Button>
-                <Link href={`/p/${address}`} >
-                    <img hidden={!showProfile} src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
-                        e.target.src = DEFAULT_IMAGE_PROFILE;
-                    }} className="w-[60px] h-[60px] rounded-full" />
-                </Link>
+                <div className="w-[60px] h-[60px] rounded-full overflow-hidden">
+                    <Link href={`/p/${address}`} >
+                        <img hidden={!showProfile} src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
+                            e.target.src = DEFAULT_IMAGE_PROFILE;
+                        }} className="w-[60px] h-[60px] rounded-full hover:scale-105" />
+                    </Link>
+                </div>
             </div>
         )}
     </div>)

@@ -45,20 +45,20 @@ export default function Stake() {
                 <div className="grid">
                     <div className="px-10 mt-16 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
                         <div className="md:!ml-16">
-                            <div className="flex justify-center md:!justify-start">
+                            <div className="flex justify-center md:!justify-center">
                                 <CustomGradualSpacing
                                     className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
                                     text="Stake your NFT"
                                 />
                             </div>
-                            <div className="flex justify-center md:!justify-start">
+                            <div className="flex justify-center md:!justify-center">
                                 <CustomGradualSpacing
                                     className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
                                     text="and LFGODDS"
                                 />
                             </div>
                             {/* <h1 className="text-4xl text-white font-black">Stake, Win, and LFGODDS!</h1> */}
-                            <div className="text-center md:!text-start mx-auto mt-6">
+                            <div className="text-center md:!text-center mx-auto mt-6">
                                 <p className="text-sm md:!text-xl text-gray-400 leading-tight">Discover the ultimate NFT staking challenge!</p>
                                 <p className="text-sm md:!text-xl text-gray-400 leading-tight">Join to complete, stack the most NFTs, and win prizes.</p>
                                 {/* <p className="text-lg text-gray-400 leading-tight"></p> */}

@@ -24,7 +24,7 @@ export default function HeaderMobile() {
     const config = getConfig();
     const path = usePathname();
     const { isOpened, setOpen } = useNavbarMobile();
-    const [ opend, setOpend ] = useState<boolean>(isOpened);
+    const [opend, setOpend] = useState<boolean>(isOpened);
 
     useEffect(() => {
 
@@ -67,7 +67,7 @@ export default function HeaderMobile() {
             {opend && (
                 <div className="absolute z-[999] top-0 left-0 right-0 h-screen bg-[url('/images/About.gif')] bg-cover bg-center py-4 md:hidden">
                     <div className="relative pt-10">
-                        <img src={ wallet.status == WalletStatus.Connected ? "/images/mobile/goblin.png" : "/images/mobile/goblin-sleep.png" } className="absolute top-24 right-0 w-[155px] pointer-events-none" />
+                        <img src={wallet.status == WalletStatus.Connected ? "/images/mobile/goblin.png" : "/images/mobile/goblin-sleep.png"} className="absolute top-24 right-0 w-[155px] pointer-events-none" />
                         <div className="absolute top-0 right-2">
                             <button
                                 onClick={() => setOpen(false)}
@@ -134,11 +134,13 @@ export default function HeaderMobile() {
                                     </Button>
                                 ) : (
                                     <div className="grid gap-y-3">
-                                        <Link onClick={() => setOpen(false)} href={`/p/${address}`} >
-                                            <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
-                                                e.target.src = DEFAULT_IMAGE_PROFILE;
-                                            }} className="w-[75px] h-[75px] rounded-[25px] mx-auto" />
-                                        </Link>
+                                        <div className="mx-auto w-[75px] h-[75px] rounded-[25px] overflow-hidden">
+                                            <Link onClick={() => setOpen(false)} href={`/p/${address}`} >
+                                                <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
+                                                    e.target.src = DEFAULT_IMAGE_PROFILE;
+                                                }} className="w-[75px] h-[75px] rounded-[25px] mx-auto hover:scale-105" />
+                                            </Link>
+                                        </div>
                                         <Button
                                             variant={"ghost"}
                                             className="px-5 py-3 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black hover:animate-shake"
