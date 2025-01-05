@@ -64,6 +64,10 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
         return () => clearInterval(timer);
     }, [data]);
 
+    useEffect(() => {
+        updateRaffle();
+    }, [address]);
+
     const calculateTimeLeft = () => {
         if (!raffle.raffle_start || !raffle.raffle_end) return "";
 
