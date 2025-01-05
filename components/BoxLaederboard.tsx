@@ -56,12 +56,12 @@ export const BoxLeaderboard = () => {
           <div className="w-full grid md:grid-cols-3 gap-x-4">
             <div className="flex bg-[url('/images/Cosmos.gif')] bg-cover bg-center flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full border-2 border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
               <div className="flex items-center gap-4">
-                <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
+                <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center overflow-hidden">
                   <Link href={`/p/${leaderboard?.staker_address}`} >
                     <img
                       src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
                       alt={leaderboard?.staker_address ?? ""}
-                      className="rounded-full object-cover w-full h-full"
+                      className="rounded-full object-cover w-full h-full hover:scale-105"
                       onError={(e: any) => {
                         e.target.src = DEFAULT_IMAGE_PROFILE;
                       }}
