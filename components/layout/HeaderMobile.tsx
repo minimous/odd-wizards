@@ -171,6 +171,13 @@ export default function HeaderMobile() {
                             >
                                 Stake
                             </Link>
+                            <Link
+                                onClick={() => setOpen(false)}
+                                href="/raffle"
+                                className={cn("text-xl max-w-max mx-auto font-bold transition-transform hover:animate-shake", path == "/" || path == "/raffle" ? "text-white" : "text-gray-200")}
+                            >
+                                Raffle
+                            </Link>
                             <Footer />
                         </div>
                     </div>

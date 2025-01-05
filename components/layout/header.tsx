@@ -12,12 +12,13 @@ import { usePathname } from "next/navigation";
 import { cn, formatAddress } from "@/lib/utils";
 import { useNavbarMobile } from "@/hooks/useNavbarMobile";
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { StdSignDoc, AminoSignResponse } from "@cosmjs/amino";
 import { useToast } from "../ui/use-toast";
+import confetti from "canvas-confetti";
+import { useLoading } from "@/hooks/useLoading";
 
 export default function Header() {
   const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
-  const { setUser } = useUser();
+  const { setUser, setStaker } = useUser();
   const { wallet } = useWallet();
   const config = getConfig();
   const path = usePathname();
@@ -25,14 +26,18 @@ export default function Header() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { toast } = useToast();
 
+  const { showLoading, hideLoading } = useLoading();
+
   useEffect(() => {
 
     async function fetchData() {
+      showLoading();
       if (address) {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         setUser(resp.data?.data?.user);
-        console.log("usersss", resp.data?.data?.user);
+        setStaker(resp.data?.data?.staker);
       }
+      hideLoading();
     }
 
     fetchData();
@@ -77,6 +82,63 @@ export default function Header() {
     }
   };
 
+  // Check for complete page load
+  useEffect(() => {
+    if (address) {
+      // Wait for the window load event
+      const handleLoad = async () => {
+        let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
+        const user = resp.data?.data?.user;
+        if (user.user_trigger_event != "Y") {
+          // Add a small delay to ensure all components are rendered
+          setTimeout(() => {
+            triggerConffeti();
+            axios.post("/api/user/trigger-event", {
+              wallet_address: address
+            })
+          }, 500); // Half second delay to ensure everything is rendered
+        }
+      };
+
+      // If the page is already loaded
+      if (document.readyState === 'complete') {
+        handleLoad();
+      } else {
+        window.addEventListener('load', handleLoad);
+        // Cleanup
+        return () => window.removeEventListener('load', handleLoad);
+      }
+    }
+  }, [address]);
+
+  const triggerConffeti = () => {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 500, ticks: 100, zIndex: 9999 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 75 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 1000);
+  };
 
   return (
     <nav className="absolute top-0 left-0 right-0 flex items-center justify-between md:px-10 py-5 bg-transparent z-50">
@@ -101,7 +163,6 @@ export default function Header() {
                 className="hidden group-hover:block object-contain"
               />
             </Link>
-            <img src="/images/santa-hat.png" className="absolute -top-3 -left-3 md:-top-4 md:-left-4 h-[40px] md:h-[50px]" />
           </div>
 
           {/* Navigation Links */}
@@ -127,6 +188,13 @@ export default function Header() {
             >
               Stake
             </Link>
+            <Link
+              href="/raffle"
+              className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/raffle" ? "text-white" : "text-gray-400"))}
+            // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            >
+              Raffle
+            </Link>
           </div>
         </div>
 
@@ -139,7 +207,7 @@ export default function Header() {
           <button
             onClick={() => setOpen(true)}
             aria-label="Open Menu"
-            className="text-black focus:outline-none bg-white p-2 rounded-lg"
+            className="text-black focus:outline-none bg-white p-2 rounded-[5px]"
           >
             <svg
               className="w-6 h-5"

@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import { FetchAllStargazeTokensOptions, OwnedTokensResponse, Token } from "@/types";
 import getConfig from '@/config/config';
 import { mst_attributes_reward } from '@prisma/client';
+import moment from 'moment';
 
 const config = getConfig();
 
@@ -423,17 +424,183 @@ export async function getAssosiatedName(associated_address: string) {
   }
 }
 
+export async function getToken(collectionAddr: string, tokenId: string) {
+  if (!config) throw Error("Config not found");
 
-export function formatToStars(value?: string | number): string {
-  if (!value) return '0';
+  const query = `query Token($collectionAddr: String!, $tokenId: String!) {
+    token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
+      id
+      name
+      description
+      tokenId
+      isExplicit
+      media {
+        type
+        url
+        height
+        width
+        visualAssets {
+          xs {
+            type
+            url
+            height
+            width
+            staticUrl
+          }
+          sm {
+            type
+            url
+            height
+            width
+            staticUrl
+          }
+          md {
+            type
+            url
+            height
+            width
+            staticUrl
+          }
+          lg {
+            type
+            url
+            height
+            width
+            staticUrl
+          }
+          xl {
+            type
+            url
+            height
+            width
+            staticUrl
+          }
+        }
+      }
+      collection {
+        contractAddress
+        contractUri
+        name
+        tradingAsset {
+          exponent
+          denom
+          price
+          symbol
+        }
+        startTradingTime
+        tokenCounts {
+          active
+          total
+        }
+        mintStatus
+        floorPrice
+        royaltyInfo {
+          sharePercent
+        }
+      }
+      traits {
+        name
+        value
+        rarityPercent
+        rarity
+        floorPrice {
+          amount
+          amountUsd
+          denom
+          symbol
+        }
+      }
+      listPrice {
+        amount
+        amountUsd
+        denom
+        symbol
+        rate
+      }
+      owner {
+        address
+        name {
+          name
+        }
+      }
+      saleType
+      expiresAtDateTime
+      rarityOrder
+      rarityScore
+      isEscrowed
+      onlyOwner
+      lastSalePrice {
+        amount
+        amountUsd
+        denom
+        symbol
+      }
+      auction {
+        duration
+        startTime
+        endTime
+        highestBid {
+          id
+          type
+          offerPrice {
+            amount
+            amountUsd
+            denom
+            symbol
+          }
+          from {
+            address
+            name {
+              name
+            }
+          }
+        }
+        seller {
+          address
+          name {
+            name
+          }
+        }
+      }
+    }
+  }`;
+
+  try {
+    const response = await fetch(config.graphql_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          collectionAddr,
+          tokenId
+        },
+        operationName: 'Token'
+      })
+    });
+
+    const data = await response.json();
+    return data.data.token;
+  } catch (error) {
+    console.error('Error fetching token:', error);
+    throw error;
+  }
+}
+
+
+export function formatToStars(value?: string | number): number {
+  if (!value) return 0;
   let number = typeof value === 'string' ? parseFloat(value) : value;
 
   number /= 1000000;
 
-  return formatDecimal(number, 2);
+  // return formatDecimal(number, 2);
+  return number;
 }
 
-export function formatDecimal(value?: string | number, decimal: number = 2): string {
+export function formatDecimal(value?: string | number | null | undefined, decimal: number = 2): string {
   if (!value) return '0';
   let number = typeof value === 'string' ? parseFloat(value) : value;
 
@@ -443,10 +610,15 @@ export function formatDecimal(value?: string | number, decimal: number = 2): str
     return `${(number / 1_000).toFixed(decimal)}K`;
   }
 
-  return `${number.toFixed(decimal)}`;
+  return `${number.toFixed(0)}`;
 }
 
 export function formatAddress(address: string | undefined) {
   if (!address) return '';
   return `${address.substring(5, 9)}...${address.substring(address.length - 4)}`
+}
+
+export function formatDate(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
+  if (date == null) return;
+  return moment(date).format(format);
 }

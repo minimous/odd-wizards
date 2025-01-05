@@ -10,6 +10,7 @@ const nextConfig = {
     config.externals.push({
       'chrome-aws-lambda': 'commonjs chrome-aws-lambda',
     });
+    config.optimization.minimize = false;
 
     return config;
   },

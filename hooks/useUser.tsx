@@ -1,12 +1,16 @@
-import { mst_users } from '@prisma/client';
+import { mst_staker, mst_users } from '@prisma/client';
 import { create } from 'zustand';
 
 interface SidebarStore {
   user: mst_users;
-  setUser: (user: mst_users) => void
+  staker: mst_staker;
+  setUser: (user: mst_users) => void;
+  setStaker: (staker: mst_staker) => void;
 }
 
 export const useUser = create<SidebarStore>((set) => ({
   user: {} as mst_users,
-  setUser: (user: mst_users) => set({ user })
+  staker: {} as mst_staker,
+  setUser: (user: mst_users) => set({ user }),
+  setStaker: (staker: mst_staker) => set({ staker })
 }));

@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/Loading";
 import { promiseToast } from "@/components/ui/use-toast";
 import { mst_users } from "@prisma/client";
+import NumberTicker from "@/components/ui/number-ticker";
 
 export default function Profile({ params }: { params: { address: string } }) {
     const config = getConfig();
@@ -90,7 +91,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                 description: "Please Wait"
             },
             success: () => {
-                const tweetText = `Check out my Odds Wizard collection!\nHow cool is that😎✨\n${config?.base_url}/p/${params.address}\n\nShare yours! 🧙`;
+                const tweetText = `Check out my Odds Wizard collection!\nHow cool is that😎✨\n${config?.base_url}/p/${params.address}\n\nShare yours! 🧙\n\n#oddsgarden #stargaze`;
                 const encodedTweetText = encodeURIComponent(tweetText);
                 const mobileTweetUrl = `twitter://post?message=${encodedTweetText}`; // Mobile app scheme
                 const webTweetUrl = `https://x.com/intent/tweet?text=${encodedTweetText}`;
@@ -286,7 +287,10 @@ export default function Profile({ params }: { params: { address: string } }) {
                                         <div className="mt-1 flex items-center gap-x-4">
                                             <div className="p-4 bg-[#18181B] border border-[#323237] rounded-2xl font-bold max-w-max flex items-center gap-x-4">
                                                 <img src="/images/Icon/wzrd.png" className="w-6 h-6" />
-                                                <span className="text-[13px] md:text-base">{staker?.staker?.staker_nft_staked ?? 0} NFTs/{formatDecimal(staker?.staker?.staker_total_points ?? 0)} $WZRD</span>
+                                                <span className="text-[13px] md:text-base">
+                                                    {/* <NumberTicker value={staker?.staker?.staker_nft_staked ?? 0} decimalPlaces={2} /> NFTs/<NumberTicker value={staker?.staker?.staker_total_points ?? 0} decimalPlaces={2} /> $WZRD */}
+                                                    {formatDecimal(staker?.staker?.staker_nft_staked ?? 0, 2)} NFTs/{formatDecimal(staker?.staker?.staker_total_points ?? 0, 2)} $WZRD
+                                                </span>
                                             </div>
                                             {/* <div className="p-4 bg-[#18181B] border border-[#323237] rounded-2xl font-bold w-[200px] flex items-center gap-x-4 blur-[1.5px]">
                                                 <img src="/images/Icon/wzrd.png" className="w-6 h-6" />

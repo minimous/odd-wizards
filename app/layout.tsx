@@ -6,6 +6,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { auth } from '@/auth';
+import LoadingPage from '@/components/LoadingPage';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -49,6 +50,7 @@ export default async function RootLayout({
         <NextTopLoader showSpinner={false} />
         <Providers session={session}>
           <Toaster />
+          <LoadingPage />
           {children}
         </Providers>
       </body>
