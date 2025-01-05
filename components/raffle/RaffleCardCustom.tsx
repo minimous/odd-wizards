@@ -101,9 +101,9 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 return {
                     fontBold: "font-base",
                     bgColor: "bg-yellow-700/20 justify-center",
-                    dotBg: "bg-green-500/50",
-                    dot: "bg-green-500",
-                    text: "Starts in:"
+                    dotBg: "bg-yellow-500/50",
+                    dot: "bg-yellow-500",
+                    text: "Start in:"
                 };
             case 'expired':
                 return {
@@ -111,7 +111,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                     bgColor: "bg-red-700/20 justify-center",
                     dotBg: "bg-red-500/50",
                     dot: "bg-red-500",
-                    text: "Ended!"
+                    text: "Ended"
                 };
             default:
                 return {
@@ -364,13 +364,13 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                         <ScrollArea className="h-[360px] md:!h-[345px]"> {/* Fixed height to match front card image */}
                             <div className="px-2">
                                 {Object.values(summedParticipants)?.map((item, index) => (
-                                    <div key={index} className="flex justify-between items-center my-2 text-lg">
+                                    <div key={index} className="flex justify-between items-center my-2">
                                         <Link href={`https://www.stargaze.zone/p/${item.participant_address}/tokens`} target="_blank">
                                             <span className="text-[#DB2877]">
                                                 {formatAddress(item.participant_address ?? undefined)}
                                             </span>
                                         </Link>
-                                        <span className="text-sm">
+                                        <span className="">
                                             {formatDecimal(item.total_amount, 2)} Ticket
                                         </span>
                                     </div>
@@ -390,8 +390,8 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                             variant="ghost"
                             className="hover:bg-transparent italic gap-x-2 opacity-50 hover:opacity-60 items-center"
                         >
-                            <Undo2 size={20} />
-                            <span className="mt-1">Back</span>
+                            <Undo2 size={18} />
+                            <span className="mt-1 text-[13px]">Back</span>
                         </Button>
                     </div>
                 </div>
@@ -446,9 +446,9 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                         <Button
                             onClick={() => setIsFlipped(true)}
                             variant="ghost"
-                            className="hover:bg-transparent italic gap-x-2 opacity-50 hover:opacity-60"
+                            className="hover:bg-transparent italic gap-x-2 opacity-50 hover:opacity-60 text-[13px]"
                         >
-                            <Eye size={20} />
+                            <Eye size={18} />
                             <span>See Participants</span>
                         </Button>
                     </div>
