@@ -115,12 +115,12 @@ export default function Stake() {
             ) : (
                 <div className="container">
                     {address && user && (
-                        <div className="flex justify-center mt-8">
+                        <div className="flex justify-center mt-4 md:!mt-8">
                             <div className="w-full md:!w-[750px]">
-                                <div className="grid grid-cols-1 md:!grid-cols-2 gap-x-4 gap-y-4">
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
                                     <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center justify-between p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full flex items-center justify-center">
+                                            <div className="hidden md:!flex w-[40px] h-[40px] md:w-[70px] md:h-[70px] bg-amber-200 rounded-full items-center justify-center">
                                                 <Link href={`/p/${user?.user_address}`}>
                                                     <img
                                                         src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
@@ -144,7 +144,7 @@ export default function Stake() {
                                     </div>
                                     <div className="flex bg-[#18181B] border-2 border-[#323237] flex-grow items-center p-4 px-8 h-[68px] md:h-[105px] w-full rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
                                         <div className="flex items-center gap-4">
-                                            <div>
+                                            <div className="hidden md:flex">
                                                 <img src="/images/Icon/wzrd.png" className="h-[35px] md:!h-[55px]" alt="WZRD Token" />
                                             </div>
                                             <div className="block">
@@ -159,7 +159,7 @@ export default function Stake() {
                             </div>
                         </div>
                     )}
-                    <div className="mt-14 md:!mt-24">
+                    <div className="mt-8 md:!mt-24">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-6 md:gap-8 lg:gap-10">
                             {raffles.map((item, index) => (
                                 <div key={index} className="my-4">
