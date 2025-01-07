@@ -18,6 +18,7 @@ model mst_users {
   user_trigger_event     String?
   // Relasi dengan Staker
   mst_staker mst_staker[]
+  participant trn_participant[]
 }
 
 model mst_collection {
@@ -105,4 +106,5 @@ model trn_participant {
   participant_raffle_id Int?
   participant_created_date DateTime?
   raffle  trn_raffle?   @relation(fields: [participant_raffle_id], references: [raffle_id])
+  user    mst_users?    @relation(fields: [participant_address], references: [user_address])
 }
