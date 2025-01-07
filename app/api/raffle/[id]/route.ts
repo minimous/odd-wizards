@@ -14,10 +14,25 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             }
         });
 
+        if(!raffle) {
+            return NextResponse.json(
+                {
+                    message: 'Raffle not found',
+                    data: undefined
+                },
+                { status: 400 }
+            );
+        }
+
+        const modifiedRewards = raffle.rewards.map((reward) => {
+            const { reward_inject_win_address, ...rest } = reward;
+            return rest;
+        });
+
         return NextResponse.json(
             {
                 message: 'Get Raffle successfully',
-                data: raffle
+                data:  { ...raffle, rewards: modifiedRewards }
             },
             { status: 200 }
         );
