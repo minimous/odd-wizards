@@ -75,23 +75,38 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
         const startTime = new Date(raffle.raffle_start).getTime();
         const endTime = new Date(raffle.raffle_end).getTime();
 
-        if (now < startTime) {
-            setStatus('not_started');
-            const difference = startTime - now;
-            const hours = Math.floor(difference / (1000 * 60 * 60));
+        const formatTime = (difference: number) => {
+            // Calculate all time units
+            const years = Math.floor(difference / (1000 * 60 * 60 * 24 * 365));
+            const months = Math.floor((difference % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+            const weeks = Math.floor((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7));
+            const days = Math.floor((difference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-            return `${hours}h ${minutes}min ${seconds}s`;
+
+            // Build time string
+            const timeArray = [];
+            if (years > 0) timeArray.push(`${years}y`);
+            if (months > 0) timeArray.push(`${months}m`);
+            if (weeks > 0) timeArray.push(`${weeks}w`);
+            if (days > 0) timeArray.push(`${days}d`);
+            if (hours > 0) timeArray.push(`${hours}h`);
+            if (minutes > 0) timeArray.push(`${minutes}min`);
+            if (seconds > 0) timeArray.push(`${seconds}s`);
+
+            return timeArray.join(' ');
+        };
+
+        if (now < startTime) {
+            setStatus('not_started');
+            return formatTime(startTime - now);
         } else if (now > endTime) {
             setStatus('expired');
             return "";
         } else {
             setStatus('active');
-            const difference = endTime - now;
-            const hours = Math.floor(difference / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-            return `${hours}h ${minutes}min ${seconds}s`;
+            return formatTime(endTime - now);
         }
     };
 
@@ -333,7 +348,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 p.participant_address == address ? sum + (p.participant_amount || 0) : sum, 0) || 0;
             setUserTickets(userTickets);
         }
-        
+
         let respUser = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         setUser(respUser.data?.data?.user);
         setStaker(respUser.data?.data?.staker);
