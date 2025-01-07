@@ -17,6 +17,8 @@ import Loading from "@/components/Loading";
 import { useChain } from "@cosmos-kit/react";
 import Particles from "@/components/ui/particles";
 import RaffleCardCustom from "@/components/raffle/RaffleCardCustom";
+import { AnimatedList } from "@/components/ui/animated-list";
+import { Item, Notification } from "@/components/Notification";
 
 export default function Stake() {
     const config = getConfig();
@@ -24,6 +26,7 @@ export default function Stake() {
     const [loading, setLoading] = useState<boolean>(true);
     const [loadingMore, setLoadingMore] = useState<boolean>(false);
     const [raffles, setRaffles] = useState<Raffle[]>([]);
+    const [history, setHistory] = useState<Item[]>([]);
     const [page, setPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const { address } = useChain("stargaze");
@@ -48,6 +51,27 @@ export default function Stake() {
         }
     };
 
+    const fetchHistory = async () => {
+        try {
+            const resp = await axios.get(`/api/raffle/history`);
+            const { data } = resp.data;
+            const notifcations: Item[] = data.map((item: any) => {
+                return {
+                    name: `Bought Ticket Raffle`,
+                    description: `${formatAddress(item.user.user_address)} just bought ${item.participant_amount} tikets`,
+                    img: item.user.user_image_url,
+                    color: "#fff",
+                    time: item.participant_created_date
+                }
+            });
+
+            setHistory(notifcations);
+        } catch (error) {
+            console.error('Error fetching history:', error);
+            return [];
+        }
+    };
+
     const loadMore = async () => {
         if (loadingMore) return;
         setLoadingMore(true);
@@ -61,6 +85,7 @@ export default function Stake() {
         async function fetchInitialData() {
             setLoading(true);
             await fetchRaffles(1);
+            await fetchHistory();
             setLoading(false);
         }
         fetchInitialData();
@@ -68,15 +93,28 @@ export default function Stake() {
 
     useEffect(() => {
 
-    }, [user])
+    }, [user]);
 
     return (
         <div className="relative bg-black w-full">
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-24 px-4 md:!px-16 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
+                    <div className="px-10 mt-16 px-4 md:!px-16 md:!mt-16 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
                         <div>
+                            <div>
+                                <div
+                                    className={cn(
+                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-lg md:shadow-xl my-4"
+                                    )}
+                                >
+                                    <AnimatedList delay={5000}>
+                                        {history.map((item, idx) => (
+                                            <Notification {...item} key={idx} />
+                                        ))}
+                                    </AnimatedList>
+                                </div>
+                            </div>
                             <div className="hidden md:!flex justify-center">
                                 <CustomGradualSpacing
                                     className="font-display text-[36px] md:!text-6xl font-black leading-tight md:!leading-[5rem]"
