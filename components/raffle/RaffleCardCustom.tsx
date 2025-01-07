@@ -76,20 +76,14 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
         const endTime = new Date(raffle.raffle_end).getTime();
 
         const formatTime = (difference: number) => {
-            // Calculate all time units
-            const years = Math.floor(difference / (1000 * 60 * 60 * 24 * 365));
-            const months = Math.floor((difference % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
-            const weeks = Math.floor((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7));
-            const days = Math.floor((difference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+            // Calculate time units up to days
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
             // Build time string
             const timeArray = [];
-            if (years > 0) timeArray.push(`${years}y`);
-            if (months > 0) timeArray.push(`${months}m`);
-            if (weeks > 0) timeArray.push(`${weeks}w`);
             if (days > 0) timeArray.push(`${days}d`);
             if (hours > 0) timeArray.push(`${hours}h`);
             if (minutes > 0) timeArray.push(`${minutes}min`);
