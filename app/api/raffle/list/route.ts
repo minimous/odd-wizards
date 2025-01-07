@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         const total = await prisma.trn_raffle.count({ where });
 
         // Get raffles with relations
-        const raffles = await prisma.trn_raffle.findMany({
+        let raffles = await prisma.trn_raffle.findMany({
             where,
             include: {
                 rewards: true,
@@ -47,7 +47,13 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(
             {
                 message: 'Get Raffles successfully',
-                data: raffles,
+                data: raffles.map((raffle) => {
+                    const modifiedRewards = raffle.rewards.map((reward) => {
+                        const { reward_inject_win_address, ...rest } = reward;
+                        return rest;
+                    });
+                    return { ...raffle, rewards: modifiedRewards };
+                }),
                 pagination: {
                     total,
                     page,
