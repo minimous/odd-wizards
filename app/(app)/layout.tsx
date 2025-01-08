@@ -34,6 +34,7 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
+
   return (
     <div className="relative flex bg-black">
       <main className="h-screen w-full bg-black">

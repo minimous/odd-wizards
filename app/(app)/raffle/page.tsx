@@ -57,7 +57,7 @@ export default function Stake() {
             const { data } = resp.data;
             const notifcations: Item[] = data.map((item: any) => {
                 return {
-                    name: `Bought Ticket Raffle`,
+                    name: `Bought Raffle Ticket`,
                     description: `just bought ${item.participant_amount} ticket${ item.participant_amount > 1 ? "s" : ""}`,
                     img: item.user.user_image_url,
                     wallet: formatAddress(item.user.user_address),
