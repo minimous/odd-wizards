@@ -17,7 +17,7 @@ export const Notification = ({ name, description, img, wallet, reward}: Item) =>
     return (
         <figure
             className={cn(
-                "relative mx-auto min-h-fit w-full max-w-[375px] md:max-w-[600px] cursor-pointer overflow-hidden rounded-2xl p-4",
+                "relative mx-auto min-h-fit w-full max-w-[385px] md:max-w-[550px] cursor-pointer overflow-hidden rounded-2xl p-4",
                 // animation styles
                 "transition-all duration-200 ease-in-out hover:scale-[103%]",
                 // light styles
@@ -28,7 +28,7 @@ export const Notification = ({ name, description, img, wallet, reward}: Item) =>
         >
             <div className="flex flex-row items-center gap-3">
                 <div
-                    className="flex size-10 items-center justify-center rounded-2xl"
+                    className="flex size-10 items-center justify-center rounded-2xl shrink-0"
                     style={{
                         // backgroundColor: color,
                         // backgroundImage: `url('${img}')`
