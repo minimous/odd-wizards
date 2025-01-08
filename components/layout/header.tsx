@@ -15,8 +15,12 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { useToast } from "../ui/use-toast";
 import confetti from "canvas-confetti";
 import { useLoading } from "@/hooks/useLoading";
+import { useTheme } from "next-themes";
 
 export default function Header() {
+  const { theme, setTheme } = useTheme();
+  setTheme("dark");
+
   const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
   const { setUser, setStaker } = useUser();
   const { wallet } = useWallet();
