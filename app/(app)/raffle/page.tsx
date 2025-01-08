@@ -100,7 +100,7 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="px-10 mt-16 px-4 md:!px-16 md:!mt-16 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
+                    <div className="md:!px-10 mt-16 px-4 md:!px-16 md:!mt-16 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
                         <div>
                             <div>
                                 <div
