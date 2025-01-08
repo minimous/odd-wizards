@@ -105,7 +105,7 @@ export default function Stake() {
                             <div>
                                 <div
                                     className={cn(
-                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-lg md:shadow-xl my-4 px-4"
+                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-[10px] md:shadow-xl my-4 px-4"
                                     )}
                                 >
                                     <AnimatedList delay={5000}>
