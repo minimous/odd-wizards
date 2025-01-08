@@ -414,7 +414,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 className="w-full"
                 gradientColor={"#262626"}
             >
-                <div className="h-[535px] md:!h-[520px]">
+                <div className="h-[535px] md:!h-[520px] rounded-[12px] overflow-hidden">
                     <div className={cn("flex items-center gap-2 p-2 px-6 text-sm", statusStyles.bgColor)}>
                         <div className={cn("w-4 h-4 flex items-center justify-center rounded-full blinker", statusStyles.dotBg)}>
                             <div className={cn("w-2 h-2 rounded-full", statusStyles.dot)} />
@@ -467,7 +467,7 @@ const RaffleCardCustom = ({ data }: RaffleCardCustomProps) => {
                 className="w-full"
                 gradientColor={"#262626"}
             >
-                <div className="h-[535px] md:!h-[520px]">
+                <div className="h-[535px] md:!h-[520px] rounded-[12px] overflow-hidden">
                     {renderParticipants()}
                 </div>
             </MagicCard>
