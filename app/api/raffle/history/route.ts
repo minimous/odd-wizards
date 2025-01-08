@@ -10,6 +10,11 @@ export async function GET(request: NextRequest) {
         where: {
         },
         include: {
+            raffle: {
+              include: {
+                rewards: true
+              }
+            },
             user: true
         },
         orderBy: {
