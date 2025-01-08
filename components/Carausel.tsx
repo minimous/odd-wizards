@@ -70,7 +70,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, interval = 3000 }) => {
               <img
                 src={image.src}
                 alt={image.alt}
-                className="w-[150px] h-[150px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out"
+                className="w-[150px] h-[150px] md:w-[400px] md:h-[400px] rounded-[15px] shadow-lg cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out"
               />
             </div>
           ))}
