@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
 import { REWARD_TYPE } from '@/constants';
 import { getToken } from '@/lib/utils';
+import getConfig from '@/config/config';
+
+const config = getConfig();
 
 // CREATE Collection
 export async function POST(request: NextRequest) {
@@ -19,14 +22,24 @@ export async function POST(request: NextRequest) {
       token_id
     } = body;
 
+    if(config && !config.owners.includes(wallet_address)){
+      return NextResponse.json(
+        { 
+          message: 'Unauthorized to create a raffle', 
+          error: 'Wallet address is not authorized to create a raffle' 
+        }, 
+        { status: 403 }
+      );
+    }
+
     const raffle = await prisma.trn_raffle.create({
       data: {
-        raffle_price: price,
+        raffle_price: Number(price),
         raffle_created_by: wallet_address,
         raffle_created_date: new Date(),
         raffle_start: start_date,
         raffle_end: end_date,
-        raffle_max_ticket: max_ticket,
+        raffle_max_ticket: Number(max_ticket),
         raffle_price_type: type,
       }
     });

@@ -14,6 +14,7 @@ import { useNavbarMobile } from "@/hooks/useNavbarMobile";
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useToast } from "../ui/use-toast";
 import confetti from "canvas-confetti";
+import { useLoading } from "@/hooks/useLoading";
 
 export default function Header() {
   const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
@@ -25,14 +26,18 @@ export default function Header() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { toast } = useToast();
 
+  const { showLoading, hideLoading } = useLoading();
+
   useEffect(() => {
 
     async function fetchData() {
+      showLoading();
       if (address) {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         setUser(resp.data?.data?.user);
         setStaker(resp.data?.data?.staker);
       }
+      hideLoading();
     }
 
     fetchData();
@@ -183,13 +188,13 @@ export default function Header() {
             >
               Stake
             </Link>
-            {/* <Link
+            <Link
               href="/raffle"
               className={cn("text-2xl font-bold transition-transform hover:animate-shake", path == "/" ? "text-[#156E7E]" : (path == "/raffle" ? "text-white" : "text-gray-400"))}
             // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
             >
               Raffle
-            </Link> */}
+            </Link>
           </div>
         </div>
 
@@ -202,7 +207,7 @@ export default function Header() {
           <button
             onClick={() => setOpen(true)}
             aria-label="Open Menu"
-            className="text-black focus:outline-none bg-white p-2 rounded-lg"
+            className="text-black focus:outline-none bg-white p-2 rounded-[5px]"
           >
             <svg
               className="w-6 h-5"

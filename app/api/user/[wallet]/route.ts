@@ -62,17 +62,17 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
             updateNftOwner(wallet, collection_address);
         }
 
-        const leaderboard = await getLeaderboard(collection_address, wallet, 0, 1);
-        // Handle BigInt serialization
-        const leaderboardWithBigIntAsString = leaderboard.map((item: any) => ({
-            ...item,
-            total_points: item.total_points.toString(),
-            ranking: item.ranking.toString()
-        }));
+        // const leaderboard = await getLeaderboard(collection_address, wallet, 0, 1);
+        // // Handle BigInt serialization
+        // const leaderboardWithBigIntAsString = leaderboard.map((item: any) => ({
+        //     ...item,
+        //     total_points: item.total_points.toString(),
+        //     ranking: item.ranking.toString()
+        // }));
 
-        if(staker){
-            staker.staker_total_points = leaderboardWithBigIntAsString.length > 0 ? leaderboardWithBigIntAsString[0].total_points : 0;
-        }
+        // if(staker){
+        //     staker.staker_total_points = leaderboardWithBigIntAsString.length > 0 ? leaderboardWithBigIntAsString[0].total_points : 0;
+        // }
 
         const associatedName = await getAssosiatedName(wallet);
 

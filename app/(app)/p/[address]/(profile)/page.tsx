@@ -215,10 +215,10 @@ export default function Profile({ params }: { params: { address: string } }) {
                         <div className="absolute z-10 left-4 md:left-24 bottom-5">
 
                             <div className="flex gap-x-6 items-center">
-                                <div className="shrink-0">
+                                <div className="shrink-0 w-[100px] h-[100px] md:!w-[125px] md:!h-[125px] rounded-full overflow-hidden">
                                     <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
                                         e.target.src = DEFAULT_IMAGE_PROFILE;
-                                    }} className="w-[100px] h-[100px] md:!w-[125px] md:!h-[125px] rounded-full" />
+                                    }} className="w-[100px] h-[100px] md:!w-[125px] md:!h-[125px] rounded-full hover:scale-105" />
                                 </div>
                                 {
                                     loading ? <Loading /> : (

@@ -29,7 +29,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
             case "lg":
                 return (
                     <div className="relative w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-2 absolute h-[75px] -top-2 right-0 bg-gradient-to-b from-black/70 to-transparent">
-                        <div className="w-full flex justify-end text-white">
+                        <div className="w-full flex justify-end text-white pt-3 px-3">
                             <ProfilePoper address={address} token={token} position="bottom" />
                         </div>
                     </div>
@@ -37,7 +37,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
             case "md":
                 return (
                     <div className="relative w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[65px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
-                        <div className="w-full flex justify-end text-white">
+                        <div className="w-full flex justify-end text-white p-2 px-2">
                             <ProfilePoper address={address} token={token} position="bottom" />
                         </div>
                     </div>
@@ -45,7 +45,7 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
             case "sm":
                 return (
                     <div className="relative w-full hidden group-hover:flex group-hover:scale-[1.02] transition-all duration-200 ease-in-out p-1 absolute h-[45px] -top-1 right-0 bg-gradient-to-b from-black/70 to-transparent">
-                        <div className="w-full flex justify-end text-white">
+                        <div className="w-full flex justify-end text-white p-1 px-1">
                             <ProfilePoper address={address} token={token} position="bottom" />
                         </div>
 
@@ -55,30 +55,31 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div className={cn("aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
-            style={{ backgroundImage: `url(${getImageUrl(token)})` }}
-            onClick={() => {
-                if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
-                    let index = allToken.findIndex(
-                        (item) =>
-                            item.collection.contractAddress === token.collection.contractAddress &&
-                            item.tokenId === token.tokenId
-                    );
-                    setIndex(index);
-                    setOpen(true);
-                }
-            }}
-        >
-            <Lightbox
-                index={index}
-                open={open}
-                close={() => setOpen(false)}
-                slides={allToken.map((item) => {
-                    return { src: item.media.url, alt: item.name };
-                })}
-            />
-            {token && renderImageButton(size)}
+        <div className="aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg overflow-hidden">
+            <div className={cn("aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg hover:scale-105", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
+                style={{ backgroundImage: `url(${getImageUrl(token)})` }}
+                onClick={() => {
+                    if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {
+                        let index = allToken.findIndex(
+                            (item) =>
+                                item.collection.contractAddress === token.collection.contractAddress &&
+                                item.tokenId === token.tokenId
+                        );
+                        setIndex(index);
+                        setOpen(true);
+                    }
+                }}
+            >
+                <Lightbox
+                    index={index}
+                    open={open}
+                    close={() => setOpen(false)}
+                    slides={allToken.map((item) => {
+                        return { src: item.media.url, alt: item.name };
+                    })}
+                />
+                {token && renderImageButton(size)}
+            </div>
         </div>
-
     )
 }

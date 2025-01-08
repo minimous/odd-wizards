@@ -53,12 +53,12 @@ export const BoxLeaderboardMobile = () => {
           </div>
           <div className="flex flex-grow items-center justify-between p-4 px-2 md:!px-8 gap-2 w-[50px] h-[50px] md:w-[105px] md:h-[105px] md:w-full bg-[#18181B] border border-[#49ED4A] rounded-[15px] md:rounded-[25px] text-[#A1A1AA]">
             <div className="flex items-center gap-4">
-              <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px]  bg-amber-200 rounded-full flex items-center justify-center">
+              <div className="w-[35px] h-[35px] md:w-[70px] md:h-[70px]  bg-amber-200 rounded-full flex items-center justify-center overflow-hidden">
                 <Link href={`/p/${leaderboard?.staker_address}`} >
                   <img
                     src={leaderboard?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
                     alt={leaderboard?.staker_address ?? ""}
-                    className="rounded-full object-cover w-full h-full"
+                    className="rounded-full object-cover w-full h-full hover:scale-105"
                     onError={(e: any) => {
                       e.target.src = DEFAULT_IMAGE_PROFILE;
                     }}

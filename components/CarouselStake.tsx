@@ -72,7 +72,7 @@ const CarouselStake: React.FC<CarouselStakeProps> = ({ images, interval = 3000 }
                 alt={image.alt}
                 width={175} // Lebar gambar lebih kecil
                 height={175} // Tinggi gambar lebih kecil
-                className="cursor-pointer rounded-lg shadow-md hover:scale-105 transition-all duration-200 ease-in-out"
+                className="cursor-pointer rounded-[15px] shadow-md hover:scale-105 transition-all duration-200 ease-in-out"
               />
             </div>
           ))}
