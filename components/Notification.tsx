@@ -17,7 +17,7 @@ export const Notification = ({ name, description, img, wallet, reward}: Item) =>
     return (
         <figure
             className={cn(
-                "relative mx-auto min-h-fit w-full max-w-[350px] md:max-w-[550px] cursor-pointer overflow-hidden rounded-2xl p-4",
+                "relative mx-auto min-h-fit w-full w-[325px] md:max-w-[550px] cursor-pointer overflow-hidden rounded-2xl p-4",
                 // animation styles
                 "transition-all duration-200 ease-in-out hover:scale-[103%]",
                 // light styles

@@ -100,12 +100,12 @@ export default function Stake() {
             <Header />
             <div>
                 <div className="grid">
-                    <div className="md:!px-10 mt-16 px-4 md:!px-16 md:!mt-16 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
+                    <div className="px-0 mt-16 md:!px-16 md:!mt-16 mx-auto py-4 md:!py-6 gap-x-32 text-left grid md:flex justify-between items-center">
                         <div>
                             <div>
                                 <div
                                     className={cn(
-                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-lg md:shadow-xl my-4"
+                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-lg md:shadow-xl my-4 px-4"
                                     )}
                                 >
                                     <AnimatedList delay={5000}>
