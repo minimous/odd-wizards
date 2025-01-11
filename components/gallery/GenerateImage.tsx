@@ -254,7 +254,7 @@ export default function GenerateImage({ collection }: GenerateImageProps) {
                                                 key={`${activeTraits}-${item}-${index}`}
                                                 onClick={() => handleSelectTrait(item)}
                                                 className={cn(
-                                                    "relative aspect-square rounded-lg overflow-hidden border transition-colors cursor-pointer",
+                                                    "relative aspect-square rounded-[10px] overflow-hidden border transition-colors cursor-pointer",
                                                     selectedTraits[activeTraits] === item
                                                         ? "border-blue-500 border-2"
                                                         : "hover:border-[#323237]"
