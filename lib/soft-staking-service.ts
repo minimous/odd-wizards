@@ -160,7 +160,7 @@ export async function getLeaderboard(collection_address: string, staker_address:
         LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
         WHERE mc.collection_address = ${collection_address}
-        ${!staker_address ? Prisma.sql`AND ms.staker_nft_staked > 0` : Prisma.empty}
+        AND ms.staker_nft_staked > 0
     )
     SELECT 
         collection_address,
