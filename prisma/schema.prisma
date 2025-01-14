@@ -72,6 +72,18 @@ model mst_attributes_reward {
   collection  mst_collection?  @relation(fields: [attr_collection_id], references: [collection_id])
 }
 
+model trn_distribusi_reward {
+  distribusi_id           Int       @id @default(autoincrement())
+  distribusi_collection   Int?
+  distribusi_reward       String?
+  distribusi_wallet       String?
+  distribusi_is_claimed   String?   @default("N")
+  distribusi_start        DateTime?
+  distribusi_end          DateTime?   
+  distribusi_position     Int?
+  distribusi_tx_hash      String?
+}
+
 model trn_raffle {
   raffle_id           Int       @id @default(autoincrement())
   raffle_start        DateTime?

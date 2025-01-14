@@ -13,9 +13,9 @@ import { cn, formatAddress } from "@/lib/utils";
 import { useNavbarMobile } from "@/hooks/useNavbarMobile";
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useToast } from "../ui/use-toast";
-import confetti from "canvas-confetti";
 import { useLoading } from "@/hooks/useLoading";
 import { useTheme } from "next-themes";
+import RewardModalModal from "../modal/reward-modal";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
@@ -28,6 +28,7 @@ export default function Header() {
   const path = usePathname();
   const { isOpened, setOpen } = useNavbarMobile();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [ rewardModal, setRewardModal ] = useState<boolean>(false);
   const { toast } = useToast();
 
   const { showLoading, hideLoading } = useLoading();
@@ -93,13 +94,14 @@ export default function Header() {
       const handleLoad = async () => {
         let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
         const user = resp.data?.data?.user;
-        if (user.user_trigger_event != "Y") {
+        if (user.is_winner == "Y" && address) {
           // Add a small delay to ensure all components are rendered
           setTimeout(() => {
-            triggerConffeti();
-            axios.post("/api/user/trigger-event", {
-              wallet_address: address
-            })
+            setRewardModal(true);
+            // triggerConffeti();
+            // axios.post("/api/user/trigger-event", {
+            //   wallet_address: address
+            // })
           }, 500); // Half second delay to ensure everything is rendered
         }
       };
@@ -115,37 +117,9 @@ export default function Header() {
     }
   }, [address]);
 
-  const triggerConffeti = () => {
-    const duration = 5 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 500, ticks: 100, zIndex: 9999 };
-
-    const randomInRange = (min: number, max: number) =>
-      Math.random() * (max - min) + min;
-
-    const interval = window.setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 75 * (timeLeft / duration);
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-      });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-      });
-    }, 1000);
-  };
-
   return (
     <nav className="absolute top-0 left-0 right-0 flex items-center justify-between md:px-10 py-5 bg-transparent z-50">
+      <RewardModalModal isOpen={rewardModal} setOpen={setRewardModal} onClose={() => {}} wallet={address} />
       <div className="container mx-auto flex items-center justify-between w-full">
         {/* Logo and Links */}
         <div className="flex items-center space-x-4 md:space-x-10">
