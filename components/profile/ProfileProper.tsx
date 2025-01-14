@@ -138,7 +138,7 @@ const PoperProfile = ({
             {isOpen && (
                 <div
                     ref={popoverRef}
-                    className="absolute z-50 min-w-[150px] bg-[#171717] border border-[#323237] rounded-lg shadow-lg px-2 py-4"
+                    className="absolute z-50 min-w-[150px] bg-[#171717] border border-[#323237] rounded-[10px] shadow-lg px-2 py-4"
                     style={{
                         ...getPopoverPosition()
                     }}

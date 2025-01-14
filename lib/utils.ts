@@ -9,6 +9,9 @@ import { FetchAllStargazeTokensOptions, OwnedTokensResponse, Token } from "@/typ
 import getConfig from '@/config/config';
 import { mst_attributes_reward } from '@prisma/client';
 import moment from 'moment';
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { GasPrice } from "@cosmjs/stargate";
 
 const config = getConfig();
 
@@ -621,4 +624,76 @@ export function formatAddress(address: string | undefined) {
 export function formatDate(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
   if (date == null) return;
   return moment(date).format(format);
+}
+
+export function extractCollectionAndTokenId(url: string) {
+  const regex = /\/m\/([^/]+)\/(\d+)/;
+  const match = url?.match(regex);
+
+  if (match) {
+      return {
+          collection: match[1],
+          tokenId: match[2],
+      };
+  } else {
+      // throw new Error("URL format is invalid");
+      return {
+          collection: undefined,
+          tokenId: undefined,
+      };
+  }
+}
+
+export async function transferNFT(
+  mnemonic: string, 
+  contractAddress: string, 
+  recipientAddress: string, 
+  tokenId: string
+) {
+  try {
+      const rpcEndpoint = config?.rpc_url ?? ""; // Ganti dengan RPC Stargaze yang valid
+      // Create wallet instance from mnemonic
+      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+          prefix: "stars" // Stargaze address prefix
+      });
+
+      // Get the wallet address
+      const [firstAccount] = await wallet.getAccounts();
+      console.log("Sender address:", firstAccount.address);
+
+      // Create signing client
+      const client = await SigningCosmWasmClient.connectWithSigner(
+          rpcEndpoint,
+          wallet,
+          {
+              gasPrice: GasPrice.fromString("0.025ustars")
+          }
+      );
+
+      // Prepare transfer message
+      const transferMsg = {
+          transfer_nft: {
+              recipient: recipientAddress,
+              token_id: tokenId
+          }
+      };
+
+      // Execute transfer
+      const result = await client.execute(
+          firstAccount.address,
+          contractAddress,
+          transferMsg,
+          "auto", // automatic gas estimation
+          "",     // memo
+          []      // funds
+      );
+
+      console.log("Transfer successful!");
+      console.log("Transaction hash:", result.transactionHash);
+      return result;
+
+  } catch (error) {
+      console.error("Error during transfer:", error);
+      throw error;
+  }
 }

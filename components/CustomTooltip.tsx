@@ -8,7 +8,7 @@ const CustomTooltip = ({ message }: CustomTooltipProps) => {
   return (
     <div className="relative flex items-center">
       {/* Tooltip */}
-      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg">
+      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-[10px] shadow-lg">
         {message}
         <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-t-[8px] border-t-red-600 border-x-[8px] border-x-transparent"></div>
       </div>

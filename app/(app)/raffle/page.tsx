@@ -57,7 +57,7 @@ export default function Stake() {
             const { data } = resp.data;
             const notifcations: Item[] = data.map((item: any) => {
                 return {
-                    name: `Bought Ticket Raffle`,
+                    name: `Bought Raffle Ticket`,
                     description: `just bought ${item.participant_amount} ticket${ item.participant_amount > 1 ? "s" : ""}`,
                     img: item.user.user_image_url,
                     wallet: formatAddress(item.user.user_address),
@@ -105,7 +105,7 @@ export default function Stake() {
                             <div>
                                 <div
                                     className={cn(
-                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-lg md:shadow-xl my-4 px-4"
+                                        "relative flex h-[80px] w-full flex-col overflow-hidden rounded-[10px] md:shadow-xl my-4 px-4"
                                     )}
                                 >
                                     <AnimatedList delay={5000}>

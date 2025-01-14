@@ -72,7 +72,7 @@ export default function HeaderMobile() {
                             <button
                                 onClick={() => setOpen(false)}
                                 aria-label="Open Menu"
-                                className="text-white focus:outline-none p-2 rounded-lg"
+                                className="text-white focus:outline-none p-2 rounded-[10px]"
                             >
                                 <svg
                                     className="w-6 h-5"

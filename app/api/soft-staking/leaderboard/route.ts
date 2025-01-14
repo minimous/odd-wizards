@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         }
 
         const leaderboard = await getLeaderboard(collection_address, staker_address, page, size);
-        
+
         // Handle BigInt serialization
         const leaderboardWithBigIntAsString = leaderboard.map((item: any) => ({
             ...item,
