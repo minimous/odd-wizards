@@ -55,8 +55,8 @@ export default function ImageGalleryProfile({ address, token, allToken, size }: 
     }
 
     return (
-        <div className="aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg overflow-hidden">
-            <div className={cn("aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-lg hover:scale-105", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
+        <div className="aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-[10px] overflow-hidden">
+            <div className={cn("aspect-square group cursor-pointer max-h-[250px] md:!max-h-none bg-center bg-cover rounded-[10px] hover:scale-105", getImageUrl(token) == DEFAULT_IMAGE_PROFILE && "opacity-10")}
                 style={{ backgroundImage: `url(${getImageUrl(token)})` }}
                 onClick={() => {
                     if (getImageUrl(token) !== DEFAULT_IMAGE_PROFILE) {

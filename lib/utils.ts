@@ -9,6 +9,8 @@ import { FetchAllStargazeTokensOptions, OwnedTokensResponse, Token } from "@/typ
 import getConfig from '@/config/config';
 import { mst_attributes_reward } from '@prisma/client';
 import moment from 'moment';
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { SigningStargateClient } from "@cosmjs/stargate";
 
 const config = getConfig();
 
@@ -622,3 +624,57 @@ export function formatDate(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
   if (date == null) return;
   return moment(date).format(format);
 }
+
+export const transferNFT = async (
+  mnemonic: string,
+  contractAddress: string,
+  recipientAddress: string,
+  tokenId: string
+) => {
+  const rpcEndpoint = config?.rpc_url ?? ""; // Ganti dengan RPC Stargaze yang valid
+
+  try {
+    // Buat wallet dari private key
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+      prefix: "stars" // Stargaze address prefix
+    });
+
+    // Dapatkan alamat pengirim
+    const [account] = await wallet.getAccounts();
+    const senderAddress = account.address;
+
+    // Hubungkan ke Stargaze menggunakan RPC
+    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
+
+    // Siapkan pesan transfer
+    const msgTransfer = {
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      value: {
+        sender: senderAddress,
+        contract: contractAddress,
+        msg: Buffer.from(
+          JSON.stringify({
+            transfer_nft: {
+              recipient: recipientAddress,
+              token_id: tokenId,
+            },
+          })
+        ).toString("base64"),
+        funds: [],
+      },
+    };
+
+    // Kirim transaksi
+    const fee = {
+      amount: [{ denom: "ustars", amount: "200000" }], // Sesuaikan biaya gas
+      gas: "200000",
+    };
+
+    const result = await client.signAndBroadcast(senderAddress, [msgTransfer], fee);
+    console.log("Transaction result:", result);
+
+    return result;
+  } catch (error) {
+    console.error("Error during NFT transfer:", error);
+  }
+};

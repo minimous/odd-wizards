@@ -1,3 +1,4 @@
+import { DEFAULT_IMAGE_PROFILE } from "@/constants";
 import { cn } from "@/lib/utils";
 import moment from "moment";
 import Link from "next/link";
@@ -10,7 +11,7 @@ export interface Item {
     reward: string;
 }
 
-export const Notification = ({ name, description, img, wallet, reward}: Item) => {
+export const Notification = ({ name, description, img, wallet, reward }: Item) => {
 
     // const timeAgo = moment(time).fromNow();
 
@@ -35,18 +36,24 @@ export const Notification = ({ name, description, img, wallet, reward}: Item) =>
                     }}
                 >
                     {/* <span className="text-lg">{img}</span> */}
-                    <img src={img} className="w-full h-full rounded-2xl hover:scale-105" />
+                    <img
+                        src={img ?? DEFAULT_IMAGE_PROFILE}
+                        alt={img ?? ""}
+                        onError={(e: any) => {
+                            e.target.src = DEFAULT_IMAGE_PROFILE;
+                        }}
+                        className="w-full h-full rounded-2xl hover:scale-105" />
                 </div>
                 <div className="flex flex-col overflow-hidden">
                     <figcaption className="flex flex-row items-center whitespace-pre text-lg font-medium dark:text-white truncate">
                         <span className="text-sm sm:text-lg">{name}</span>
                         <span className="mx-1 sm:text-lg">-</span>
-                        { reward && <span className="text-sm sm:text-lg truncate">{reward}</span> }
+                        {reward && <span className="text-sm sm:text-lg truncate">{reward}</span>}
                     </figcaption>
                     <p className="text-xs md:!text-sm font-normal dark:text-white/60">
                         <Link href={`https://www.stargaze.zone/p/${wallet}`} className="text-[#DB2877] mr-1">
                             {wallet}
-                        </Link> 
+                        </Link>
                         {description}
                     </p>
                 </div>

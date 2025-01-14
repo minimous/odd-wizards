@@ -103,17 +103,17 @@ export default function NFTGallery({ address }: NFTGalleryProps) {
         // Create fixed-size arrays for each gallery section
 
 
-        const gallery3Tokens = tokens.slice(startIndex + 4, startIndex + 10).concat(
-          Array(6 - Math.min(tokens.slice(startIndex + 4, startIndex + 10).length, 6)).fill(null)
+        const gallery3Tokens = tokens.slice(startIndex, startIndex + 6).concat(
+          Array(6 - Math.min(tokens.slice(startIndex, startIndex + 6).length, 6)).fill(null)
         );
-        const gallery4Tokens = tokens.slice(startIndex + 10, startIndex + 16).concat(
-          Array(6 - Math.min(tokens.slice(startIndex + 10, startIndex + 16).length, 6)).fill(null)
+        const gallery4Tokens = tokens.slice(startIndex + 6, startIndex + 12).concat(
+          Array(6 - Math.min(tokens.slice(startIndex + 6, startIndex + 12).length, 6)).fill(null)
         );
-        const gallery1Tokens = tokens.slice(startIndex, startIndex + 3).concat(
-          Array(3 - Math.min(tokens.slice(startIndex, startIndex + 3).length, 3)).fill(null)
+        const gallery1Tokens = tokens.slice(startIndex + 12, startIndex + 15).concat(
+          Array(3 - Math.min(tokens.slice(startIndex + 12, startIndex + 15).length, 3)).fill(null)
         );
-        const gallery2Tokens = tokens.slice(startIndex + 3, startIndex + 4).concat(
-          Array(1 - Math.min(tokens.slice(startIndex + 3, startIndex + 4).length, 1)).fill(null)
+        const gallery2Tokens = tokens.slice(startIndex + 15, startIndex + 16).concat(
+          Array(1 - Math.min(tokens.slice(startIndex + 15, startIndex + 16).length, 1)).fill(null)
         );
 
         // Always push all galleries with their respective padded tokens

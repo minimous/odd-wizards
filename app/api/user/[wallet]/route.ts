@@ -28,11 +28,11 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
         const collection = await prisma.mst_collection.findFirst({
             where: { collection_address: collection_address },
             include: {
-              mst_staker: false
+                mst_staker: false
             }
         });
-    
-        if(!collection) throw Error("Collection not found");
+
+        if (!collection) throw Error("Collection not found");
 
         // If user doesn't exist, create new user
         if (!user) {
@@ -53,13 +53,35 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
                 }
             });
         }
-    
+
         const staker = await prisma.mst_staker.findFirst({
             where: { staker_address: wallet, staker_collection_id: collection.collection_id }
         });
 
-        if(staker && collection_address){
+        if (staker && collection_address) {
             updateNftOwner(wallet, collection_address);
+        }
+
+        const distribusiWinner = await prisma.trn_distribusi_reward.findFirst({
+            where: {
+                distribusi_collection: collection.collection_id,
+                distribusi_wallet: wallet
+            }
+        });
+
+        let is_winner = "N";
+        if (distribusiWinner && distribusiWinner?.distribusi_is_claimed != "Y") {
+            const distribusiStart = distribusiWinner.distribusi_start;
+            const distribusiEnd = distribusiWinner.distribusi_end;
+            const now = new Date();
+
+            // Check if start date exists and current time is after start date
+            // if (distribusiStart && now.getTime() > distribusiStart.getTime()) {
+            //     // If end date is null OR current time is before end date
+            //     if (!distribusiEnd || now.getTime() < distribusiEnd.getTime()) {
+            is_winner = "Y";
+            // }
+            // }
         }
 
         // const leaderboard = await getLeaderboard(collection_address, wallet, 0, 1);
@@ -87,9 +109,9 @@ export async function GET(request: NextRequest, { params }: { params: { wallet: 
         return NextResponse.json(
             {
                 message: 'successfully',
-                data: { 
+                data: {
                     associated: associatedName,
-                    user: { ...user, user_total_points: userTotalPoints},
+                    user: { ...user, user_total_points: userTotalPoints, is_winner: is_winner },
                     staker: { ...staker, staker_total_points: stakerTotalPoints },
                 }
             },

@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 const texts = [
     "Loading",
-    "Odds Graden"
+    "Odds Garden"
 ];
 
 
