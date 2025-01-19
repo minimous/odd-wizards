@@ -9,7 +9,7 @@ export default function Stake({ params }: { params: { collection: string } }) {
     return (
         <div className="relative bg-black w-full">
             <Header />
-            <div className="bg-black w-full h-[200px] md:h-full relative">
+            <div className="bg-black w-full h-[175px] md:h-full relative">
                 <div className="absolute top-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
                 <div className="absolute bottom-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-transparent to-black z-10" />
                 {/* <div className="absolute top-0 left-0 right-0 bottom-0 "> */}
