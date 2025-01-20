@@ -33,7 +33,7 @@ const StakeCardMobile: FC = () => {
         setIsFetch(false);
         async function fetchData() {
             try {
-                let resp = await axios.get(`/api/soft-staking/point?wallet_address=${address}&collection_address=${config?.collection_address}`)
+                let resp = await axios.get(`/api/soft-staking/available-point?wallet_address=${address}&collection_address=${config?.collection_address}`)
                 let data = resp.data.data;
                 // setPoints(data.points);
                 setStaker(data.staker);
@@ -114,7 +114,7 @@ const StakeCardMobile: FC = () => {
     }
 
     return (
-        <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center w-full border border-[#323237] p-4 py-6 md:p-8 rounded-[25px]">
+        <div className="w-full bg-[#171717] border-2 border-[#323237] w-full p-4 py-6 md:p-8 rounded-[25px]">
             <InfoModal isOpen={infoModal} onClose={() => { setInfoModal(false) }} loading={false} />
             <div className="flex items-center gap-x-4">
                 <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
