@@ -21,15 +21,19 @@ export const columns: ColumnsFunction = (router, page, perpage) => [
     enableHiding: false
   },
   {
-    accessorKey: 'actCreatedBy',
+    accessorKey: 'collection_code',
+    header: 'Collection ID'
+  },
+  {
+    accessorKey: 'collection_name',
     header: 'Collection Name'
   },
   {
-    accessorKey: 'roleName',
+    accessorKey: 'collection_description',
     header: 'Description'
   },
   {
-    accessorKey: 'unitName',
+    accessorKey: 'collection_supply',
     header: 'Supply'
   },
 ];

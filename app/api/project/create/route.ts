@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
 import { z } from 'zod';
 import { uploadFile } from '@/lib/utils';
+import { mst_collection } from '@prisma/client';
+import getConfig from '@/config/config';
+
+const config = getConfig();
 
 // Validation Schema
 const ProjectSchema = z.object({
+  project_code: z.string().min(1, 'Project name is required'),
   project_name: z.string().min(1, 'Project name is required'),
   project_description: z.string().optional(),
   project_banner: z.string().url().optional(),
@@ -14,15 +19,30 @@ const ProjectSchema = z.object({
   project_footer_twitter: z.string().optional(),
   project_footer_discord_color: z.string().optional(),
   project_footer_twitter_color: z.string().optional(),
+  collections: z.any()
 });
 
 // CREATE Project
 export async function POST(request: NextRequest) {
   try {
+    const { searchParams } = request.nextUrl;
+    const wallet_address = searchParams.get('wallet_address') || '';
+
+    if(config && !config.owners.includes(wallet_address)){
+      return NextResponse.json(
+        { 
+          message: 'Unauthorized to create a project', 
+          error: 'Wallet address is not authorized to create a project' 
+        }, 
+        { status: 403 }
+      );
+    }
+
     const formData = await request.formData();
 
     // Extract fields from formData
     const projectData = {
+      project_code: formData.get('project_code') as string,
       project_name: formData.get('project_name') as string,
       project_description: formData.get('project_description') as string | undefined,
       project_status: formData.get('project_status') as string | undefined,
@@ -33,6 +53,8 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     const validatedData = ProjectSchema.parse(projectData);
+
+    const collections = formData.get("collections") as string | null;
 
     // Handle file uploads if needed
     const fileBanner = formData.get("project_banner") as File | null;
@@ -61,6 +83,17 @@ export async function POST(request: NextRequest) {
     const project = await prisma.mst_project.create({
       data: validatedData
     });
+
+    if(collections){
+      const collectionsParse = JSON.parse(collections);
+      for(let collection of collectionsParse){
+        collection.collection_project_id = project.project_id;
+        collection.collection_supply = Number(collection.collection_supply);
+        await prisma.mst_collection.create({
+          data: collection
+        });
+      }
+    }
 
     return NextResponse.json(
       { 
