@@ -77,19 +77,20 @@ export default function Stake({ searchParams }: paramsProps) {
     }, [address]);
 
     const defaultValues = {
-        project_is_leaderboard: "Y"  
+        project_is_leaderboard: "Y",
+        project_status: "N",
     };
 
     const formSchema = z.object({
-        project_name: z.string(),
-        project_description: z.string(),
-        project_banner: z.string(),
+        project_name: z.string().min(1, "Project name is required"),
+        project_description: z.string().min(1, "Project description is required"),
+        project_banner: z.instanceof(File, { message: "A file is required" }),
         project_status: z.string(),
         project_is_leaderboard: z.string(),
-        project_footer_discord: z.string(),
-        project_footer_twitter: z.string(),
-        project_footer_discord_color: z.string(),
-        project_footer_twitter_color: z.string()
+        project_footer_discord: z.instanceof(File).optional(),
+        project_footer_twitter: z.instanceof(File).optional(),
+        project_footer_discord_color: z.string().optional(),
+        project_footer_twitter_color: z.string().optional()
     });
     type FormValue = z.infer<typeof formSchema>;
 
@@ -120,25 +121,40 @@ export default function Stake({ searchParams }: paramsProps) {
         });
     };
 
-    const createProject = async (data: FormValue) => {
-        // const { collection, tokenId } = extractCollectionAndTokenId(form.watch("priceUrl"));
-        await axios.post("/api/project/create", data);
+    const createProject = async (data: Record<string, any>) => {
+
+        const formData = new FormData();
+
+        // Menambahkan setiap properti dari data ke dalam FormData
+        Object.entries(data).forEach(([key, value]) => {
+            if (value instanceof File) {
+                formData.append(key, value); // Jika ada file, langsung tambahkan
+            } else if (Array.isArray(value)) {
+                value.forEach((val, index) => {
+                    formData.append(`${key}[${index}]`, val); // Menangani array
+                });
+            } else {
+                formData.append(key, String(value)); // Konversi lainnya ke string
+            }
+        });
+
+        await axios.post("/api/project/create", formData);
     }
 
     return (
         <div className="relative bg-black w-full">
             <Header />
             <CollectionModal isOpen={collectionModal} onClose={() => setCollectionModal(false)} loading={false} />
-            <div>
-                <div className="grid">
-                    <div className="px-10 mt-16 px-4 md:!px-10 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left flex flex-col items-center">
+            <div className="flex items-center justify-center"> 
+                <div className="grid w-full max-w-4xl">
+                    <div className="w-full px-10 mt-16 px-4 md:!px-10 md:!mt-24 mx-auto py-4 md:!py-6 gap-x-32 text-left flex flex-col items-center">
                         {
                             !address ? (
                                 <div className="w-full h-[350px] flex justify-center items-center">
                                     <h1 className="text-4xl font-bold">Please Login</h1>
                                 </div>
                             ) : (
-                                <div>
+                                <div className="w-full">
                                     <div>
                                         <div className="flex justify-center">
                                             <h1 className="font-display text-[36px] md:!text-4xl font-black">
@@ -152,8 +168,8 @@ export default function Stake({ searchParams }: paramsProps) {
                                             onSubmit={form.handleSubmit(onSubmit)}
                                             className="w-full space-y-4"
                                         >
-                                            <div className="flex gap-x-8">
-                                                <div className="grid">
+                                            <div className="flex gap-x-8 w-full">
+                                                <div className="grid w-full">
                                                     <div className="my-4">
                                                         <h1 className="mr-4 font-londrina text-xl text-green-500 font-bold md:text-2xl xl:text-2xl">
                                                             Project Details:
@@ -326,10 +342,11 @@ export default function Stake({ searchParams }: paramsProps) {
                                                                                 <FormLabel className="flex items-center">
                                                                                     <div className="h-1 w-1 rounded-full bg-white mr-2" /> Banner Url: <span className="text-green-500">*</span>
                                                                                 </FormLabel>
-                                                                                <div className="relative max-w-[500px] ml-auto flex-1 md:grow-0">
+                                                                                <div className="relative max-w-[820px] ml-auto flex-1 md:grow-0">
                                                                                     <FormControl>
                                                                                         <ImageUpload onImageUpload={(file) => {
                                                                                             setFileBanner(file);
+                                                                                            field.onChange(file);
                                                                                         }} />
                                                                                     </FormControl>
                                                                                 </div>
@@ -347,10 +364,11 @@ export default function Stake({ searchParams }: paramsProps) {
                                                                                 <FormLabel className="flex items-center">
                                                                                     <div className="h-1 w-1 rounded-full bg-white mr-2" /> Footer Discord <span className="text-green-500">*</span>
                                                                                 </FormLabel>
-                                                                                <div className="relative max-w-[230px] ml-auto flex-1 md:grow-0">
+                                                                                <div className="relative max-w-[380px] ml-auto flex-1 md:grow-0">
                                                                                     <FormControl>
                                                                                         <ImageUpload onImageUpload={(file) => {
-                                                                                            setFileDiscord(file)
+                                                                                            setFileDiscord(file);
+                                                                                            field.onChange(file);
                                                                                         }} />
                                                                                     </FormControl>
                                                                                 </div>
@@ -368,10 +386,11 @@ export default function Stake({ searchParams }: paramsProps) {
                                                                                 <FormLabel className="flex items-center">
                                                                                     <div className="h-1 w-1 rounded-full bg-white mr-2" /> Footer Twiter : <span className="text-green-500">*</span>
                                                                                 </FormLabel>
-                                                                                <div className="max-w-[230px] relative ml-auto flex-1 md:grow-0">
+                                                                                <div className="max-w-[380px] relative ml-auto flex-1 md:grow-0">
                                                                                     <FormControl>
                                                                                         <ImageUpload onImageUpload={(file) => {
-                                                                                            setFileTwitter(file)
+                                                                                            setFileTwitter(file);
+                                                                                            field.onChange(file);
                                                                                         }} />
                                                                                     </FormControl>
                                                                                 </div>

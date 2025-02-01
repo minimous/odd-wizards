@@ -89,7 +89,7 @@ export default function CollectionModal({
                                                                 <Input
                                                                     type="text"
                                                                     disabled={loading}
-                                                                    placeholder="https://www.stargaze.zone/m/oddswizard/5263"
+                                                                    placeholder="oddswizard..."
                                                                     className="w-full"
                                                                     {...field}
                                                                 />
@@ -116,7 +116,7 @@ export default function CollectionModal({
                                                                 <Input
                                                                     type="text"
                                                                     disabled={loading}
-                                                                    placeholder="https://www.stargaze.zone/m/oddswizard/5263"
+                                                                    placeholder="stars..."
                                                                     className="w-full"
                                                                     {...field}
                                                                 />
@@ -143,7 +143,7 @@ export default function CollectionModal({
                                                                 <Input
                                                                     type="text"
                                                                     disabled={loading}
-                                                                    placeholder="https://www.stargaze.zone/m/oddswizard/5263"
+                                                                    placeholder="Odds Wizard..."
                                                                     className="w-full"
                                                                     {...field}
                                                                 />
@@ -170,7 +170,7 @@ export default function CollectionModal({
                                                                 <Textarea
                                                                     rows={3}
                                                                     disabled={loading}
-                                                                    placeholder="https://www.stargaze.zone/m/oddswizard/5263"
+                                                                    placeholder="Dive into the magic..."
                                                                     className="w-full"
                                                                     {...field}
                                                                 />
@@ -201,27 +201,6 @@ export default function CollectionModal({
                                                                     className="w-full"
                                                                     {...field}
                                                                 />
-                                                            </FormControl>
-                                                        </div>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className='my-2'>
-                                        <div className="col-span-2">
-                                            <FormField
-                                                control={form.control}
-                                                name="priceUrl"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="flex items-center">
-                                                            <div className="h-1 w-1 rounded-full bg-white mr-2" /> Banner Url: <span className="text-green-500">*</span>
-                                                        </FormLabel>
-                                                        <div className="relative ml-auto flex-1 md:grow-0">
-                                                            <FormControl>
-                                                                <ImageUpload />
                                                             </FormControl>
                                                         </div>
                                                         <FormMessage />
