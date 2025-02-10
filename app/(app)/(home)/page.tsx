@@ -114,8 +114,8 @@ export default function Home() {
           playsInline className="hidden md:!block w-full h-full">
           <source src="/images/Home-Odds.mp4" type="video/mp4" />
         </video> */}
-        <Banner items={[]} />
-        {/* <div className="relative h-screen bg-[url('/images/Odds-Garden.png')] bg-center bg-cover bg-no-repeat rounded-[20px]">
+        {/* <Banner items={[]} /> */}
+        <div className="relative h-screen bg-[url('/images/Odds-Garden.png')] bg-center bg-cover bg-no-repeat rounded-[20px]">
           <div className="absolute left-0 bottom-0 z-1 w-full h-[350px] bg-gradient-to-b from-transparent to-black/80" />
           <div className="absolute bottom-24 w-full px-6">
             <div className="flex gap-2">
@@ -139,7 +139,7 @@ export default function Home() {
               <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">Go to Launchpad</Button>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
       <div className="flex flex-col items-center justify-center my-10 mt-24 px-20">
         <CustomGradualSpacing
