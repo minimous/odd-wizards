@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         }
 
         const collection = await prisma.mst_collection.findFirst({
-            where: { collection_address: collection_address },
+            where: { collection_code: collection_address },
             include: {
                 mst_staker: false
             }
@@ -47,16 +47,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const resp = await getTotalPoints(staker_address, collection_address);
-
-        if (resp.point == 0) {
-            return NextResponse.json(
-                { message: 'No points available to claim' },
-                { status: 400 }
-            );
-        }
-
-        const stakerTotalPoints = staker.staker_total_points
+        const stakerTotalPoints = staker?.staker_total_points
             ? staker.staker_total_points.toString()
             : null;
 
@@ -64,8 +55,8 @@ export async function GET(request: NextRequest) {
             {
                 message: 'Get points successfully',
                 data: {
-                    staker: { ...staker, staker_total_points: stakerTotalPoints },
-                    points: resp.point
+                    point: stakerTotalPoints,
+                    totalStake: staker.staker_nft_staked
                 }
             },
             { status: 200 }

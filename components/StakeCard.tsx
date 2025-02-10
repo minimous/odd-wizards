@@ -32,7 +32,7 @@ const StakeCard: FC = () => {
     setIsFetch(false);
     async function fetchData() {
       try {
-        let resp = await axios.get(`/api/soft-staking/point?wallet_address=${address}&collection_address=${config?.collection_address}`)
+        let resp = await axios.get(`/api/soft-staking/available-point?wallet_address=${address}&collection_address=${config?.collection_address}`)
         let data = resp.data.data;
         // setPoints(data.points);
         setStaker(data.staker);
@@ -113,9 +113,9 @@ const StakeCard: FC = () => {
 }
 
   return (
-    <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center border-2 border-[#323237] p-4 md:px-12 md:p-8 rounded-[50px] flex items-center gap-x-4">
+    <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center border border-[#323237] p-4 md:px-12 md:p-8 rounded-[50px] flex items-center gap-x-4">
       <InfoModal isOpen={infoModal} onClose={() => {setInfoModal(false)}} loading={false} />
-      <img src="/images/wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
+      <img src="https://ipfs-gw.stargaze-apis.com/ipfs/bafybeidhudswmq6jlu54ixz45rsdbncrj62hx5paz2pdil52q7jtilqdvu/IMG_7278.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
       <div className="w-full p-2 md:p-4">
         <div className="text-center md:flex md:text-start justify-between mb-2">
           <Link href="https://www.stargaze.zone/m/oddswizard/tokens" target="_blank" className="w-full flex items-center justify-between gap-x-4">
@@ -144,7 +144,7 @@ const StakeCard: FC = () => {
                       ref={claimRef}
                       variant={"ghost"}
                       onClick={doStakeAndClaim}
-                      className="w-full px-8 py-3 h-max text-[14px] md:!text-xl font-black text-black rounded-xl bg-green-500 hover:bg-green-400 hover:text-black"
+                      className="w-full px-8 py-3 h-max text-[15px] md:!text-xl font-bold text-black rounded-xl bg-green-500 hover:bg-green-400 hover:text-black"
                     >Stake and Claim</Button>) :
                     (<StakeButton />)
                 }
