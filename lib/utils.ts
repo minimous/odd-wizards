@@ -796,7 +796,7 @@ export async function getLaunchpad(address: string, walletAddress?: string) {
   }`;
 
   try {
-    const response = await fetch(config.graphql_url, {
+    const response = await fetch(`${config.graphql_url}?t=${new Date().getTime()}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
