@@ -16,6 +16,7 @@ const Banner = ({ items }: BannerProps) => {
     const OPTIONS: EmblaOptionsType = { loop: true };
     const plugin = React.useRef(Autoplay({ delay: 10000, stopOnInteraction: false }));
     const [timeLeft, setTimeLeft] = useState<{ [key: string]: string }>({});
+    const [isLiveTrading, setIsLiveTrading] = useState<boolean>(false);
 
     const formatTime = (difference: number) => {
         if (difference <= 0) return '';
@@ -94,15 +95,14 @@ const Banner = ({ items }: BannerProps) => {
             new Date().getTime();
 
         if (!launchpad?.minterV2?.currentStage?.endTime) {
+            setIsLiveTrading(true);
             return (
                 <span className="opacity-70 text-lg font-bold">
-                    Trading starts
-                    <span className="text-[#49ED4A]">
-                        {timeLeft[launchpad.id] ? ` in ${timeLeft[launchpad.id]}` : ' soon'}
-                    </span>
+                    Live Trading on stargaze
                 </span>
             );
         } else if (now < startTime) {
+            setIsLiveTrading(false);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     {stageName} Start
@@ -112,12 +112,14 @@ const Banner = ({ items }: BannerProps) => {
                 </span>
             );
         } else if (now > endTime) {
+            setIsLiveTrading(true);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     Live Trading on stargaze
                 </span>
             );
         } else {
+            setIsLiveTrading(false);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     {stageName} Ends
@@ -195,11 +197,11 @@ const Banner = ({ items }: BannerProps) => {
                                         </div>
                                         <Link 
                                             hidden={!banner?.launchpad} 
-                                            href={`https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}`}
+                                            href={`${ isLiveTrading ? `https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens` : `https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}` }`}
                                             target="_blank"
                                         >
                                             <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
-                                                Go to Launchpad
+                                                { isLiveTrading ? "Go to Stargaze" : "Go to Launchpad" }
                                             </Button>
                                         </Link>
                                     </div>
