@@ -20,7 +20,7 @@ const Banner = ({ items }: BannerProps) => {
 
     const formatTime = (difference: number) => {
         if (difference <= 0) return '';
-        
+
         // Calculate time units
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -39,50 +39,57 @@ const Banner = ({ items }: BannerProps) => {
 
     useEffect(() => {
         const timers: NodeJS.Timeout[] = [];
-
+    
         const updateAllTimers = () => {
             const now = new Date().getTime();
             const newTimeLeft: { [key: string]: string } = {};
-
+            let liveTrading = false;
+    
             items?.forEach((banner) => {
                 if (!banner.launchpad) return;
-
+    
                 const launchpad = banner.launchpad;
                 const currentStage = launchpad?.minterV2?.currentStage;
-                
+    
                 if (!currentStage?.endTime) {
                     // Trading countdown
                     const tradingStart = launchpad.startTradingTime / 1000000;
                     const difference = tradingStart - now;
+    
                     if (difference > 0) {
                         newTimeLeft[banner.id] = formatTime(difference);
+                    } else {
+                        liveTrading = true; // Trading sudah dimulai
                     }
                 } else {
                     // Stage countdown
                     const startTime = new Date(currentStage.startTime / 1000000).getTime();
                     const endTime = new Date(currentStage.endTime / 1000000).getTime();
-                    
+    
                     if (now < startTime) {
                         newTimeLeft[banner.id] = formatTime(startTime - now);
                     } else if (now < endTime) {
                         newTimeLeft[banner.id] = formatTime(endTime - now);
+                    } else {
+                        liveTrading = true; // Jika semua stage sudah selesai, masuk ke live trading
                     }
                 }
             });
-
+    
             setTimeLeft(newTimeLeft);
+            setIsLiveTrading(liveTrading); // Update isLiveTrading berdasarkan kondisi terbaru
         };
-
+    
         // Update immediately and set interval
         updateAllTimers();
         const timer = setInterval(updateAllTimers, 1000);
         timers.push(timer);
-
+    
         // Cleanup
         return () => {
             timers.forEach(timer => clearInterval(timer));
         };
-    }, [items]);
+    }, [items]);    
 
     const showCurrentStage = (launchpad: any) => {
         if (!launchpad) return "";
@@ -90,19 +97,17 @@ const Banner = ({ items }: BannerProps) => {
         const stageName = launchpad?.minterV2?.currentStage?.name;
         const now = new Date().getTime();
         const startTime = new Date(launchpad?.minterV2?.currentStage?.startTime / 1000000).getTime();
-        const endTime = launchpad?.minterV2?.currentStage?.endTime ? 
-            new Date(launchpad?.minterV2?.currentStage?.endTime / 1000000).getTime() : 
+        const endTime = launchpad?.minterV2?.currentStage?.endTime ?
+            new Date(launchpad?.minterV2?.currentStage?.endTime / 1000000).getTime() :
             new Date().getTime();
 
         if (!launchpad?.minterV2?.currentStage?.endTime) {
-            setIsLiveTrading(true);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     Live Trading on stargaze
                 </span>
             );
         } else if (now < startTime) {
-            setIsLiveTrading(false);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     {stageName} Start
@@ -112,14 +117,12 @@ const Banner = ({ items }: BannerProps) => {
                 </span>
             );
         } else if (now > endTime) {
-            setIsLiveTrading(true);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     Live Trading on stargaze
                 </span>
             );
         } else {
-            setIsLiveTrading(false);
             return (
                 <span className="opacity-70 text-lg font-bold">
                     {stageName} Ends
@@ -133,14 +136,14 @@ const Banner = ({ items }: BannerProps) => {
 
     const renderMedia = (banner: any) => {
         const mediaUrl = banner.banner_image ?? "/images/Odds-Garden.png";
-        
+
         if (banner.banner_type == 'V') {
             return (
-                <video 
+                <video
                     className="w-full h-full object-cover rounded-[30px] hover:scale-[102%] transition-all duration-300 ease-in-out"
-                    autoPlay 
-                    loop 
-                    muted 
+                    autoPlay
+                    loop
+                    muted
                     playsInline
                 >
                     <source src={mediaUrl} type="video/mp4" />
@@ -195,15 +198,26 @@ const Banner = ({ items }: BannerProps) => {
                                             </div>
                                             {showCurrentStage(banner?.launchpad)}
                                         </div>
-                                        <Link 
-                                            hidden={!banner?.launchpad} 
-                                            href={`${ isLiveTrading ? `https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens` : `https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}` }`}
-                                            target="_blank"
-                                        >
-                                            <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
-                                                { isLiveTrading ? "Go to Stargaze" : "Go to Launchpad" }
-                                            </Button>
-                                        </Link>
+                                        {
+                                            isLiveTrading ? <Link
+                                                hidden={!banner?.launchpad}
+                                                href={`https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens`}
+                                                target="_blank"
+                                            >
+                                                <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
+                                                    Go to Stargaze
+                                                </Button>
+                                            </Link> :
+                                                <Link
+                                                    hidden={!banner?.launchpad}
+                                                    href={`https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}`}
+                                                    target="_blank"
+                                                >
+                                                    <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
+                                                        Go to Launchpad
+                                                    </Button>
+                                                </Link>
+                                        }
                                     </div>
                                 </div>
                             </div>
