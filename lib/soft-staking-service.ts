@@ -139,19 +139,20 @@ export async function getLeaderboard(project_id: number, staker_address: string 
         SELECT 
             mc.collection_project_id,
             ms.staker_address,
-            ms.staker_nft_staked,
-            ms.staker_red_flag,
+            SUM(ms.staker_nft_staked) AS staker_nft_staked,
+            BOOL_OR(ms.staker_red_flag) AS staker_red_flag, -- Jika ada satu saja yang red_flag, maka hasilnya true
             mu.user_image_url,
-            ms.staker_total_points as total_points,
+            SUM(ms.staker_total_points) AS total_points,
             ROW_NUMBER() OVER (
                 PARTITION BY mc.collection_project_id
-                ORDER BY ms.staker_total_points DESC
-            ) as ranking
+                ORDER BY SUM(ms.staker_total_points) DESC
+            ) AS ranking
         FROM mst_staker ms
         LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
         WHERE mc.collection_project_id = ${project_id}
         AND ms.staker_nft_staked > 0
+        GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url
     )
     SELECT 
         collection_project_id,
@@ -167,7 +168,6 @@ export async function getLeaderboard(project_id: number, staker_address: string 
     ORDER BY total_points DESC, ranking
     LIMIT ${size} OFFSET ${page * size};
 `;
-
 
     return leaderboard;
 }
