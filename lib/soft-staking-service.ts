@@ -152,7 +152,7 @@ export async function getLeaderboard(project_id: number, staker_address: string 
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
         WHERE mc.collection_project_id = ${project_id}
         AND ms.staker_nft_staked > 0
-        GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url
+        GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url, ms.staker_red_flag
     )
     SELECT 
         collection_project_id,
