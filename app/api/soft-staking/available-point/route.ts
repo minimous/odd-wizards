@@ -5,7 +5,7 @@ import { getTotalPoints } from '@/lib/soft-staking-service';
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = request.nextUrl;
-        const collection_address = searchParams.get('collection_address');
+        const project_code = searchParams.get('project_code');
         const staker_address = searchParams.get('wallet_address');
 
         if (!staker_address) {
@@ -15,57 +15,63 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        if (!collection_address) {
+        if (!project_code) {
             return NextResponse.json(
-                { message: 'collection_address is required' },
+                { message: 'project_code is required' },
                 { status: 400 }
             );
         }
 
-        const collection = await prisma.mst_collection.findFirst({
-            where: { collection_address: collection_address },
+        const project = await prisma.mst_project.findFirst({
+            where: {
+                project_code: project_code
+            },
             include: {
-                mst_staker: false
+                collections: true
             }
-        });
-
-        if (!collection) {
-            return NextResponse.json(
-                { message: 'Collection not found' },
-                { status: 400 }
-            );
-        }
-
-        const staker = await prisma.mst_staker.findFirst({
-            where: { staker_address: staker_address, staker_collection_id: collection.collection_id }
         })
 
-        if (!staker) {
+        if (!project) {
+            return NextResponse.json(
+                { message: 'project not found' },
+                { status: 400 }
+            );
+        }
+
+        const stakers = await prisma.mst_staker.findMany({
+            where: {
+                staker_address: staker_address,
+                staker_project_id: project.project_id
+            }
+        })
+
+        if (stakers.length == 0) {
             return NextResponse.json(
                 { message: 'Staker not found' },
                 { status: 400 }
             );
         }
 
-        const resp = await getTotalPoints(staker_address, collection_address);
+        const resp = await getTotalPoints(staker_address, project.project_id);
 
-        if (resp.point == 0) {
-            return NextResponse.json(
-                { message: 'No points available to claim' },
-                { status: 400 }
-            );
-        }
+        // if (resp.point == 0) {
+        //     return NextResponse.json(
+        //         { message: 'No points available to claim' },
+        //         { status: 400 }
+        //     );
+        // }
 
-        const stakerTotalPoints = staker.staker_total_points
-            ? staker.staker_total_points.toString()
-            : null;
+        const stakerTotalPoints = stakers.reduce(
+            (sum, staker) => sum + (staker.staker_total_points || 0),
+            0
+        );
 
         return NextResponse.json(
             {
                 message: 'Get available points successfully',
                 data: {
-                    staker: { ...staker, staker_total_points: stakerTotalPoints },
-                    points: resp.point
+                    staker: { ...stakers, staker_total_points: stakerTotalPoints },
+                    points: resp.point ?? 0
                 }
             },
             { status: 200 }

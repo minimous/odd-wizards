@@ -6,8 +6,7 @@ import { WalletStatus } from '@cosmos-kit/core';
 import { useChain, useWallet } from "@cosmos-kit/react";
 import ConnectButton from "@/components/ConnectButton";
 import axios, { AxiosError } from "axios";
-import getConfig from "@/config/config";
-import { mst_staker } from "@prisma/client";
+import { mst_collection, mst_staker } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { promiseToast, useToast } from "./ui/use-toast";
 import { useClaim } from "@/hooks/useClaim";
@@ -16,12 +15,19 @@ import confetti from "canvas-confetti";
 import { BorderBeam } from "./ui/border-beam";
 import InfoModal from "./modal/info-modal";
 
-const StakeCardMobile: FC = () => {
+export interface StakeCardMobileProps {
+    collection: mst_collection,
+    projectid: string
+  }
+
+const StakeCardMobile = ({
+    collection,
+    projectid
+}: StakeCardMobileProps) => {
 
     const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
     const [isFetch, setIsFetch] = useState<boolean>(false);
     // const [point, setPoints] = useState<number>(0);
-    const config = getConfig();
     const wallet = useWallet();
     const { address } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
     const { toast } = useToast();
@@ -33,7 +39,7 @@ const StakeCardMobile: FC = () => {
         setIsFetch(false);
         async function fetchData() {
             try {
-                let resp = await axios.get(`/api/soft-staking/available-point?wallet_address=${address}&collection_address=${config?.collection_address}`)
+                let resp = await axios.get(`/api/soft-staking/available-point?wallet_address=${address}&project_code=${projectid}`)
                 let data = resp.data.data;
                 // setPoints(data.points);
                 setStaker(data.staker);
@@ -54,7 +60,7 @@ const StakeCardMobile: FC = () => {
             setClaim(false);
             promiseToast(axios.post("/api/soft-staking/claim", {
                 staker_address: address,
-                collection_address: config?.collection_address
+                project_code: projectid
             }), {
                 loading: {
                     title: "Processing...",
@@ -115,7 +121,7 @@ const StakeCardMobile: FC = () => {
 
     return (
         <div className="w-full bg-[url('/images/Account.gif')] bg-cover bg-center border border-[#323237] w-full p-4 py-6 md:p-8 rounded-[25px]">
-            <InfoModal isOpen={infoModal} onClose={() => { setInfoModal(false) }} loading={false} />
+            <InfoModal collection={collection} isOpen={infoModal} onClose={() => { setInfoModal(false) }} loading={false} />
             <div className="flex items-center gap-x-4">
                 <img src="/images/stake-wizard.gif" className="shrink-0 h-[105px] md:!h-[175px] rounded-[35px] mx-auto" />
                 <div className="w-full p-2 md:p-4">

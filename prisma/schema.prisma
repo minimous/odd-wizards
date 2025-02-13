@@ -21,6 +21,48 @@ model mst_users {
   participant trn_participant[]
 }
 
+model mst_project {
+  project_id             Int    @id @default(autoincrement())
+  project_code           String?
+  project_name           String?
+  project_description    String?
+  project_banner         String?
+  project_banner_type    String?
+  project_status         String?
+  project_is_leaderboard String? @default("N")
+  project_icon           String?
+  project_profile_image  String?
+  project_footer_discord String?
+  project_footer_twitter String?
+  project_footer_discord_color String?
+  project_footer_twitter_color String?
+  project_discord_url    String?
+  project_twitter_url    String?
+  project_seqn           Int?
+  project_leaderboard_enddate DateTime?
+  project_symbol         String?
+  project_symbol_img     String?
+  project_chellange_tierrule String?
+  project_chellange_periode String?
+  project_chellange_note    String?
+
+  stakers mst_staker[]
+  rewards mst_reward[]
+  collections mst_collection[]
+}
+
+model mst_reward {
+  reward_id             Int    @id @default(autoincrement())
+  reward_project_id     Int?
+  reward_name           String?
+  reward_image_url      String?
+  reward_collection     String?
+  reward_token_id       String?
+  reward_rank           Int?
+
+  project mst_project? @relation(fields: [reward_project_id], references: [project_id])
+}
+
 model mst_collection {
   collection_id          Int     @id @default(autoincrement())
   collection_code        String?
@@ -28,8 +70,19 @@ model mst_collection {
   collection_name        String?
   collection_description String?
   collection_supply      Int?
+  collection_image_url   String?
+  collection_attr_url    String?
+  collection_banner_url  String?
+  collection_project_id  Int?
+  collection_creator     String?
+  collection_creator_name String?
+  collection_created_date DateTime?
+  collection_royalties   Int?
+  collection_chain       String?
+  collection_seqn        Int?
   
   // Relasi dengan Staker
+  project mst_project? @relation(fields: [collection_project_id], references: [project_id])
   mst_staker mst_staker[]
   mst_attributes_reward mst_attributes_reward[]
 }
@@ -44,7 +97,9 @@ model mst_staker {
   updated_date            DateTime? @updatedAt
   staker_total_points     Int?
   staker_red_flag         String?
+  staker_project_id       Int?
   
+  projects  mst_project? @relation(fields: [staker_project_id], references: [project_id])
   // Relasi dengan Collection dan Point
   collection mst_collection? @relation(fields: [staker_collection_id], references: [collection_id])
   // Relasi dengan User
@@ -76,6 +131,7 @@ model mst_attributes_reward {
 model trn_distribusi_reward {
   distribusi_id           Int       @id @default(autoincrement())
   distribusi_collection   Int?
+  distribusi_project_id   Int?
   distribusi_reward       String?
   distribusi_wallet       String?
   distribusi_is_claimed   String?   @default("N")
@@ -120,4 +176,16 @@ model trn_participant {
   participant_created_date DateTime?
   raffle  trn_raffle?   @relation(fields: [participant_raffle_id], references: [raffle_id])
   user    mst_users?    @relation(fields: [participant_address], references: [user_address])
+}
+
+model mst_banners {
+  banner_id           Int @id @default(autoincrement())
+  banner_image        String?
+  banner_status       String?
+  banner_collection_address String?
+  banner_website      String?
+  banner_twiter       String?
+  banner_discord      String?
+  banner_seqn         Int?
+  banner_type         String?
 }

@@ -20,14 +20,18 @@ import { formatAddress } from '@/lib/utils';
 import { Copy } from 'lucide-react';
 import { useToast } from '../ui/use-toast';
 import Link from 'next/link';
+import { mst_collection } from '@prisma/client';
+import moment from 'moment';
 
 interface AlertModalProps {
+    collection: mst_collection;
     isOpen: boolean;
     onClose: () => void;
     loading: boolean;
 }
 
 export default function InfoModal({
+    collection,
     isOpen,
     onClose,
     loading
@@ -54,6 +58,12 @@ export default function InfoModal({
         }
     }
 
+    const formatCreatedDate = (date: Date | undefined | null) => {
+        if(!date) return "";
+        const momentDate = moment(date);
+        return momentDate.format('MMMM D, YYYY h:mm A');
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-[95%] md:!max-w-xl rounded-xl bg-black">
@@ -62,14 +72,14 @@ export default function InfoModal({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader> */}
                 <div className="w-full bg-black text-white">
-                    <span className='font-bold text-xl'>Odds Wizard</span>
-                    <p className='text-gray-400 text-xs md:!text-base mt-2'>ODDS is a mystical garden where the most peculiar beings gather and play within the Cosmos. Starting with the Odds Wizard, the first entity to step into the ODDS, paving the way for an ever-growing collection of oddities, waiting to be discovered.</p>
+                    <span className='font-bold text-xl'>{collection?.collection_name}</span>
+                    <p className='text-gray-400 text-xs md:!text-base mt-2'>{collection?.collection_description}</p>
                     <Separator className="my-4" />
                     <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-base'>
                         <span>Contract Address:</span>
                         <div className='flex gap-x-1 items-center text-xs md:!text-base'>
-                            <span>{formatAddress("stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7")}</span>
-                            <span onClick={() => { handleCopy("stars1vjxr6hlkjkh0z5u9cnktftdqe8trhu4agcc0p7my4pejfffdsl5sd442c7")}} className='cursor-pointer'><Copy size={16} /></span>
+                            <span>{formatAddress(collection?.collection_address ?? "")}</span>
+                            <span onClick={() => { handleCopy(collection.collection_address ?? "")}} className='cursor-pointer'><Copy size={16} /></span>
                         </div>
                     </div>
                     <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-base'>
@@ -78,12 +88,12 @@ export default function InfoModal({
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Link href={"https://www.stargaze.zone/p/artnesh/tokens"} target='_blank'>
-                                            <span className='cursor-pointer text-green-500 text-xs md:!text-base'>artnesh</span>
+                                        <Link href={`https://www.stargaze.zone/p/${collection.collection_creator_name ?? collection.collection_creator}/tokens`} target='_blank'>
+                                            <span className='cursor-pointer text-green-500 text-xs md:!text-base'>{collection.collection_creator_name}</span>
                                         </Link>
                                     </TooltipTrigger>
                                     <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
-                                        <p>{formatAddress("stars130tcpz6l0j9f382prlj67r29jmr25cgpacmd7r")}</p>
+                                        <p>{formatAddress(collection.collection_creator ?? "")}</p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
@@ -91,15 +101,15 @@ export default function InfoModal({
                     </div>
                     <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-base'>
                         <span>Created:</span>
-                        <span>December 15, 2024 10:07 AM</span>
+                        <span>{formatCreatedDate(collection.collection_created_date)}</span>
                     </div>
                     <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-base'>
                         <span>Home chain:</span>
-                        <span>Stargaze</span>
+                        <span>{collection.collection_chain}</span>
                     </div>
-                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-basemd:!text-base'>
+                    <div className='flex justify-between my-2 text-gray-400 text-xs md:!text-base'>
                         <span>Royalties:</span>
-                        <span>5%</span>
+                        <span>{collection.collection_royalties}%</span>
                     </div>
                 </div>
             </DialogContent>

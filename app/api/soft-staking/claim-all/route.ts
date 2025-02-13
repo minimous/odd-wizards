@@ -29,7 +29,8 @@ export async function GET(request: NextRequest) {
             const staker_address = staker.staker_address;
             if(!staker_address) continue;
             
-            const resp = await getTotalPoints(staker_address, collection_address);
+            // const resp = await getTotalPoints(staker_address, collection_address);
+            const resp: any = {};
 
             console.log(i++, "process ", staker_address, resp.point);
 

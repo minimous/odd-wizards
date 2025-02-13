@@ -12,13 +12,16 @@ import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
 import NumberTicker from "./ui/number-ticker";
 import { useUser } from "@/hooks/useUser";
+import { mst_project } from "@prisma/client";
 
 export interface BoxStatStakeProps {
-    collection: string
+    collection: string,
+    project: mst_project
 }
 
 export const BoxStatStake = ({
-    collection
+    collection,
+    project
 }: BoxStatStakeProps) => {
 
   const rankEmojis = ["🥇", "🥈", "🥉"];
@@ -31,8 +34,11 @@ export const BoxStatStake = ({
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const resp = await axios.get(`/api/soft-staking/point?wallet_address=${address}&collection_address=${collection}`);
-      setStat(resp.data.data);
+      try {
+        const resp = await axios.get(`/api/soft-staking/point?wallet_address=${address}&project_code=${project?.project_code}`);
+        setStat(resp.data.data);
+      } catch (error) {
+      }
       setLoading(false);
     }
 
@@ -78,7 +84,7 @@ export const BoxStatStake = ({
                 <span className="text-[12px] md:text-[20px] text-white">Token</span>
                 <p className="text-[10px] md:text-[20px] font-bold text-white">
                   {/* <NumberTicker value={leaderboard?.point ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD */}
-                  {formatDecimal(stat?.point ?? 0, 2)} $WZRD
+                  {formatDecimal(stat?.point ?? 0, 2)} ${project?.project_symbol}
                 </p>
               </div>
             </div>
@@ -105,7 +111,7 @@ export const BoxStatStake = ({
               <span className="text-[12px] md:text-[20px] text-white">Token</span>
               <p className="text-[13px] md:text-[20px] font-bold text-white">
                 {/* <NumberTicker value={leaderboard?.point ?? 0} decimalPlaces={2} skipAnimation={true} /> $WZRD */}
-                {formatDecimal(stat?.point ?? 0, 2)} $WZRD
+                {formatDecimal(stat?.point ?? 0, 2)} ${project.project_symbol}
               </p>
             </div>
           </div>

@@ -19,6 +19,7 @@ import Particles from "@/components/ui/particles";
 import RaffleCardCustom from "@/components/raffle/RaffleCardCustom";
 import { AnimatedList } from "@/components/ui/animated-list";
 import { Item, Notification } from "@/components/Notification";
+import { mst_project } from "@prisma/client";
 
 export default function Stake() {
     const config = getConfig();
@@ -28,6 +29,8 @@ export default function Stake() {
     const [raffles, setRaffles] = useState<Raffle[]>([]);
     const [history, setHistory] = useState<Item[]>([]);
     const [page, setPage] = useState<number>(1);
+    const [stakers, setStakers] = useState<any>();
+    const [tokens, setTokens] = useState<any[] | []>([]);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const { address } = useChain("stargaze");
     const LIMIT = 8;
@@ -58,7 +61,7 @@ export default function Stake() {
             const notifcations: Item[] = data.map((item: any) => {
                 return {
                     name: `Bought Raffle Ticket`,
-                    description: `just bought ${item.participant_amount} ticket${ item.participant_amount > 1 ? "s" : ""}`,
+                    description: `just bought ${item.participant_amount} ticket${item.participant_amount > 1 ? "s" : ""}`,
                     img: item.user.user_image_url,
                     wallet: formatAddress(item.user.user_address),
                     reward: item.raffle.rewards[0]?.reward_name,
@@ -92,8 +95,49 @@ export default function Stake() {
     }, []);
 
     useEffect(() => {
+        async function fetchData() {
+            if (address) {
+                let resp = await axios.get(`/api/user/${address}`);
+                const data = resp.data.data;
+                setStakers(data.staker);
 
-    }, [user]);
+                setTokens(
+                    Object.values(
+                        data.staker.filter((item: mst_project) => {
+                            return item.project_code == 'oddswizard'
+                        }).reduce((acc: any, staker: any) => {
+                            const projectId = staker.staker_project_id ?? 0;
+                            const project = staker.projects; // Getting the related project data
+
+                            if (!acc[projectId]) {
+                                acc[projectId] = {
+                                    project_id: projectId,
+                                    project_symbol: project?.project_symbol ?? '',
+                                    project_symbol_img: project?.project_symbol_img ?? '',
+                                    total_nft_staked: 0,
+                                    total_points: 0
+                                };
+                            }
+
+                            acc[projectId].total_nft_staked += staker.staker_nft_staked ?? 0;
+                            acc[projectId].total_points += staker.staker_total_points ?? 0;
+
+                            return acc;
+                        }, {} as Record<number, {
+                            project_id: number;
+                            project_symbol: string;
+                            project_symbol_img: string;
+                            total_nft_staked: number;
+                            total_points: number;
+                        }>)
+                    )
+                );
+
+            }
+        }
+
+        fetchData();
+    }, [address]);
 
     return (
         <div className="relative bg-black w-full">

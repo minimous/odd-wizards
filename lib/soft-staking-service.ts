@@ -43,66 +43,97 @@ export async function updateNftOwner(address: string, collection_address: string
 }
 
 
-export async function getTotalPoints(address: string, collection_address: string) {
+export async function getTotalPoints(address: string, project_id: number) {
 
-    const collection = await prisma.mst_collection.findFirst({
-        where: { collection_address: collection_address },
+    const project = await prisma.mst_project.findFirst({
+        where: {
+            project_id: project_id
+        },
         include: {
-            mst_staker: false
+            collections: true
         }
     });
 
-    if (!collection) {
-        throw Error("Collection not found")
+    if (!project) {
+        throw Error("Project not found")
     }
 
-    const staker = await prisma.mst_staker.findFirst({
-        where: { staker_address: address, staker_collection_id: collection.collection_id }
-    })
+    let totalNft = 0;
+    let totalPoint = 0;
+    let listPoints = [];
 
-    if (!staker) {
-        throw Error("Staker not found");
-    }
+    for (let collection of project?.collections) {
 
-    const attributes_rewards = await prisma.mst_attributes_reward.findMany({
-        where: { attr_collection_id: collection.collection_id }
-    });
+        if(!collection.collection_address) continue;
 
-    let allTokens = await fetchAllStargazeTokens({
-        owner: address,
-        collectionAddress: collection_address,
-        filterForSale: 'UNLISTED'
-    });
+        const staker = await prisma.mst_staker.findFirst({
+            where: { staker_address: address, staker_collection_id: collection.collection_id }
+        })
 
-    console.log("allTokens", allTokens.length);
+        if (!staker) {
+            // throw Error("Staker not found");
+            continue;
+        }
 
-    let attrreward: mst_attributes_reward[] = [];
-    allTokens.forEach((nft) => {
-        nft.traits.forEach(trait => {
-            const matchingReward = attributes_rewards.find(reward =>
-                reward.attr_key == trait.name &&
-                reward.attr_val == trait.value
-            );
-
-            if (matchingReward) {
-                attrreward.push(matchingReward);
-            }
+        const attributes_rewards = await prisma.mst_attributes_reward.findMany({
+            where: { attr_collection_id: collection.collection_id }
         });
-    });
 
-    console.log("attrreward", attrreward.length);
+        let allTokens = await fetchAllStargazeTokens({
+            owner: address,
+            collectionAddress: collection.collection_address,
+            filterForSale: 'UNLISTED'
+        });
 
-    const totalPoints = attrreward?.reduce((sum, reward) =>
-        sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
-    );
+        let attrreward: mst_attributes_reward[] = [];
+        allTokens.forEach((nft) => {
+            nft.traits.forEach(trait => {
+                const matchingReward = attributes_rewards.find(reward =>
+                    reward.attr_key == trait.name &&
+                    reward.attr_val == trait.value
+                );
+
+                if (matchingReward) {
+                    attrreward.push(matchingReward);
+                }
+
+                if(!matchingReward){
+                    const matchingKeyReward = attributes_rewards.find(reward =>
+                        reward.attr_key == trait.name &&
+                        (reward.attr_val == undefined || reward.attr_val == null)
+                    );
+
+                    if(matchingKeyReward){
+                        attrreward.push(matchingKeyReward);
+                    }
+                }
+            });
+        });
+
+        attrreward.push(...attributes_rewards.filter(reward => !reward.attr_key && !reward.attr_val));
+
+        console.log("attrreward", attrreward.length);
+
+        const points = attrreward?.reduce((sum, reward) =>
+            sum + calculatePoint(reward, staker.staker_lastclaim_date), 0
+        );
+
+        totalNft += allTokens.length;
+        totalPoint += points;
+        listPoints.push({
+            staker_id: staker.staker_id,
+            points: points
+        });
+    }
 
     return {
-        totalNft: allTokens.length,
-        point: totalPoints
+        totalNft: totalNft,
+        point: totalPoint,
+        listPoints: listPoints
     };
 }
 
-export async function getLeaderboard(collection_address: string, staker_address: string | null, page: number, size: number) {
+export async function getLeaderboard(project_id: number, staker_address: string | null, page: number, size: number) {
     // const leaderboard: any = await prisma.$queryRaw`
     //         WITH leaderboard_points AS (
     //             SELECT
@@ -159,7 +190,7 @@ export async function getLeaderboard(collection_address: string, staker_address:
         FROM mst_staker ms
         LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
-        WHERE mc.collection_address = ${collection_address}
+        WHERE mc.collection_project_id = ${project_id}
         AND ms.staker_nft_staked > 0
     )
     SELECT 

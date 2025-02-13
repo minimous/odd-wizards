@@ -6,15 +6,23 @@ import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useClaim } from "@/hooks/useClaim";
 import confetti from "canvas-confetti";
+import { cn } from "@/lib/utils";
 
-const StakeSlider = () => {
+export interface StakeSliderProps {
+  projectCode?: string,
+  className?: string
+}
+
+const StakeSlider = ({
+  projectCode,
+  className
+}: StakeSliderProps ) => {
   const [sliderPosition, setSliderPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
   const maxValue = 100;
-  const config = getConfig();
   const { address } = useChain("stargaze");
   const { toast, promiseToast } = useToast();
   const { setClaim } = useClaim();
@@ -95,7 +103,7 @@ const StakeSlider = () => {
       setClaim(false);
       promiseToast(axios.post("/api/soft-staking/create", {
         staker_address: address,
-        collection_address: config?.collection_address
+        project_code: projectCode
       }), {
         loading: {
           title: "Processing...",
@@ -161,11 +169,11 @@ const StakeSlider = () => {
     <div>
       <div
         ref={sliderRef}
-        className={`
+        className={cn(`
           relative w-full h-16 bg-black rounded-2xl flex items-center overflow-hidden
           ${isDragging ? 'cursor-grabbing' : 'cursor-default'}
           touch-none
-        `}
+        `, className)}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => {

@@ -12,6 +12,8 @@ import moment from 'moment';
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { GasPrice } from "@cosmjs/stargate";
+import { OPERATOR_CONSTANTS } from '@/constants/filterConstant';
+import { UTApi } from 'uploadthing/server';
 
 const config = getConfig();
 
@@ -593,6 +595,230 @@ export async function getToken(collectionAddr: string, tokenId: string) {
 }
 
 
+export async function getLaunchpad(address: string, walletAddress?: string) {
+  if (!config) throw Error("Config not found");
+
+  const query = `query MinterV2($address: String!, $walletAddress: String) {
+    collection(address: $address) {
+      __typename
+      contractAddress
+      contractUri
+      name
+      description
+      website
+      isExplicit
+      minterAddress
+      featured
+      floor {
+        amount
+        amountUsd
+        denom
+        symbol
+        __typename
+      }
+      creator {
+        address
+        name {
+          name
+          records {
+            name
+            value
+            verified
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      royaltyInfo {
+        sharePercent
+        __typename
+      }
+      minterV2(walletAddress: $walletAddress) {
+        ...MinterV2Fields
+        __typename
+      }
+      startTradingTime
+      media {
+        ...MediaFields
+        __typename
+      }
+    }
+  }
+
+  fragment MinterV2Fields on MinterV2 {
+    minterType
+    minterAddress
+    mintableTokens
+    mintedTokens
+    airdroppedTokens
+    numTokens
+    currentStage {
+      id
+      name
+      type
+      presaleType
+      status
+      startTime
+      endTime
+      salePrice {
+        denom
+        symbol
+        amount
+        amountUsd
+        __typename
+      }
+      discountPrice {
+        denom
+        symbol
+        amount
+        amountUsd
+        __typename
+      }
+      burnConditions {
+        collectionAddress
+        amountToBurn
+        __typename
+      }
+      addressTokenCounts {
+        limit
+        mintable
+        minted
+        __typename
+      }
+      stageCounts {
+        limit
+        mintable
+        minted
+        __typename
+      }
+      numMembers
+      isMember
+      proofs
+      __typename
+    }
+    mintStages {
+      discountPrice {
+        amount
+        amountUsd
+        denom
+        symbol
+        __typename
+      }
+      salePrice {
+        amount
+        amountUsd
+        denom
+        symbol
+        __typename
+      }
+      burnConditions {
+        collectionAddress
+        amountToBurn
+        __typename
+      }
+      status
+      type
+      id
+      presaleType
+      startTime
+      endTime
+      name
+      isMember
+      numMembers
+      proofs
+      addressTokenCounts {
+        limit
+        mintable
+        minted
+        __typename
+      }
+      stageCounts {
+        limit
+        mintable
+        minted
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+
+  fragment MediaFields on Media {
+    type
+    url
+    height
+    width
+    visualAssets {
+      xs {
+        type
+        url
+        height
+        width
+        staticUrl
+        __typename
+      }
+      sm {
+        type
+        url
+        height
+        width
+        staticUrl
+        __typename
+      }
+      md {
+        type
+        url
+        height
+        width
+        staticUrl
+        __typename
+      }
+      lg {
+        type
+        url
+        height
+        width
+        staticUrl
+        __typename
+      }
+      xl {
+        type
+        url
+        height
+        width
+        staticUrl
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }`;
+
+  try {
+    const response = await fetch(config.graphql_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          address,
+          walletAddress
+        },
+        operationName: 'MinterV2'
+      })
+    });
+
+    const data = await response.json();
+    return data.data.collection;
+  } catch (error) {
+    console.error('Error fetching launchpad data:', error);
+    throw error;
+  }
+}
+
 export function formatToStars(value?: string | number): number {
   if (!value) return 0;
   let number = typeof value === 'string' ? parseFloat(value) : value;
@@ -631,69 +857,133 @@ export function extractCollectionAndTokenId(url: string) {
   const match = url?.match(regex);
 
   if (match) {
-      return {
-          collection: match[1],
-          tokenId: match[2],
-      };
+    return {
+      collection: match[1],
+      tokenId: match[2],
+    };
   } else {
-      // throw new Error("URL format is invalid");
-      return {
-          collection: undefined,
-          tokenId: undefined,
-      };
+    // throw new Error("URL format is invalid");
+    return {
+      collection: undefined,
+      tokenId: undefined,
+    };
   }
 }
 
 export async function transferNFT(
-  mnemonic: string, 
-  contractAddress: string, 
-  recipientAddress: string, 
+  mnemonic: string,
+  contractAddress: string,
+  recipientAddress: string,
   tokenId: string
 ) {
   try {
-      const rpcEndpoint = config?.rpc_url ?? ""; // Ganti dengan RPC Stargaze yang valid
-      // Create wallet instance from mnemonic
-      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
-          prefix: "stars" // Stargaze address prefix
-      });
+    const rpcEndpoint = config?.rpc_url ?? ""; // Ganti dengan RPC Stargaze yang valid
+    // Create wallet instance from mnemonic
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+      prefix: "stars" // Stargaze address prefix
+    });
 
-      // Get the wallet address
-      const [firstAccount] = await wallet.getAccounts();
-      console.log("Sender address:", firstAccount.address);
+    // Get the wallet address
+    const [firstAccount] = await wallet.getAccounts();
+    console.log("Sender address:", firstAccount.address);
 
-      // Create signing client
-      const client = await SigningCosmWasmClient.connectWithSigner(
-          rpcEndpoint,
-          wallet,
-          {
-              gasPrice: GasPrice.fromString("0.025ustars")
-          }
-      );
+    // Create signing client
+    const client = await SigningCosmWasmClient.connectWithSigner(
+      rpcEndpoint,
+      wallet,
+      {
+        gasPrice: GasPrice.fromString("0.025ustars")
+      }
+    );
 
-      // Prepare transfer message
-      const transferMsg = {
-          transfer_nft: {
-              recipient: recipientAddress,
-              token_id: tokenId
-          }
-      };
+    // Prepare transfer message
+    const transferMsg = {
+      transfer_nft: {
+        recipient: recipientAddress,
+        token_id: tokenId
+      }
+    };
 
-      // Execute transfer
-      const result = await client.execute(
-          firstAccount.address,
-          contractAddress,
-          transferMsg,
-          "auto", // automatic gas estimation
-          "",     // memo
-          []      // funds
-      );
+    // Execute transfer
+    const result = await client.execute(
+      firstAccount.address,
+      contractAddress,
+      transferMsg,
+      "auto", // automatic gas estimation
+      "",     // memo
+      []      // funds
+    );
 
-      console.log("Transfer successful!");
-      console.log("Transaction hash:", result.transactionHash);
-      return result;
+    console.log("Transfer successful!");
+    console.log("Transaction hash:", result.transactionHash);
+    return result;
 
   } catch (error) {
-      console.error("Error during transfer:", error);
-      throw error;
+    console.error("Error during transfer:", error);
+    throw error;
   }
+}
+
+
+export const arrayToString = (arr: any) => {
+  return '[' + arr.join(', ') + ']';
+}
+
+export const addSearch = (column: any, value: any | undefined, opr: any, opr2?: any) => {
+  if (!value) return;
+  return {
+    column,
+    value,
+    opr,
+    opr2
+  }
+}
+
+export const buildSearch = (data: any, params: any) => {
+  if (!data) return;
+
+  let filterStr = "";
+  let i = 0;
+  for (let filter of data) {
+    if (!filter) continue;
+    let comma = i > 0 ? "," : "";
+    if (OPERATOR_CONSTANTS.LIKE == filter.opr) {
+      filterStr += `${comma}${filter.column}=%${filter.value}%`;
+    } else {
+
+      if (Array.isArray(filter.value)) {
+        if (filter.value.length == 0) continue;
+        let value = encodeURIComponent("[" + buildSearch(filter.value, undefined) + "]");
+
+        filterStr += `${comma}${filter.column}${filter.opr}${value}`;
+      } else {
+        filterStr += `${comma}${filter.column}${filter.opr}${filter.value}`;
+      }
+    }
+
+    if (filter.opr2 != undefined && filter.opr2 != null) {
+      filterStr += ":" + filter.opr2;
+    }
+
+    i++;
+  }
+
+  if (filterStr == "") return;
+
+  if (params) {
+    params["filter"] = filterStr;
+  }
+
+  return filterStr;
+}
+
+export const uploadFile = async (file: File) => {
+  const utapi = new UTApi({
+    token: process.env.UPLOADTHING_TOKEN // Gunakan environment variable
+  });
+
+  // uploadFiles mengembalikan Promise, jadi perlu await
+  const uploadResult = await utapi.uploadFiles(file);
+
+  return uploadResult.data?.url;
 }

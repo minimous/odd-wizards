@@ -1,6 +1,5 @@
 "use client";
 
-import getConfig from "@/config/config";
 import { DEFAULT_IMAGE_PROFILE } from "@/constants";
 import { cn, formatAddress, formatDecimal } from "@/lib/utils";
 import { LeaderboardItem } from "@/types/leaderboard";
@@ -11,8 +10,15 @@ import { useClaim } from "@/hooks/useClaim";
 import Link from "next/link";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
+import { mst_project } from "@prisma/client";
 
-const Leaderboard = () => {
+export interface LeaderboardProps {
+  project: mst_project
+}
+
+const Leaderboard = ({
+  project
+}: LeaderboardProps) => {
   const rankEmojis = ["🥇", "🥈", "🥉"];
 
   // const [visibleItems, setVisibleItems] = useState(4); // Jumlah item yang ditampilkan
@@ -20,7 +26,6 @@ const Leaderboard = () => {
   const [page, setPage] = useState(0); // Halaman untuk pagination
   const [hasMore, setHasMore] = useState(true); // Menandakan apakah masih ada data untuk dimuat
   const [loading, setLoading] = useState<boolean>(false);
-  const config = getConfig();
   const { claim } = useClaim();
 
   // Fungsi untuk mengambil data leaderboard
@@ -31,7 +36,7 @@ const Leaderboard = () => {
     async function fetchData() {
       setLoading(true);
       try {
-        const resp = await axios.get(`/api/soft-staking/leaderboard?collection_address=${config?.collection_address}&page=${page}`, {
+        const resp = await axios.get(`/api/soft-staking/leaderboard?project_code=${project?.project_code}&page=${page}`, {
           signal,
         });
         const data = resp.data.data ?? [];
@@ -60,7 +65,7 @@ const Leaderboard = () => {
       setLoading(true);
       setPage(0);
       try {
-        const resp = await axios.get(`/api/soft-staking/leaderboard?collection_address=${config?.collection_address}&page=0`);
+        const resp = await axios.get(`/api/soft-staking/leaderboard?project_code=${project?.project_code}&page=0`);
         const data = resp.data.data ?? [];
         setLeaderboard(data);
         setHasMore(data.length > 0);
@@ -121,13 +126,13 @@ const Leaderboard = () => {
                     </p>
                   </Link>
                   <div className="text-left md:!hidden text-white">
-                    <p className="text-[12px] md:text-[20px] font-bold">{formatDecimal(item.total_points, 2)} $WZRD</p>
+                    <p className="text-[12px] md:text-[20px] font-bold">{formatDecimal(item.total_points, 2)} ${project.project_symbol}</p>
                   </div>
                 </div>
               </div>
               <div className="hidden md:!flex items-center justify-end text-center">
                 <p className="text-[10px] md:text-[20px] font-bold">
-                  {formatDecimal(item.total_points, 2)} $WZRD
+                  {formatDecimal(item.total_points, 2)} ${project.project_symbol}
                 </p>
               </div>
               <div className="flex items-center justify-end text-center">
