@@ -134,40 +134,40 @@ export async function getTotalPoints(address: string, project_id: number) {
 }
 
 export async function getLeaderboard(project_id: number, staker_address: string | null, page: number, size: number) {
-    const leaderboard: any = await prisma.$queryRaw`
-    WITH ranked_leaderboard AS (
+    const leaderboard: any = await prisma.$queryRawUnsafe(`
+        WITH ranked_leaderboard AS (
+            SELECT 
+                mc.collection_project_id,
+                ms.staker_address,
+                SUM(ms.staker_nft_staked) AS staker_nft_staked,
+                ms.staker_red_flag,
+                mu.user_image_url,
+                CAST(SUM(ms.staker_total_points) AS CHAR) AS total_points, -- Convert to String
+                ROW_NUMBER() OVER (
+                    PARTITION BY mc.collection_project_id
+                    ORDER BY SUM(ms.staker_total_points) DESC
+                ) AS ranking
+            FROM mst_staker ms
+            LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
+            LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
+            WHERE mc.collection_project_id = ?
+            AND ms.staker_nft_staked > 0
+            GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url, ms.staker_red_flag
+        )
         SELECT 
-            mc.collection_project_id,
-            ms.staker_address,
-            SUM(ms.staker_nft_staked) AS staker_nft_staked,
-            ms.staker_red_flag, -- Jika ada satu saja yang red_flag, maka hasilnya true
-            mu.user_image_url,
-            SUM(ms.staker_total_points) AS total_points,
-            ROW_NUMBER() OVER (
-                PARTITION BY mc.collection_project_id
-                ORDER BY SUM(ms.staker_total_points) DESC
-            ) AS ranking
-        FROM mst_staker ms
-        LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
-        LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
-        WHERE mc.collection_project_id = ${project_id}
-        AND ms.staker_nft_staked > 0
-        GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url, ms.staker_red_flag
-    )
-    SELECT 
-        collection_project_id,
-        staker_address,
-        staker_nft_staked,
-        staker_red_flag,
-        user_image_url,
-        total_points,
-        ranking
-    FROM ranked_leaderboard
-    WHERE 1=1
-    ${staker_address ? Prisma.sql`AND staker_address = ${staker_address}` : Prisma.empty}
-    ORDER BY total_points DESC, ranking
-    LIMIT ${size} OFFSET ${page * size};
-`;
+            collection_project_id,
+            staker_address,
+            staker_nft_staked,
+            staker_red_flag,
+            user_image_url,
+            total_points,
+            CAST(ranking AS CHAR) AS ranking
+        FROM ranked_leaderboard
+        WHERE 1=1
+        ${staker_address ? `AND staker_address = ?` : ''}
+        ORDER BY total_points DESC, ranking
+        LIMIT ? OFFSET ?;
+    `, project_id, ...(staker_address ? [staker_address] : []), size, page * size);
 
     return leaderboard;
 }
