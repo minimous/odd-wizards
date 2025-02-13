@@ -140,7 +140,7 @@ export async function getLeaderboard(project_id: number, staker_address: string 
             mc.collection_project_id,
             ms.staker_address,
             SUM(ms.staker_nft_staked) AS staker_nft_staked,
-            BOOL_OR(ms.staker_red_flag) AS staker_red_flag, -- Jika ada satu saja yang red_flag, maka hasilnya true
+            ms.staker_red_flag, -- Jika ada satu saja yang red_flag, maka hasilnya true
             mu.user_image_url,
             SUM(ms.staker_total_points) AS total_points,
             ROW_NUMBER() OVER (
