@@ -39,8 +39,11 @@ export async function GET(request: NextRequest) {
         const leaderboardWithBigIntAsString = leaderboard.map((item: any) => ({
             ...item,
             total_points: item.total_points.toString(),
+            staker_nft_staked: item.staker_nft_staked.toString(),
             ranking: item.ranking.toString()
         }));
+
+        console.log("leaderboardWithBigIntAsString", leaderboardWithBigIntAsString);
 
         return NextResponse.json(
             {
