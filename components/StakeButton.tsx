@@ -9,7 +9,7 @@ import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 
 export interface StakeSliderProps {
-  projectCode?: string,
+  projectCode: string,
   className?: string
 }
 
