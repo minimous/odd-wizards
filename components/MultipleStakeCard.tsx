@@ -16,7 +16,7 @@ import { BorderBeam } from "./ui/border-beam";
 import InfoModal from "./modal/info-modal";
 
 export interface MultipleStakeCardProps {
-  projectCode?: string
+  projectCode: string
 }
 
 const MultipleStakeCard = ({

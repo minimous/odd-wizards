@@ -154,7 +154,7 @@ const StakeCardMobile = ({
                                         onClick={doStakeAndClaim}
                                         className="w-full px-8 py-3 h-max text-[15px] md:!text-xl font-bold text-black rounded-2xl bg-green-500 hover:bg-green-400 hover:text-black"
                                     >Stake and Claim</Button>) :
-                                    (<StakeButton />)
+                                    (<StakeButton projectCode={projectid} />)
                             }
                         </div>) : (
                             <Button
