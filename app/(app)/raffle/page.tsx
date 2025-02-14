@@ -103,8 +103,8 @@ export default function Stake() {
 
                 setTokens(
                     Object.values(
-                        data.staker.filter((item: mst_project) => {
-                            return item.project_code == 'oddswizard'
+                        data.staker.filter((item: any) => {
+                            return item?.projects?.project_code == 'oddswizard'
                         }).reduce((acc: any, staker: any) => {
                             const projectId = staker.staker_project_id ?? 0;
                             const project = staker.projects; // Getting the related project data
