@@ -101,10 +101,12 @@ export default function Stake() {
                 const data = resp.data.data;
                 setStakers(data.staker);
 
+                console.log("stakers", data.staker);
+
                 setTokens(
                     Object.values(
                         data.staker.filter((item: any) => {
-                            return item?.projects?.project_code == 'oddswizard'
+                            return item?.projects?.project_code == "oddswizard"
                         }).reduce((acc: any, staker: any) => {
                             const projectId = staker.staker_project_id ?? 0;
                             const project = staker.projects; // Getting the related project data
@@ -232,7 +234,7 @@ export default function Stake() {
                                             <div className="block">
                                                 <span className="text-[12px] md:text-[20px] text-white">Token</span>
                                                 <p className="text-[10px] md:text-[20px] font-bold text-white">
-                                                    {formatDecimal(staker?.staker_total_points ?? 0, 2)} $WZRD
+                                                    {formatDecimal(tokens?.length > 0 ? tokens[0].total_points : 0, 2)} $WZRD
                                                 </p>
                                             </div>
                                         </div>
