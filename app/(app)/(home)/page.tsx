@@ -49,7 +49,7 @@ const collections: CollectionCardType[] = [
   {
     id: "stars1sxcf8dghtq9qprulmfy4f898d0rn0xzmhle83rqmtpm00j0smhes93wsys",
     address: "stars1sxcf8dghtq9qprulmfy4f898d0rn0xzmhle83rqmtpm00j0smhes93wsys",
-    image: "/images/Seals.png",
+    image: "/images/seals.png",
     imageGif: "/images/Seals.gif",
     name: "Seals",
     link: "https://www.stargaze.zone/m/stars1sxcf8dghtq9qprulmfy4f898d0rn0xzmhle83rqmtpm00j0smhes93wsys/tokens"
