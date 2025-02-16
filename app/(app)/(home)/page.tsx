@@ -45,6 +45,14 @@ const collections: CollectionCardType[] = [
     imageGif: "/images/Bad-kids.gif",
     name: "Bad Kids",
     link: "https://www.stargaze.zone/m/stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420/tokens"
+  },
+  {
+    id: "stars1sxcf8dghtq9qprulmfy4f898d0rn0xzmhle83rqmtpm00j0smhes93wsys",
+    address: "stars1sxcf8dghtq9qprulmfy4f898d0rn0xzmhle83rqmtpm00j0smhes93wsys",
+    image: "/images/Seals.png",
+    imageGif: "/images/Seals.gif",
+    name: "Seals",
+    link: "https://www.stargaze.zone/m/stars1sxcf8dghtq9qprulmfy4f898d0rn0xzmhle83rqmtpm00j0smhes93wsys/tokens"
   }
 ]
 
@@ -77,51 +85,8 @@ export default function Home() {
 
   return (
     <div className="relative bg-black w-full overflow-hidden">
-      <div className="relative bg-[url('/images/blur-home.png')] bg-cover bg-center px-10 pt-24">
-        <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black/50" />
-        <Header />
-        {/* <div className="bg-[url('/images/wizard.gif')] md:!hidden bg-cover bg-center h-[500px] w-full scale-125" /> */}
-        {/* <video autoPlay
-          loop
-          muted
-          playsInline className="md:!hidden w-full h-full">
-          <source src="/images/mobile-home.mp4" type="video/mp4" />
-        </video> */}
-        {/* <img src="/images/wizard.gif" className="md:!hidden h-screen w-full" /> */}
-        {/* <video autoPlay
-          loop
-          muted
-          playsInline className="hidden md:!block w-full h-full">
-          <source src="/images/Home-Odds.mp4" type="video/mp4" />
-        </video> */}
-        <div className="relative h-[calc(100vh-100px)]">
-          <Banner items={banners} />
-        </div>
-        {/* <div className="relative h-screen bg-[url('/images/Odds-Garden.png')] bg-center bg-cover bg-no-repeat rounded-[20px]">
-          <div className="absolute bottom-24 w-full px-6">
-            <div className="flex gap-2">
-              <Link href="#">
-                <img src="/images/x.png" className="h-[35px]" />
-              </Link>
-              <Link href="#">
-                <img src="/images/discord.png" className="h-[35px]" />
-              </Link>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="flex items-center gap-3 mt-4">
-                  <div className={cn("w-6 h-6 flex items-center justify-center rounded-full blinker bg-green-500/50")}>
-                    <div className={cn("w-4 h-4 rounded-full bg-green-500")} />
-                  </div>
-                  <h1 className="text-2xl font-black">111 Seals Minted</h1>
-                </div>
-                <span className="opacity-70 text-lg font-bold">Whitelist phase 1 ends in 12h 29m 22s</span>
-              </div>
-              <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">Go to Launchpad</Button>
-            </div>
-          </div>
-        </div> */}
-      </div>
+      <Header />
+      <Banner items={banners} />
       <div className="flex flex-col items-center justify-center my-10 mt-24 px-20">
         <CustomGradualSpacing
           className="font-display text-center text-[27px] md:!text-6xl font-black md:leading-[5rem]"
