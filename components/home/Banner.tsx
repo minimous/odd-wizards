@@ -39,23 +39,23 @@ const Banner = ({ items }: BannerProps) => {
 
     useEffect(() => {
         const timers: NodeJS.Timeout[] = [];
-    
+
         const updateAllTimers = () => {
             const now = new Date().getTime();
             const newTimeLeft: { [key: string]: string } = {};
             let liveTrading = false;
-    
+
             items?.forEach((banner) => {
                 if (!banner.launchpad) return;
-    
+
                 const launchpad = banner.launchpad;
                 const currentStage = launchpad?.minterV2?.currentStage;
-    
+
                 if (!currentStage?.endTime) {
                     // Trading countdown
                     const tradingStart = launchpad.startTradingTime / 1000000;
                     const difference = tradingStart - now;
-    
+
                     if (difference > 0) {
                         newTimeLeft[banner.id] = formatTime(difference);
                     } else {
@@ -65,7 +65,7 @@ const Banner = ({ items }: BannerProps) => {
                     // Stage countdown
                     const startTime = new Date(currentStage.startTime / 1000000).getTime();
                     const endTime = new Date(currentStage.endTime / 1000000).getTime();
-    
+
                     if (now < startTime) {
                         newTimeLeft[banner.id] = formatTime(startTime - now);
                     } else if (now < endTime) {
@@ -75,21 +75,21 @@ const Banner = ({ items }: BannerProps) => {
                     }
                 }
             });
-    
+
             setTimeLeft(newTimeLeft);
             setIsLiveTrading(liveTrading); // Update isLiveTrading berdasarkan kondisi terbaru
         };
-    
+
         // Update immediately and set interval
         updateAllTimers();
         const timer = setInterval(updateAllTimers, 1000);
         timers.push(timer);
-    
+
         // Cleanup
         return () => {
             timers.forEach(timer => clearInterval(timer));
         };
-    }, [items]);    
+    }, [items]);
 
     const showCurrentStage = (launchpad: any) => {
         if (!launchpad) return "";
@@ -164,7 +164,7 @@ const Banner = ({ items }: BannerProps) => {
     };
 
     return (
-        <div className="w-full h-full rounded-[30px]">
+        <div>
             <Carousel
                 opts={OPTIONS}
                 plugins={[plugin.current]}
@@ -174,58 +174,69 @@ const Banner = ({ items }: BannerProps) => {
             >
                 <CarouselContent className="w-full h-full -ml-2 rounded-[30px]">
                     {items?.map((banner, index) => (
-                        <CarouselItem key={banner.id} className="rounded-[30px]">
-                            <div className="relative w-full h-full rounded-[30px] overflow-hidden">
-                                {renderMedia(banner)}
-                                <div className="absolute bottom-0 left-0 z-5 bg-gradient-to-b from-transparent via-black-75 to-black w-full p-10 pb-18 pl-16">
-                                    <div className="flex gap-2">
-                                        <Link hidden={!banner.banner_twiter} href={banner.banner_twiter ?? "#"}>
-                                            <img src="/images/x.png" className="h-[35px]" />
-                                        </Link>
-                                        <Link hidden={!banner.banner_discord} href={banner.banner_discord ?? ""}>
-                                            <img src="/images/discord.png" className="h-[35px]" />
-                                        </Link>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <div hidden={!banner?.launchpad}>
-                                            <div className="flex items-center gap-3 mt-4">
-                                                <div className={cn("w-6 h-6 flex items-center justify-center rounded-full blinker bg-green-500/50")}>
-                                                    <div className={cn("w-4 h-4 rounded-full bg-green-500")} />
+                        <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
+                            <div className="relative bg-cover bg-center  px-14 pt-24"
+                            style={{
+                                backgroundImage: `url('${banner.banner_image}')`
+                            }}>
+                                <div className="absolute inset-0 bg-black/70 backdrop-blur pointer-events-none"></div>
+                                <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black/50" />
+                                <div className="relative h-[calc(100vh-100px)]">
+                                    <div className="w-full h-full rounded-[30px]">
+                                        <div className="relative w-full h-full rounded-[30px] overflow-hidden">
+                                            {renderMedia(banner)}
+                                            <div className="absolute bottom-0 left-0 z-5 bg-gradient-to-b from-transparent via-black-75 to-black w-full p-10 pb-18 pl-16">
+                                                <div className="flex gap-2">
+                                                    <Link hidden={!banner.banner_twiter} href={banner.banner_twiter ?? "#"}>
+                                                        <img src="/images/x.png" className="h-[35px]" />
+                                                    </Link>
+                                                    <Link hidden={!banner.banner_discord} href={banner.banner_discord ?? ""}>
+                                                        <img src="/images/discord.png" className="h-[35px]" />
+                                                    </Link>
                                                 </div>
-                                                <h1 className="text-2xl font-black">
-                                                    {formatAmount(banner?.launchpad?.minterV2?.mintedTokens ?? 0)} {banner?.launchpad?.name} Minted
-                                                </h1>
+                                                <div className="flex justify-between items-center">
+                                                    <div hidden={!banner?.launchpad}>
+                                                        <div className="flex items-center gap-3 mt-4">
+                                                            <div className={cn("w-6 h-6 flex items-center justify-center rounded-full blinker bg-green-500/50")}>
+                                                                <div className={cn("w-4 h-4 rounded-full bg-green-500")} />
+                                                            </div>
+                                                            <h1 className="text-2xl font-black">
+                                                                {formatAmount(banner?.launchpad?.minterV2?.mintedTokens ?? 0)} {banner?.launchpad?.name} Minted
+                                                            </h1>
+                                                        </div>
+                                                        {showCurrentStage(banner?.launchpad)}
+                                                    </div>
+                                                    {
+                                                        isLiveTrading ? <Link
+                                                            hidden={!banner?.launchpad}
+                                                            href={`https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens`}
+                                                            target="_blank"
+                                                        >
+                                                            <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
+                                                                Trade on Stargaze
+                                                            </Button>
+                                                        </Link> :
+                                                            <Link
+                                                                hidden={!banner?.launchpad}
+                                                                href={`https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}`}
+                                                                target="_blank"
+                                                            >
+                                                                <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
+                                                                    Go to Launchpad
+                                                                </Button>
+                                                            </Link>
+                                                    }
+                                                </div>
                                             </div>
-                                            {showCurrentStage(banner?.launchpad)}
                                         </div>
-                                        {
-                                            isLiveTrading ? <Link
-                                                hidden={!banner?.launchpad}
-                                                href={`https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens`}
-                                                target="_blank"
-                                            >
-                                                <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
-                                                    Go to Stargaze
-                                                </Button>
-                                            </Link> :
-                                                <Link
-                                                    hidden={!banner?.launchpad}
-                                                    href={`https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}`}
-                                                    target="_blank"
-                                                >
-                                                    <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
-                                                        Go to Launchpad
-                                                    </Button>
-                                                </Link>
-                                        }
                                     </div>
                                 </div>
                             </div>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-                <CarouselPrevious className="-left-10 absolute z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
-                <CarouselNext className="-right-10 z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
+                <CarouselPrevious className="left-4 absolute z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
+                <CarouselNext className="right-4 z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
             </Carousel>
         </div>
     );
