@@ -180,6 +180,8 @@ const Banner = ({ items }: BannerProps) => {
                                 backgroundImage: `url('${banner.banner_image}')`
                             }}>
                                 <div className="absolute inset-0 bg-black/70 backdrop-blur pointer-events-none"></div>
+                                <div className="absolute left-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-l from-transparent via-black/50 to-black pointer-events-none" />
+                                <div className="absolute right-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-r from-transparent via-black/50 to-black pointer-events-none" />
                                 <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black/50" />
                                 <div className="relative h-[calc(100vh-100px)]">
                                     <div className="w-full h-full rounded-[30px]">
