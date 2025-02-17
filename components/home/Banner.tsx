@@ -165,15 +165,15 @@ const Banner = ({ items }: BannerProps) => {
 
     return (
         <div>
-            <div className="relative bg-cover bg-center px-14 pt-24"
+            <div className="relative bg-cover bg-center px-14 pt-24 pb-8"
                 style={{
                     // backgroundImage: `url('${banner.banner_image}')`
                     backgroundImage: `url('/images/blur.gif')`
                 }}>
-                <div className="absolute inset-0 bg-black/70 backdrop-blur pointer-events-none"></div>
+                <div className="absolute inset-0 bg-black/70 backdrop-blur-xl pointer-events-none"></div>
                 {/* <div className="absolute left-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-l from-transparent via-black/50 to-black pointer-events-none" />
                                 <div className="absolute right-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-r from-transparent via-black/50 to-black pointer-events-none" /> */}
-                <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black/50" />
+                <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black" />
                 <Carousel
                     opts={OPTIONS}
                     plugins={[plugin.current]}
