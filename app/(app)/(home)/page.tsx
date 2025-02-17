@@ -87,7 +87,7 @@ export default function Home() {
     <div className="relative bg-black w-full overflow-hidden">
       <Header />
       <Banner items={banners} />
-      <div className="flex flex-col items-center justify-center my-10 mt-24 px-20">
+      <div className="flex flex-col items-center justify-center my-10 mt-20 px-20">
         <CustomGradualSpacing
           className="font-display text-center text-[27px] md:!text-6xl font-black md:leading-[5rem]"
           text="Make NFTs Great Again!"
