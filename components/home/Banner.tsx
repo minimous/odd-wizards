@@ -165,24 +165,25 @@ const Banner = ({ items }: BannerProps) => {
 
     return (
         <div>
-            <Carousel
-                opts={OPTIONS}
-                plugins={[plugin.current]}
-                className="w-full h-full rounded-[30px]"
-                onMouseEnter={plugin.current.stop}
-                onMouseLeave={plugin.current.reset}
-            >
-                <CarouselContent className="w-full h-full -ml-2 rounded-[30px]">
-                    {items?.map((banner, index) => (
-                        <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
-                            <div className="relative bg-cover bg-center  px-14 pt-24"
-                            style={{
-                                backgroundImage: `url('${banner.banner_image}')`
-                            }}>
-                                <div className="absolute inset-0 bg-black/70 backdrop-blur pointer-events-none"></div>
-                                <div className="absolute left-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-l from-transparent via-black/50 to-black pointer-events-none" />
-                                <div className="absolute right-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-r from-transparent via-black/50 to-black pointer-events-none" />
-                                <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black/50" />
+            <div className="relative bg-cover bg-center px-14 pt-24"
+                style={{
+                    // backgroundImage: `url('${banner.banner_image}')`
+                    backgroundImage: `url('/images/blur.gif')`
+                }}>
+                <div className="absolute inset-0 bg-black/70 backdrop-blur pointer-events-none"></div>
+                {/* <div className="absolute left-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-l from-transparent via-black/50 to-black pointer-events-none" />
+                                <div className="absolute right-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-r from-transparent via-black/50 to-black pointer-events-none" /> */}
+                <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black/50" />
+                <Carousel
+                    opts={OPTIONS}
+                    plugins={[plugin.current]}
+                    className="w-full h-full rounded-[30px]"
+                    onMouseEnter={plugin.current.stop}
+                    onMouseLeave={plugin.current.reset}
+                >
+                    <CarouselContent className="w-full h-full -ml-2 rounded-[30px]">
+                        {items?.map((banner, index) => (
+                            <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
                                 <div className="relative h-[calc(100vh-100px)]">
                                     <div className="w-full h-full rounded-[30px]">
                                         <div className="relative w-full h-full rounded-[30px] overflow-hidden">
@@ -233,13 +234,13 @@ const Banner = ({ items }: BannerProps) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-4 absolute z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
-                <CarouselNext className="right-4 z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
-            </Carousel>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="-left-12 absolute z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
+                    <CarouselNext className="-right-12 z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
+                </Carousel>
+            </div>
         </div>
     );
 };
