@@ -28,7 +28,7 @@ export async function updateNftOwner(address: string, collection_address: string
         });
 
         const updatedStaker = await prisma.mst_staker.update({
-            where: { staker_id: staker.staker_id },
+            where: { staker_id: staker.staker_id, staker_collection_id: collection.collection_id },
             data: {
                 staker_nft_staked: allTokens.length
             }
