@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
                     where: { staker_id: data.staker_id },
                     data: {
                         staker_lastclaim_date: new Date(),
-                        staker_nft_staked: resp.totalNft,
+                        staker_nft_staked: data.nft_staked,
                         staker_total_points: (staker?.staker_total_points ?? 0) + resp.point
                     }
                 });
