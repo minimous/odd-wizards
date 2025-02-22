@@ -122,6 +122,7 @@ export async function getTotalPoints(address: string, project_id: number) {
         totalPoint += points;
         listPoints.push({
             staker_id: staker.staker_id,
+            nft_staked: allTokens.length,
             points: points
         });
     }
