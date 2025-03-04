@@ -107,7 +107,7 @@ export default function Home() {
           </div>
         ))}
       </Marquee>
-      <div className="my-28 text-center px-10 md:px-28">
+      <div className="my-28 text-center px-4 md:px-28">
         <div className="group relative h-72 flex items-center justify-center overflow-hidden rounded-3xl">
           {/* Background div that zooms */}
           <div className="absolute inset-0 bg-[url('/images/Epigraph.gif')] bg-cover bg-center transition-transform duration-300 ease-in-out group-hover:scale-110">
@@ -115,7 +115,7 @@ export default function Home() {
 
           {/* Content div that stays static */}
           <div className="relative z-10 max-w-max max-h-max w-full">
-            <h1 className="text-center text-5xl font-black md:text-5xl sm:text-4xl">
+            <h1 className="text-center text-3xl font-black md:text-5xl">
               {formatAmount(total)} <span className="block md:!contents">Odds People!</span>
             </h1>
             <span className="text-lg text-white text-center block">
@@ -131,7 +131,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="my-20 px-10 md:px-36">
+      <div className="my-20 px-4 md:px-36">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-10">
           <div>
             <h1 className="text-3xl text-white font-bold">Challenge</h1>
