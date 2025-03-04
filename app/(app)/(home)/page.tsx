@@ -87,7 +87,7 @@ export default function Home() {
     <div className="relative bg-black w-full overflow-hidden">
       <Header />
       <Banner items={banners} />
-      <div className="flex flex-col items-center justify-center my-10 mt-20 px-20">
+      <div className="flex flex-col items-center justify-center my-10 md:mt-20 px-20">
         <CustomGradualSpacing
           className="font-display text-center text-[27px] md:!text-6xl font-black md:leading-[5rem]"
           text="Make NFTs Great Again!"
@@ -107,16 +107,20 @@ export default function Home() {
           </div>
         ))}
       </Marquee>
-      <div className="my-28 text-center px-28">
+      <div className="my-28 text-center px-10 md:px-28">
         <div className="group relative h-72 flex items-center justify-center overflow-hidden rounded-3xl">
           {/* Background div that zooms */}
           <div className="absolute inset-0 bg-[url('/images/Epigraph.gif')] bg-cover bg-center transition-transform duration-300 ease-in-out group-hover:scale-110">
           </div>
 
           {/* Content div that stays static */}
-          <div className="relative z-10 max-w-max max-h-max">
-            <h1 className="text-center text-5xl font-black">{formatAmount(total)} Odds People!</h1>
-            <span className="text-lg text-white">Stay Connected, from all over the world</span>
+          <div className="relative z-10 max-w-max max-h-max w-full">
+            <h1 className="text-center text-5xl font-black md:text-5xl sm:text-4xl">
+              {formatAmount(total)} <span className="block md:!contents">Odds People!</span>
+            </h1>
+            <span className="text-lg text-white text-center block">
+              Stay Connected, from <span className="block md:!contents">all over the world</span>
+            </span>
             <div className="mx-auto mt-4">
               <AvatarCircles
                 className="justify-center mx-auto p-4 max-w-max rounded-full"
@@ -127,7 +131,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="my-20 px-36">
+      <div className="my-20 px-10 md:px-36">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-10">
           <div>
             <h1 className="text-3xl text-white font-bold">Challenge</h1>
@@ -166,14 +170,14 @@ export default function Home() {
           <h1 className="text-5xl text-center font-black">FAQ</h1>
           <div className="mt-4">
             <FaqContainer number="01" title="What is Odds Garden?">
-              <span className="text-xl text-[#A1A1AA]">Odds Garden is a growing and innovative NFTs staking platform, where art, tech, and community unite to unlock endless possibilities, offering bigger opportunities for holders. The future is ODDS, where imagination meets innovation.</span>
+              <span className="md:text-xl text-[#A1A1AA]">Odds Garden is a growing and innovative NFTs staking platform, where art, tech, and community unite to unlock endless possibilities, offering bigger opportunities for holders. The future is ODDS, where imagination meets innovation.</span>
             </FaqContainer>
             <FaqContainer number="02" title="What can you do?">
-              <span className="text-xl text-[#A1A1AA]">Explore Odds Garden and experience a whole new level of Stake, Raffle, and Challenges like never before. You can participate on competitions, earn exclusive benefits, and discover new possibilities as the world of ODDS continues to expand.</span>
+              <span className="md:text-xl text-[#A1A1AA]">Explore Odds Garden and experience a whole new level of Stake, Raffle, and Challenges like never before. You can participate on competitions, earn exclusive benefits, and discover new possibilities as the world of ODDS continues to expand.</span>
             </FaqContainer>
             <FaqContainer number="03" title="It says &quot;Powered by Stargaze&quot; what&apos;s Stargaze?">
               <div className="grid gap-4">
-                <span className="text-xl text-[#A1A1AA]">Stargaze is the only NFT platform that offers minting and trading with ZERO gas. Mint and trade NFTs on the app chain made for NFTs. Secured and governed by $STARS.</span>
+                <span className="md:text-xl text-[#A1A1AA]">Stargaze is the only NFT platform that offers minting and trading with ZERO gas. Mint and trade NFTs on the app chain made for NFTs. Secured and governed by $STARS.</span>
                 <Link href="https://docs.stargaze.zone/introduction/what-is-stargaze" target="_blank" className="text-xl text-[#DB2877]">Read more about Stargaze</Link>
               </div>
             </FaqContainer>

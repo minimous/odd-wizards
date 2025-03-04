@@ -159,7 +159,7 @@ export default function Header() {
           </div>
           <Link
             href="/challenge"
-            className={cn("text-xl font-bold transition-transform ", (path == "/challenge" ? "text-white" : "text-gray-400 hover:text-white"))}
+            className={cn("text-xl hidden md:!flex font-bold transition-transform ", (path == "/challenge" ? "text-white" : "text-gray-400 hover:text-white"))}
           // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
           >
             Challenge
@@ -198,7 +198,7 @@ export default function Header() {
           </div>
           <Link
             href="/raffle"
-            className={cn("text-xl font-bold transition-transform ", (path == "/raffle" ? "text-white" : "text-gray-400 hover:text-white"))}
+            className={cn("text-xl hidden md:!flex font-bold transition-transform ", (path == "/raffle" ? "text-white" : "text-gray-400 hover:text-white"))}
           // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
           >
             Raffle
