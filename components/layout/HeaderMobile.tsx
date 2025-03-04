@@ -191,7 +191,7 @@ export default function HeaderMobile() {
                                                             <div className="opacity-30 col-span-10 flex">{project.project_name} (Soon)</div>
                                                         </div>
                                                         :
-                                                        <Link href={`/stake/${project.project_code}`} className="flex items-center mt-1 justify-center hover:scale-105 hover:font-semibold">
+                                                        <Link onClick={() => setOpen(false)} href={`/stake/${project.project_code}`} className="flex items-center mt-1 justify-center hover:scale-105 hover:font-semibold">
                                                             <span className="col-span-2">{project.project_icon}</span>
                                                             <span className="col-span-10">{project.project_name}</span>
                                                         </Link>
