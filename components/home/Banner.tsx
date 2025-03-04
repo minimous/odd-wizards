@@ -184,7 +184,7 @@ const Banner = ({ items }: BannerProps) => {
                     <CarouselContent className="w-full h-full -ml-2 rounded-[30px]">
                         {items?.map((banner, index) => (
                             <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
-                                <div className="relative h-[calc(100vh-100px)]">
+                                <div className="relative h-[calc(100vh-200px)] md:h-[calc(100vh-100px)]">
                                     <div className="w-full h-full rounded-[30px]">
                                         <div className="relative w-full h-full rounded-[30px] overflow-hidden">
                                             {renderMedia(banner)}
