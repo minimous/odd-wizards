@@ -30,7 +30,7 @@ export default function Stake({ params }: { params: { projectid: string } }) {
     const renderBanner = () => {
         if (project?.project_banner_type === 'V') {
             return (
-                <video autoPlay loop muted className="w-full h-full scale-110">
+                <video autoPlay loop muted className="w-full h-[200px] md:h-full scale-110">
                     <source src={project?.project_banner} type="video/mp4" />
                 </video>
             );
@@ -50,8 +50,8 @@ export default function Stake({ params }: { params: { projectid: string } }) {
         <div className="relative bg-black w-full">
             <Header />
             <div className="bg-black w-full h-[175px] md:h-[70vh] relative overflow-hidden">
-                <div className="absolute top-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
-                <div className="absolute bottom-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-transparent to-black z-10" />
+                <div className="absolute top-0 w-full h-[75px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
+                <div className="absolute bottom-0 w-full h-[75px] md:h-[250px] bg-gradient-to-b from-transparent to-black z-10" />
                 {renderBanner()}
             </div>
             <div className="relative">
