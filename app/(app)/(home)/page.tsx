@@ -139,7 +139,7 @@ export default function Home() {
           <div>
             <h1 className="text-3xl text-white font-bold">Challenge</h1>
             <p className="leading-7 text-lg text-gray-500 mt-2">Participate on the Staking Challenge and compete with fellow holders. Climb the leaderboard by staking as much NFTs as you can, track your rank, and win exciting prizes.</p>
-            <div className="rounded-[25px] w-full h-[250px] mt-4 overflow-hidden">
+            <div className="rounded-[25px] w-full h-[150px] md:h-[250px] mt-4 overflow-hidden">
               <div className="bg-[url('/images/home/challenge.png')] bg-cover bg-center w-full h-full hover:scale-105 transition-all duration-300 ease-in-out" />
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function Home() {
           <div>
             <h1 className="text-3xl text-white font-bold">Raffles</h1>
             <p className="leading-7 text-lg text-gray-500 mt-2">Try your luck on raffle, collect as many tickets as possible for a chance to win valueable NFTs. Don&apos;t forget to check the Raffle page to see the participants and the lucky winners.</p>
-            <div className="rounded-[25px] w-full h-[250px] mt-4 overflow-hidden">
+            <div className="rounded-[25px] w-full h-[150px] md:h-[250px] mt-4 overflow-hidden">
               <div className="bg-[url('/images/home/raffle.png')] bg-cover bg-center w-full h-full hover:scale-105 transition-all duration-300 ease-in-out" />
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function Home() {
               <li className="leading-7 text-lg text-gray-500">Games - More fun and rewarding.</li>
               <li className="leading-7 text-lg text-gray-500">Exchange - Convert Odds Points into $STARS/USDC.</li>
             </ul>
-            <div className="rounded-[25px] w-full h-[250px] mt-4 overflow-hidden">
+            <div className="rounded-[25px] w-full h-[150px] md:h-[250px] mt-4 overflow-hidden">
               <div className="bg-[url('/images/home/coming-soon.png')] bg-cover bg-center w-full h-full hover:scale-105 transition-all duration-300 ease-in-out" />
             </div>
           </div>
