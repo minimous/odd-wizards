@@ -15,7 +15,7 @@ const CollectionCard = ({
     const [infoModal, setInfoModal] = useState<boolean>(false);
 
     return (
-        <div className="w-full bg-[#171717] border border-[#323237] p-4 md:px-8 md:p-6 rounded-[50px] flex items-center gap-x-4">
+        <div className="w-full bg-[#171717] border border-[#323237] p-4 md:px-8 md:p-6 rounded-[35px] md:rounded-[50px] flex items-center gap-x-4">
             <InfoModal collection={collection} isOpen={infoModal} onClose={() => { setInfoModal(false) }} loading={false} />
             <img src={collection?.collection_image_url ?? ""} className="shrink-0 w-[80px] h-[80px] md:!h-[125px] md:!w-[125px] object-cover bg-center rounded-[25px] md:rounded-[35px] mx-auto" />
             <div className="w-full p-2 md:p-4">

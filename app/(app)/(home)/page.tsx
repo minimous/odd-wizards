@@ -95,7 +95,7 @@ export default function Home() {
           className="font-display text-center text-[27px] md:!text-6xl font-black md:leading-[5rem]"
           text="Make NFTs Great Again!"
         />
-        <div className="mt-3 px-10 md:!px-40">
+        <div className="mt-3 md:!px-40">
           <p className="text-sm md:!text-xl text-gray-400 leading-none text-center">The next Blue chip on Internet, powered by <Link href="https://www.stargaze.zone" className="text-[#DB2877]" >Stargaze.</Link></p>
         </div>
       </div>

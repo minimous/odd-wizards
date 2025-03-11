@@ -165,7 +165,7 @@ const Banner = ({ items }: BannerProps) => {
 
     return (
         <div>
-            <div className="relative bg-cover bg-center px-8 md:px-14 pt-24 pb-8"
+            <div className="relative bg-cover bg-center px-2 pr-1 md:px-14 pt-24 pb-8"
                 style={{
                     // backgroundImage: `url('${banner.banner_image}')`
                     backgroundImage: `url('/images/blur.gif')`
@@ -237,8 +237,8 @@ const Banner = ({ items }: BannerProps) => {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <CarouselPrevious className="-left-6 md:-left-12 absolute z-15 bg-transparent bg-opacity-50 border-0 h-5 w-5 md:!h-10 md:!w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
-                    <CarouselNext className="-right-6 md:-right-12 z-15 bg-transparent bg-opacity-50 border-0 h-5 w-5 md:!h-10 md:!w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
+                    <CarouselPrevious className="left-4 md:-left-12 absolute z-15 bg-transparent bg-opacity-50 border-0 h-5 w-5 md:!h-10 md:!w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
+                    <CarouselNext className="right-4 md:-right-12 z-15 bg-transparent bg-opacity-50 border-0 h-5 w-5 md:!h-10 md:!w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
                 </Carousel>
             </div>
         </div>
