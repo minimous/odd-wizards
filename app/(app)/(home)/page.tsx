@@ -146,7 +146,7 @@ export default function Home() {
           <div>
             <h1 className="text-3xl text-white font-bold">Stake</h1>
             <p className="leading-7 text-lg text-gray-500 mt-2">Enhance your NFTs value by staking on Odds Garden, offering you a fresh experience to earn points, use them to try unique features within the website, and gather even more benefits.</p>
-            <div className="rounded-[25px] w-full h-[250px] mt-4 overflow-hidden">
+            <div className="rounded-[25px] w-full h-[150px] md:h-[250px] mt-4 overflow-hidden">
               <div className="bg-[url('/images/home/stake.png')] bg-cover bg-center w-full h-full hover:scale-105 transition-all duration-300 ease-in-out" />
             </div>
           </div>
