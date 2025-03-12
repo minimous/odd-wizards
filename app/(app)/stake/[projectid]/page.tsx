@@ -31,7 +31,7 @@ export default function Stake({ params }: { params: { projectid: string } }) {
         if (project?.project_banner_type === 'V') {
             return (
                 <video autoPlay loop muted playsInline className="w-full !h-[175px] md:!h-full">
-                    <source src={project?.project_banner} type="video/mp4" />
+                    <source src="https://static.vecteezy.com/system/resources/previews/036/888/824/mp4/ai-generated-calm-evening-atmosphere-with-lantern-light-at-night-view-from-inside-a-chinese-temple-or-pagoda-seamless-looping-4k-animation-background-free-video.mp4" type="video/mp4" />
                 </video>
             );
         } else {
