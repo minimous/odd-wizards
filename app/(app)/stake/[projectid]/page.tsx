@@ -30,8 +30,8 @@ export default function Stake({ params }: { params: { projectid: string } }) {
     const renderBanner = () => {
         if (project?.project_banner_type === 'V') {
             return (
-                <video autoPlay loop muted playsInline className="w-full !h-[175px] md:!h-full">
-                    <source src="https://static.vecteezy.com/system/resources/previews/036/888/824/mp4/ai-generated-calm-evening-atmosphere-with-lantern-light-at-night-view-from-inside-a-chinese-temple-or-pagoda-seamless-looping-4k-animation-background-free-video.mp4" type="video/mp4" />
+                <video autoPlay loop muted className="w-full h-full scale-110">
+                    <source src={project?.project_banner} type="video/mp4" />
                 </video>
             );
         } else {
@@ -47,14 +47,14 @@ export default function Stake({ params }: { params: { projectid: string } }) {
     };
 
     return (
-        <div className="relative w-full">
+        <div className="relative bg-black w-full">
             <Header />
-            <div className="w-full h-[175px] md:h-[70vh] relative overflow-hidden">
-                {/* <div className="absolute top-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
-                <div className="absolute bottom-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-transparent to-black z-10" /> */}
+            <div className="bg-black w-full h-[175px] md:h-[70vh] relative overflow-hidden">
+                <div className="absolute top-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
+                <div className="absolute bottom-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-transparent to-black z-10" />
                 {renderBanner()}
             </div>
-            {/* <div className="relative">
+            <div className="relative">
                 <div
                     style={{
                         backgroundImage: `url('${project?.project_profile_image}')`
@@ -91,7 +91,7 @@ export default function Stake({ params }: { params: { projectid: string } }) {
                     twitterImage={project?.project_footer_twitter} 
                     className="my-0" 
                 />
-            </div> */}
+            </div>
         </div>
     );
 }
