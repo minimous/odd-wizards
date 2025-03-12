@@ -30,7 +30,7 @@ export default function Stake({ params }: { params: { projectid: string } }) {
     const renderBanner = () => {
         if (project?.project_banner_type === 'V') {
             return (
-                <video autoPlay loop muted className="w-full h-full scale-110">
+                <video autoPlay loop playsInline muted className="w-full h-full scale-110">
                     <source src={project?.project_banner} type="video/mp4" />
                 </video>
             );
