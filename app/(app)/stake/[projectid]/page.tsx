@@ -49,18 +49,18 @@ export default function Stake({ params }: { params: { projectid: string } }) {
     return (
         <div className="relative w-full">
             <Header />
-            <div className="w-full h-[175px] md:h-[70vh] relative overflow-hidden">
-                {renderBanner()}
-                {/* <div className="absolute top-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
+            {/* <div className="w-full h-[175px] md:h-[70vh] relative overflow-hidden">
+                <div className="absolute top-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-black to-transparent z-10" />
                 <div className="absolute bottom-0 w-full h-[100px] md:h-[250px] bg-gradient-to-b from-transparent to-black z-10" /> */}
-            </div>
-            {/* <div className="relative">
+                {renderBanner()}
+            {/* </div>
+            <div className="relative">
                 <div
                     style={{
                         backgroundImage: `url('${project?.project_profile_image}')`
                     }}
                     className="bg-cover bg-center w-[100px] h-[100px] md:w-[175px] md:h-[175px] absolute -top-14 md:!-top-24 left-1/2 transform -translate-x-1/2 rounded-full z-20" />
-            </div> */}
+            </div>
             <div className="flex flex-col items-center justify-center mt-14 md:!mt-28 px-5 md:px-20">
                 <CustomGradualSpacing
                     className="font-display text-center text-4xl md:!text-6xl font-black md:leading-[5rem]"
@@ -91,7 +91,7 @@ export default function Stake({ params }: { params: { projectid: string } }) {
                     twitterImage={project?.project_footer_twitter} 
                     className="my-0" 
                 />
-            </div>
+            </div> */}
         </div>
     );
 }
