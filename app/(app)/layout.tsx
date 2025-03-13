@@ -14,7 +14,7 @@ export const metadata = {
     description: 'Stake, Win, and LFGODDS!',
     images: [
       {
-        url: 'https://www.oddsgarden.io/images/Odds-Garden.png',
+        url: 'https://www.oddsgarden.io/images/Odds-Banner.jpg',
         width: 1200,
         height: 630,
         alt: 'Odd Wizard Share Image'
@@ -25,7 +25,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Odds Wizard',
     description: 'Stake, Win, and LFGODDS!',
-    images: ['https://www.oddsgarden.io/images/Odds-Garden.png']
+    images: ['https://www.oddsgarden.io/images/Odds-Banner.jpg']
   }
 };
 
