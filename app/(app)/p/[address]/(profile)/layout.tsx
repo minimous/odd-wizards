@@ -16,7 +16,7 @@ async function generateMetadata({ params }: { params: { address: string } }) {
       user_address: params.address
     }
   });
-  const imageUrl = user?.user_image_preview ?? 'https://www.oddsgarden.io/images/Odds-Garden.png';
+  const imageUrl = user?.user_image_preview ?? 'https://www.oddsgarden.io/images/Odds-Banner.jpg';
 
   return {
     title: 'Odds Wizard',
