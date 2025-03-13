@@ -165,7 +165,7 @@ const Banner = ({ items }: BannerProps) => {
 
     return (
         <div>
-            <div className="relative bg-cover bg-center px-14 pt-24 pb-8"
+            <div className="relative bg-cover bg-center px-2 pr-1 md:px-14 pt-24 pb-8"
                 style={{
                     // backgroundImage: `url('${banner.banner_image}')`
                     backgroundImage: `url('/images/blur.gif')`
@@ -184,11 +184,11 @@ const Banner = ({ items }: BannerProps) => {
                     <CarouselContent className="w-full h-full -ml-2 rounded-[30px]">
                         {items?.map((banner, index) => (
                             <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
-                                <div className="relative h-[calc(100vh-100px)]">
+                                <div className="relative h-[calc(100vh-200px)] md:h-[calc(100vh-100px)]">
                                     <div className="w-full h-full rounded-[30px]">
                                         <div className="relative w-full h-full rounded-[30px] overflow-hidden">
                                             {renderMedia(banner)}
-                                            <div className="absolute bottom-0 left-0 z-5 bg-gradient-to-b from-transparent via-black-75 to-black w-full p-10 pb-18 pl-16">
+                                            <div className="absolute bottom-0 left-0 z-5 bg-gradient-to-b from-transparent via-black-75 to-black w-full p-10 pb-18 pl-8 md:pl-16">
                                                 <div className="flex gap-2">
                                                     <Link hidden={!banner.banner_twiter} href={banner.banner_twiter ?? "#"}>
                                                         <img src="/images/x.png" className="h-[35px]" />
@@ -197,7 +197,7 @@ const Banner = ({ items }: BannerProps) => {
                                                         <img src="/images/discord.png" className="h-[35px]" />
                                                     </Link>
                                                 </div>
-                                                <div className="flex justify-between items-center">
+                                                <div className="grid md:flex justify-between items-center gap-y-2">
                                                     <div hidden={!banner?.launchpad}>
                                                         <div className="flex items-center gap-3 mt-4">
                                                             <div className={cn("w-6 h-6 flex items-center justify-center rounded-full blinker bg-green-500/50")}>
@@ -237,8 +237,8 @@ const Banner = ({ items }: BannerProps) => {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <CarouselPrevious className="-left-12 absolute z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
-                    <CarouselNext className="-right-12 z-15 bg-transparent bg-opacity-50 border-0 h-10 w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
+                    <CarouselPrevious className="left-4 md:-left-12 absolute z-15 bg-transparent bg-opacity-50 border-0 h-5 w-5 md:!h-10 md:!w-10 text-gray-500 hover:text-white hover:bg-black hover:bg-opacity-75" />
+                    <CarouselNext className="right-4 md:-right-12 z-15 bg-transparent bg-opacity-50 border-0 h-5 w-5 md:!h-10 md:!w-10 text-gray-500 hover:white hover:bg-black hover:bg-opacity-75" />
                 </Carousel>
             </div>
         </div>

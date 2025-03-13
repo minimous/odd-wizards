@@ -35,10 +35,8 @@ const MultipleStakeSection = ({
         <div className="relative">
             <BoxStatStake project={project} collection={projectid} />
             <div>
-                <div className="hidden md:!flex w-full">
-                    <MultipleStakeCard projectCode={project?.project_code ?? "-"} />
-                </div>
-                <div className="grid grid-cols-2 px-20 gap-4 mt-10">
+                <MultipleStakeCard projectCode={project?.project_code ?? "-"} />
+                <div className="grid grid-cols-1 md:grid-cols-2 px-4 md:px-20 gap-4 mt-10">
                     {
                         collections.map((collection, index) => {
                             return <CollectionCard collection={collection} key={index} />

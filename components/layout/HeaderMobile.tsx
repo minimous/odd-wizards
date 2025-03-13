@@ -16,6 +16,7 @@ import { useChain } from "@cosmos-kit/react";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { ChevronDownIcon } from "lucide-react";
+import { mst_project } from "@prisma/client";
 
 export default function HeaderMobile() {
 
@@ -27,6 +28,7 @@ export default function HeaderMobile() {
     const { isOpened, setOpen } = useNavbarMobile();
     const [opend, setOpend] = useState<boolean>(isOpened);
     const [stakeOpen, setStakeOpen] = useState<boolean>(false);
+    const [projects, setProjects] = useState<mst_project[] | []>([]);
 
     useEffect(() => {
 
@@ -35,6 +37,9 @@ export default function HeaderMobile() {
                 let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
                 setUser(resp.data.data);
             }
+
+            const projectResp = await axios.get(`/api/project/list`);
+            setProjects(projectResp.data.data ?? []);
         }
 
         fetchData();
@@ -156,20 +161,13 @@ export default function HeaderMobile() {
                             </div>
                             <Link
                                 onClick={() => setOpen(false)}
-                                href="/about"
+                                href="/challenge"
                                 className={cn("text-xl max-w-max mx-auto font-bold transition-transform", path == "/" || path == "/about" ? "text-white" : "text-gray-200 hover:text-white")}
                             >
-                                About
-                            </Link>
-                            <Link
-                                onClick={() => setOpen(false)}
-                                href="/gallery"
-                                className={cn("text-xl max-w-max mx-auto font-bold transition-transform", path == "/" || path == "/gallery" ? "text-white" : "text-gray-200 hover:text-white")}
-                            >
-                                Gallery
+                                Challenge
                             </Link>
                             <div>
-                                <div onClick={() => {setStakeOpen(!stakeOpen)}}
+                                <div onClick={() => { setStakeOpen(!stakeOpen) }}
                                     className="flex items-center gap-1 max-w-max mx-auto cursor-pointer ">
                                     <span
 
@@ -182,13 +180,25 @@ export default function HeaderMobile() {
                                         aria-hidden="true"
                                     /> */}
                                 </div>
-                                <div hidden={!stakeOpen} className="mt-2">
-                                    <div className="grid gap-1" >
-                                        <Link onClick={() => setOpen(false)} href="/stake/oddswizards" className="font-semibold">
-                                            Odd Wizards
-                                        </Link>
-                                        <span className="opacity-50 font-semibold">Bad Kids (Soon)</span>
-                                    </div>
+                                <div hidden={!stakeOpen} className="mt-2 text-center">
+                                    {
+                                        projects.map((project, index) => {
+                                            return <div key={index}>
+                                                {
+                                                    project.project_status == "N" ?
+                                                        <div className="flex items-center mt-1 justify-center hover:scale-105 hover:font-semibold">
+                                                            <span className="col-span-2 opacity-30">{project.project_icon}</span>
+                                                            <div className="opacity-30 col-span-10 flex">{project.project_name} (Soon)</div>
+                                                        </div>
+                                                        :
+                                                        <Link onClick={() => setOpen(false)} href={`/stake/${project.project_code}`} className="flex items-center mt-1 justify-center hover:scale-105 hover:font-semibold">
+                                                            <span className="col-span-2">{project.project_icon}</span>
+                                                            <span className="col-span-10">{project.project_name}</span>
+                                                        </Link>
+                                                }
+                                            </div>
+                                        })
+                                    }
                                 </div>
                             </div>
                             <Link
