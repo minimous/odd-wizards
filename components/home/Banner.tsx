@@ -50,16 +50,23 @@ const Banner = ({ items }: BannerProps) => {
 
                 const launchpad = banner.launchpad;
                 const currentStage = launchpad?.minterV2?.currentStage;
+                
+                // Check if trading has started
+                const tradingStart = launchpad.startTradingTime / 1000000;
+                const isTradingStarted = now >= tradingStart;
+                
+                // If any banner is in live trading, set the global flag
+                if (isTradingStarted) {
+                    liveTrading = true;
+                }
 
-                if (!currentStage?.endTime) {
-                    // Trading countdown
-                    const tradingStart = launchpad.startTradingTime / 1000000;
-                    const difference = tradingStart - now;
-
-                    if (difference > 0) {
-                        newTimeLeft[banner.id] = formatTime(difference);
-                    } else {
-                        liveTrading = true; // Trading sudah dimulai
+                if (!currentStage?.endTime || isTradingStarted) {
+                    // Trading countdown (only if trading hasn't started yet)
+                    if (!isTradingStarted) {
+                        const difference = tradingStart - now;
+                        if (difference > 0) {
+                            newTimeLeft[banner.id] = formatTime(difference);
+                        }
                     }
                 } else {
                     // Stage countdown
@@ -70,14 +77,12 @@ const Banner = ({ items }: BannerProps) => {
                         newTimeLeft[banner.id] = formatTime(startTime - now);
                     } else if (now < endTime) {
                         newTimeLeft[banner.id] = formatTime(endTime - now);
-                    } else {
-                        liveTrading = true; // Jika semua stage sudah selesai, masuk ke live trading
                     }
                 }
             });
 
             setTimeLeft(newTimeLeft);
-            setIsLiveTrading(liveTrading); // Update isLiveTrading berdasarkan kondisi terbaru
+            setIsLiveTrading(liveTrading);
         };
 
         // Update immediately and set interval
@@ -100,11 +105,24 @@ const Banner = ({ items }: BannerProps) => {
         const endTime = launchpad?.minterV2?.currentStage?.endTime ?
             new Date(launchpad?.minterV2?.currentStage?.endTime / 1000000).getTime() :
             new Date().getTime();
+        
+        // Check if trading has started for this specific launchpad
+        const tradingStart = launchpad.startTradingTime / 1000000;
+        const isTradingStarted = now >= tradingStart;
 
-        if (!launchpad?.minterV2?.currentStage?.endTime) {
+        if (isTradingStarted) {
             return (
                 <span className="opacity-70 text-lg font-bold">
                     Live Trading on stargaze
+                </span>
+            );
+        } else if (!launchpad?.minterV2?.currentStage?.endTime) {
+            return (
+                <span className="opacity-70 text-lg font-bold">
+                    Trading starts
+                    <span className="text-[#49ED4A]">
+                        {timeLeft[launchpad.id] ? ` in ${timeLeft[launchpad.id]}` : ' soon'}
+                    </span>
                 </span>
             );
         } else if (now < startTime) {
@@ -119,7 +137,7 @@ const Banner = ({ items }: BannerProps) => {
         } else if (now > endTime) {
             return (
                 <span className="opacity-70 text-lg font-bold">
-                    Live Trading on stargaze
+                    Next stage starting soon
                 </span>
             );
         } else {
@@ -171,8 +189,6 @@ const Banner = ({ items }: BannerProps) => {
                     backgroundImage: `url('/images/blur.gif')`
                 }}>
                 <div className="absolute inset-0 bg-black/70 backdrop-blur-xl pointer-events-none"></div>
-                {/* <div className="absolute left-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-l from-transparent via-black/50 to-black pointer-events-none" />
-                                <div className="absolute right-0 top-0 bottom-0 z-1 w-[100px] h-full bg-gradient-to-r from-transparent via-black/50 to-black pointer-events-none" /> */}
                 <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black" />
                 <Carousel
                     opts={OPTIONS}
@@ -210,24 +226,34 @@ const Banner = ({ items }: BannerProps) => {
                                                         {showCurrentStage(banner?.launchpad)}
                                                     </div>
                                                     {
-                                                        isLiveTrading ? <Link
-                                                            hidden={!banner?.launchpad}
-                                                            href={`https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens`}
-                                                            target="_blank"
-                                                        >
-                                                            <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
-                                                                Trade on Stargaze
-                                                            </Button>
-                                                        </Link> :
-                                                            <Link
-                                                                hidden={!banner?.launchpad}
-                                                                href={`https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}`}
-                                                                target="_blank"
-                                                            >
-                                                                <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
-                                                                    Go to Launchpad
-                                                                </Button>
-                                                            </Link>
+                                                        (() => {
+                                                            // Check if trading has started for this specific banner
+                                                            const now = new Date().getTime();
+                                                            const tradingStart = banner?.launchpad?.startTradingTime / 1000000;
+                                                            const isTradingStarted = tradingStart && now >= tradingStart;
+                                                            
+                                                            return isTradingStarted ? (
+                                                                <Link
+                                                                    hidden={!banner?.launchpad}
+                                                                    href={`https://www.stargaze.zone/m/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}/tokens`}
+                                                                    target="_blank"
+                                                                >
+                                                                    <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
+                                                                        Trade on Stargaze
+                                                                    </Button>
+                                                                </Link>
+                                                            ) : (
+                                                                <Link
+                                                                    hidden={!banner?.launchpad}
+                                                                    href={`https://www.stargaze.zone/l/${banner?.launchpad?.contractUri ?? banner?.launchpad?.contractAddress}`}
+                                                                    target="_blank"
+                                                                >
+                                                                    <Button className="h-12 px-8 rounded-[10px] text-lg bg-white text-black font-black hover:bg-white">
+                                                                        Go to Launchpad
+                                                                    </Button>
+                                                                </Link>
+                                                            );
+                                                        })()
                                                     }
                                                 </div>
                                             </div>
