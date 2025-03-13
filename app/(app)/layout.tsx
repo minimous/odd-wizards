@@ -43,13 +43,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
           {/* <MobileComingSoon /> */}
           {/* <Header /> */}
           {/* <NavPrice /> */}
-          {/* <ScrollArea className="w-full h-screen"> */}
-          <div className="w-full h-screen overflow-y-auto">
+          <ScrollArea className="w-full h-screen">
             <div className="mx-auto w-screen 2xl:max-w-[1920px]">
               {children}
             </div>
-          </div>
-          {/* </ScrollArea> */}
+          </ScrollArea>
         </ChainProviderWrapper>
       </main>
     </div>
