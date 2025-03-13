@@ -60,7 +60,7 @@ const collections: CollectionCardType[] = [
 export default function Home() {
 
   const [banners, setBanners] = useState<any[] | []>([ {
-    "banner_image": "https://ludus.id/wp-content/uploads/2023/09/Hero-Banner-Placeholder-Dark-2500x1172-1.png",
+    "banner_image": "https://s9oawqeuub.ufs.sh/f/Ae0rhpcXcgiTFCiheDZdliOCodsxKvZgQHNrSD7Lp0hTekVj",
     "banner_type": "I"
 }]);
   const [avatars, setAvatars] = useState<any[] | []>([]);
