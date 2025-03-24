@@ -46,7 +46,7 @@ export default function RewardModalModal({
 
     async function fetchData() {
         setLoading(true);
-        let resp = await axios.get(`/api/soft-staking/reward?wallet_address=${wallet}&collection_address=${config?.collection_address}`);
+        let resp = await axios.get(`/api/soft-staking/reward?wallet_address=${wallet}`);
         setToken(resp.data.data.token);
         setIsClaimed(resp.data.data.isClaimed);
         setTxHash(resp.data.data.txHash);
@@ -121,8 +121,8 @@ export default function RewardModalModal({
 
     const doClaimReward = async () => {
         await axios.post("/api/soft-staking/claim-reward", {
-            staker_address: wallet,
-            collection_address: config?.collection_address
+            staker_address: wallet
+            // collection_address: config?.collection_address
         });
     }
 
