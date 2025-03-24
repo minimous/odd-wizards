@@ -36,17 +36,6 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const staker = await prisma.mst_staker.findFirst({
-            where: { staker_address: staker_address, staker_collection_id: collection.collection_id }
-        })
-
-        if (!staker) {
-            return NextResponse.json(
-                { message: 'Staker not found' },
-                { status: 400 }
-            );
-        }
-
         const reward = await prisma.trn_distribusi_reward.findFirst({
             where: {
                 distribusi_is_claimed: "N",
