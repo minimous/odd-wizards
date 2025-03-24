@@ -39,7 +39,9 @@ export default function RewardModalModal({
     const { toast, promiseToast } = useToast();
 
     useEffect(() => {
-        fetchData();
+        if(wallet){
+            fetchData();
+        }
     }, [wallet]);
 
     async function fetchData() {
