@@ -110,7 +110,7 @@ export default function Stake() {
     useEffect(() => {
         async function fetchData() {
             if (address) {
-                let resp = await axios.get(`/api/user/stars130tcpz6l0j9f382prlj67r29jmr25cgpacmd7r`);
+                let resp = await axios.get(`/api/user/${address}`);
                 const data = resp.data.data;
                 setStakers(data.staker);
 
