@@ -186,7 +186,6 @@ export async function getLeaderboard(project_id: number, staker_address: string 
         ranking
     FROM ranked_leaderboard
     WHERE 1=1
-    and staker_nft_staked > 0
     ${staker_address ? Prisma.sql`AND staker_address = ${staker_address}` : Prisma.empty}
     ORDER BY total_points DESC, ranking
     LIMIT ${size} OFFSET ${page * size};
