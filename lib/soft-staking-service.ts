@@ -28,7 +28,7 @@ export async function updateNftOwner(address: string, collection_address: string
         });
 
         //cek if exists stake in daodao
-        if(collection.collection_staker_daodao){
+        if (collection.collection_staker_daodao) {
             const staked_tokenIds = await getUserStakedNFTs(address, collection.collection_staker_daodao);
             const staked_nfts = await Promise.all(staked_tokenIds.map(async (tokenId: string) => {
                 const token = await getToken(collection.collection_code ?? "-", tokenId);
@@ -75,7 +75,7 @@ export async function getTotalPoints(address: string, project_id: number) {
 
     for (let collection of project?.collections) {
 
-        if(!collection.collection_address) continue;
+        if (!collection.collection_address) continue;
 
         const staker = await prisma.mst_staker.findFirst({
             where: { staker_address: address, staker_collection_id: collection.collection_id }
@@ -97,7 +97,7 @@ export async function getTotalPoints(address: string, project_id: number) {
         });
 
         //cek if exists stake in daodao
-        if(collection.collection_staker_daodao){
+        if (collection.collection_staker_daodao) {
             const staked_tokenIds = await getUserStakedNFTs(address, collection.collection_staker_daodao);
             const staked_nfts = await Promise.all(staked_tokenIds.map(async (tokenId: string) => {
                 const token = await getToken(collection.collection_code ?? "-", tokenId);
@@ -119,13 +119,13 @@ export async function getTotalPoints(address: string, project_id: number) {
                     attrreward.push(matchingReward);
                 }
 
-                if(!matchingReward){
+                if (!matchingReward) {
                     const matchingKeyReward = attributes_rewards.find(reward =>
                         reward.attr_key == trait.name &&
                         (reward.attr_val == undefined || reward.attr_val == null)
                     );
 
-                    if(matchingKeyReward){
+                    if (matchingKeyReward) {
                         attrreward.push(matchingKeyReward);
                     }
                 }
@@ -157,26 +157,72 @@ export async function getTotalPoints(address: string, project_id: number) {
 }
 
 export async function getLeaderboard(project_id: number, staker_address: string | null, page: number, size: number) {
+    //     const leaderboard: any = await prisma.$queryRaw`
+    //     WITH ranked_leaderboard AS (
+    //         SELECT 
+    //             mc.collection_project_id,
+    //             ms.staker_address,
+    //             SUM(ms.staker_nft_staked) AS staker_nft_staked,
+    //             ms.staker_red_flag, -- Jika ada satu saja yang red_flag, maka hasilnya true
+    //             mu.user_image_url,
+    //             SUM(ms.staker_total_points) AS total_points,
+    //             ROW_NUMBER() OVER (
+    //                 PARTITION BY mc.collection_project_id
+    //                 ORDER BY SUM(ms.staker_total_points) DESC
+    //             ) AS ranking
+    //         FROM mst_staker ms
+    //         LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
+    //         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
+    //         WHERE mc.collection_project_id = ${project_id}
+    //         GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url, ms.staker_red_flag
+    //     )
+    //     SELECT 
+    //         collection_project_id,
+    //         staker_address,
+    //         staker_nft_staked,
+    //         staker_red_flag,
+    //         user_image_url,
+    //         total_points,
+    //         ranking
+    //     FROM ranked_leaderboard
+    //     WHERE 1=1
+    //     and staker_nft_staked > 0
+    //     ${staker_address ? Prisma.sql`AND staker_address = ${staker_address}` : Prisma.empty}
+    //     ORDER BY total_points DESC, ranking
+    //     LIMIT ${size} OFFSET ${page * size};
+    // `;
+
     const leaderboard: any = await prisma.$queryRaw`
-    WITH ranked_leaderboard AS (
-        SELECT 
+    WITH pre_filtered_data AS (
+        SELECT
             mc.collection_project_id,
             ms.staker_address,
             SUM(ms.staker_nft_staked) AS staker_nft_staked,
-            ms.staker_red_flag, -- Jika ada satu saja yang red_flag, maka hasilnya true
+            ms.staker_red_flag,
             mu.user_image_url,
-            SUM(ms.staker_total_points) AS total_points,
-            ROW_NUMBER() OVER (
-                PARTITION BY mc.collection_project_id
-                ORDER BY SUM(ms.staker_total_points) DESC
-            ) AS ranking
+            SUM(ms.staker_total_points) AS total_points
         FROM mst_staker ms
         LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
         WHERE mc.collection_project_id = ${project_id}
         GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url, ms.staker_red_flag
+        HAVING SUM(ms.staker_nft_staked) > 0
+    ),
+    ranked_leaderboard AS (
+        SELECT
+            collection_project_id,
+            staker_address,
+            staker_nft_staked,
+            staker_red_flag,
+            user_image_url,
+            total_points,
+            ROW_NUMBER() OVER (
+                PARTITION BY collection_project_id
+                ORDER BY total_points DESC
+            ) AS ranking
+        FROM pre_filtered_data
     )
-    SELECT 
+    SELECT
         collection_project_id,
         staker_address,
         staker_nft_staked,
