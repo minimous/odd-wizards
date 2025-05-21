@@ -834,15 +834,26 @@ export function formatToStars(value?: string | number): number {
 
 export function formatDecimal(value?: string | number | null | undefined, decimal: number = 2): string {
   if (!value) return '0';
+  
+  // Convert string to number if needed
   let number = typeof value === 'string' ? parseFloat(value) : value;
-
+  
+  // Check if the number is a whole number (no decimal part)
+  const isWholeNumber = Number.isInteger(number);
+  
+  // Format based on size
   if (number >= 1_000_000) {
-    return `${(number / 1_000_000).toFixed(decimal)}M`;
+    // For millions, conditionally show decimals
+    const divided = number / 1_000_000;
+    return isWholeNumber ? `${Math.floor(divided)}M` : `${divided.toFixed(decimal)}M`;
   } else if (number >= 1_000) {
-    return `${(number / 1_000).toFixed(decimal)}K`;
+    // For thousands, conditionally show decimals
+    const divided = number / 1_000;
+    return isWholeNumber ? `${Math.floor(divided)}K` : `${divided.toFixed(decimal)}K`;
   }
-
-  return `${number.toFixed(0)}`;
+  
+  // For numbers less than 1000, conditionally show decimals
+  return isWholeNumber ? `${Math.floor(number)}` : `${number.toFixed(decimal)}`;
 }
 
 export function formatAddress(address: string | undefined) {
