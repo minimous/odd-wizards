@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
-import { updateNftOwner } from '@/lib/soft-staking-service';
+import { getTotalPoints, updateNftOwner } from '@/lib/soft-staking-service';
 import { fetchStargazeTokens } from '@/lib/utils';
 import { OwnedTokensResponse } from '@/types';
 
@@ -84,6 +84,44 @@ export async function POST(request: NextRequest) {
                 { message: 'No tokens found for the given owner and collection.' },
                 { status: 400 }
             );
+        }
+
+        const resp = await getTotalPoints(staker_address, project.project_id);
+
+        if (resp.point == 0) {
+            return NextResponse.json(
+                { message: 'No points available to claim' },
+                { status: 400 }
+            );
+        }
+
+        for (let data of resp.listPoints) {
+            await prisma.trn_point.create({
+                data: {
+                    point_amount: data.points,
+                    point_nft_staked: data.nft_staked,
+                    point_staker_id: data.staker_id,
+                    point_claim_date: new Date()
+                }
+            });
+
+            if (resp.point >= 1) {
+
+                let staker = await prisma.mst_staker.findUnique({
+                    where: {
+                        staker_id: data.staker_id
+                    }
+                });
+
+                await prisma.mst_staker.update({
+                    where: { staker_id: data.staker_id },
+                    data: {
+                        staker_lastclaim_date: new Date(),
+                        staker_nft_staked: data.nft_staked,
+                        staker_total_points: (staker?.staker_total_points ?? 0) + data.points
+                    }
+                });
+            }
         }
 
         return NextResponse.json(
