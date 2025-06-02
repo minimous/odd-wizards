@@ -196,7 +196,7 @@ export default function ConnectButtonV2({ showProfile = true, className }: Conne
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 loading={isConnecting}
-                onConnectChain={handleConnectChain}
+                onConnectWallet={handleConnectChain}
             />
         </>
     )
