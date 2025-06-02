@@ -23,6 +23,7 @@ import { mst_users } from "@prisma/client";
 import NumberTicker from "@/components/ui/number-ticker";
 import { sum } from "@cosmos-kit/core";
 import TokensCard from "@/components/profile/TokensCard";
+import { Bot } from "lucide-react";
 
 export default function Profile({ params }: { params: { address: string } }) {
     const config = getConfig();
@@ -279,36 +280,52 @@ export default function Profile({ params }: { params: { address: string } }) {
                                                     </Link>
                                                 )
                                             }
-                                            <div className="flex items-center gap-x-3">
-                                                {
-                                                    associated?.records?.map((item: any) => {
-                                                        return renderSocmed(item);
-                                                    })
-                                                }
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <Link href={`https://www.stargaze.zone/p/${params.address}/tokens`} target='_blank'>
-                                                                <img src="/images/Icon/stargaze-white.png" className="w-[20px] md:w-[30px] hover:scale-105 transition-all duration-300 ease-in-out" />
-                                                            </Link>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
-                                                            <p>Go to Stargaze Account</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <span className="cursor-pointer" onClick={doTweet}>
-                                                                <img src="/images/Icon/forward-arrow.png" className="w-[30px] md:w-[35px] hover:scale-105 transition-all duration-300 ease-in-out" />
-                                                            </span>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
-                                                            <p>Share Your Account</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
+                                            <div className="flex items-center justify-between w-full">
+                                                <div className="flex items-center gap-x-3">
+                                                    {
+                                                        associated?.records?.map((item: any) => {
+                                                            return renderSocmed(item);
+                                                        })
+                                                    }
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Link href={`https://www.stargaze.zone/p/${params.address}/tokens`} target='_blank'>
+                                                                    <img src="/images/Icon/stargaze-white.png" className="w-[20px] md:w-[30px] hover:scale-105 transition-all duration-300 ease-in-out" />
+                                                                </Link>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
+                                                                <p>Go to Stargaze Account</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span className="cursor-pointer" onClick={doTweet}>
+                                                                    <img src="/images/Icon/forward-arrow.png" className="w-[30px] md:w-[35px] hover:scale-105 transition-all duration-300 ease-in-out" />
+                                                                </span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
+                                                                <p>Share Your Account</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                </div>
+                                                <div>
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button variant={"ghost"}>
+                                                                    <Bot />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className='bg-black border border-[#323237] text-xs md:!text-base'>
+                                                                <p>Setup Your Bot</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                </div>
                                             </div>
                                             {/* <span className="md:!text-md text-gray-400 hover:text-white">Edit Profile</span> */}
                                         </div>
