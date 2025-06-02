@@ -133,8 +133,14 @@ export async function getTotalPoints(address: string, project_id: number) {
         });
 
         allTokens.forEach(item => {
+            console.log("traits", item.traits);
+        })
+
+        allTokens.forEach(item => {
             attrreward.push(...attributes_rewards.filter(reward => !reward.attr_key && !reward.attr_val));
         });
+
+        console.log("attrreward", attrreward);
 
         const points = attrreward?.reduce((sum, reward) =>
             sum + calculatePoint(reward, staker.staker_lastclaim_date), 0

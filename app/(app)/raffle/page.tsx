@@ -203,7 +203,7 @@ export default function Stake() {
                 </div>
             </div>
             <div className="container">
-                {address && user && (
+                {address && (
                     <div className="flex justify-center">
                         <RaffleTokensCard data={tokens} tokenType={tokenType} setTokenType={setTokenType} />
                     </div>
