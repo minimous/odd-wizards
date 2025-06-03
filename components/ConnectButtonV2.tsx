@@ -11,6 +11,14 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import WalletConnectModal from "./modal/wallet-connect-modal";
 
+declare global {
+    interface Window {
+        ethereum?: {
+            request: (args: { method: string; params?: any[] }) => Promise<any>;
+        };
+    }
+}
+
 export interface ConnectButtonProps {
     showProfile?: boolean,
     className?: string
