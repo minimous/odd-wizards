@@ -25,9 +25,30 @@ export default function ConnectButtonV2({ showProfile = true, className }: Conne
     const { connect, disconnect, address } = useChain("stargaze");
     const { toast } = useToast();
 
+    // Pre-initialize chain hooks for supported Cosmos chains
+    const stargazeChain = useChain("stargaze");
+    const osmosisChain = useChain("osmosis");
+    const junoChain = useChain("juno");
+    // Add other Cosmos chains as needed
+
     useEffect(() => {
         setUser(dataUser);
     }, [dataUser])
+
+    // Helper function to get the appropriate chain hook
+    const getChainHook = (chainId: string) => {
+        switch (chainId) {
+            case "stargaze":
+                return stargazeChain;
+            case "osmosis":
+                return osmosisChain;
+            case "juno":
+                return junoChain;
+            // Add other cases as needed
+            default:
+                return stargazeChain; // fallback
+        }
+    };
 
     // Handle connecting to specific chain
     const handleConnectChain = async (chainId: string, chainType: 'cosmos' | 'evm') => {
@@ -35,8 +56,8 @@ export default function ConnectButtonV2({ showProfile = true, className }: Conne
         try {
             if (chainType === 'cosmos') {
                 // Handle Cosmos chains connection
-                const { connect: connectChain } = useChain(chainId);
-                await connectChain();
+                const chainHook = getChainHook(chainId);
+                await chainHook.connect();
                 toast({
                     title: "Connected!",
                     description: `Successfully connected to ${chainId}`,
