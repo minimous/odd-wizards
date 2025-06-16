@@ -188,6 +188,7 @@ model trn_participant {
 
 model mst_banners {
   banner_id           Int @id @default(autoincrement())
+  banner_thumbnail        String?
   banner_image        String?
   banner_status       String?
   banner_collection_address String?

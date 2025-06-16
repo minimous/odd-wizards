@@ -16,3 +16,11 @@ export class OPERATOR_CONSTANTS2 {
     static GROUP_CONDITION_OR = "GROUP_CONDITION_OR";
     static GROUP_CONDITION_AND = "GROUP_CONDITION_AND";
 }
+
+
+export const TIME_FILTER = [
+    { key: '6H', label: '6h' },
+    { key: '1D', label: '1d' },
+    { key: '7D', label: '7d', active: true },
+    { key: '30D', label: '30d' }
+  ];
