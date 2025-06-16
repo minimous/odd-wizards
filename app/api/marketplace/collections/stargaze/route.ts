@@ -1,8 +1,8 @@
 // pages/api/collections/index.ts
 import { MarketplaceCollectionParams, StargazeService } from '@/lib/stargaze/stargaze-service';
 import { FormattedCollection, FormattedPriceInfo } from '@/types/marketplace';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 
 // Helper functions to format data for your components
 function formatPriceInfo(priceData: any): FormattedPriceInfo {
