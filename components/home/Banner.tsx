@@ -127,7 +127,7 @@ const Banner = ({ items }: BannerProps) => {
 
             // Add event listener untuk slide change (baik manual maupun autoplay)
             api.on('select', onSlideChange);
-            
+
             // Tambahan: listener untuk autoplay events
             api.on('settle', onSlideChange);
 
@@ -319,7 +319,7 @@ const Banner = ({ items }: BannerProps) => {
                                             {
                                                 bannerItem.banner_id == selectedBanner ?
                                                     <button type="button"
-                                                        className="relative transition-all duration-300 h-[120px] w-[120px] rounded-lg border-2 border-white/20 p-1">
+                                                        className="relative transition-all duration-300 h-[120px] w-[120px] rounded-[5px] border-2 border-white/20 p-1">
                                                         <svg className="absolute inset-0 translate-x-[-2px] translate-y-[-2px]" width="120" height="120"
                                                             viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                                                             <title>Slide timer</title>
@@ -337,9 +337,13 @@ const Banner = ({ items }: BannerProps) => {
                                                     </button> :
                                                     <button
                                                         onClick={() => handleBannerClick(bannerItem, bannerIndex)}
-                                                        className="relative transition-all duration-300 h-16 w-16 rounded opacity-60 hover:opacity-100"
+                                                        className="relative transition-all duration-300 h-16 w-16 rounded-[5px] opacity-60 hover:opacity-100"
                                                     >
-                                                        <img src={bannerItem.banner_image} decoding="async" className="w-full h-full rounded-[5px] bg-cover bg-center" />
+                                                        <img alt="banner preview" decoding="async"
+                                                            data-nimg="fill" className="object-cover absoulte w-full h-full"
+                                                            src={bannerItem.banner_image}
+                                                            style={{ inset: '0px', color: 'transparent' }}>
+                                                        </img>
                                                     </button>
                                             }
                                         </div>

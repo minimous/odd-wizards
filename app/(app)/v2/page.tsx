@@ -1,5 +1,6 @@
 'use client';
 
+import NFTCollectionsTable from "@/components/collection-statistic/NFTCollectionsTable";
 import Banner from "@/components/home/Banner";
 import FooterV2 from "@/components/layout/footerV2";
 import HeaderV2 from "@/components/layout/headerV2";
@@ -42,7 +43,10 @@ export default function HomePage() {
     return (<div className="w-full h-full">
         <HeaderV2 />
         <Banner items={banners} />
-        <div className="mt-32 px-8">
+        <div className="mt-32">
+            <NFTCollectionsTable />
+        </div>
+        <div className="mt-4 px-8">
             <div className="bg-[#18181B] w-full h-full rounded-[10px]">
                 <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg px-40 pb-40 pt-8 md:pb-60">
                     {/* Content div that stays static */}
