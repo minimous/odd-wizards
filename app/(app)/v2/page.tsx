@@ -43,7 +43,7 @@ export default function HomePage() {
     return (<div className="w-full h-full">
         <HeaderV2 />
         <Banner items={banners} />
-        <div className="mt-32">
+        <div className="mt-4">
             <NFTCollectionsTable />
         </div>
         <div className="mt-4 px-8">

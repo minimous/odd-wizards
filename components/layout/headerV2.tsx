@@ -48,18 +48,18 @@ export default function HeaderV2() {
             <Link
               href="/"
               aria-label="Home"
-              className="group rounded-[10px] overflow-hidden w-[50px] md:w-[45px] h-[40px] md:h-[40px] flex items-center justify-center"
+              className="group rounded-[10px] overflow-hidden w-[50px] md:w-[55px] h-[40px] md:h-[50px] flex items-center justify-center"
             >
               <img
-                src="/images/logo.png"
+                src="/images/logov2.png"
                 alt="Logo"
-                className="group-hover:hidden object-contain"
+                className="object-contain"
               />
-              <img
+              {/* <img
                 src="/images/logo.gif"
                 alt="Logo"
                 className="hidden group-hover:block object-contain"
-              />
+              /> */}
             </Link>
           </div>
           <Link
@@ -111,7 +111,7 @@ export default function HeaderV2() {
           <ConnectButtonV2 />
         </div>
       </nav>
-      <ChainSelection />
+      {/* <ChainSelection /> */}
     </header>
   );
 }
