@@ -229,7 +229,7 @@ const Banner = ({ items }: BannerProps) => {
                 <div className="bg-[url('/images/blur.gif')] bg-center bg-cover w-full h-1/2 opacity-50"></div>
                 <div className="absolute inset-0 bg-black/70 backdrop-blur-xl pointer-events-none"></div>
                 <div className="absolute left-0 bottom-0 z-1 w-full h-[100px] bg-gradient-to-b from-transparent to-black" />
-                <div className="px-8 absolute top-0 left-0 right-0">
+                <div className="px-8 py-4 absolute top-0 left-0 right-0">
                     <Carousel
                         setApi={setApi}
                         opts={OPTIONS}
