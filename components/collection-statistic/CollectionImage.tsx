@@ -30,7 +30,7 @@ const CollectionImage = ({
   };
 
   return (
-    <div className={`${sizeClass} rounded-lg overflow-hidden bg-gray-800 flex-shrink-0 ${className}`}>
+    <div className={`${sizeClass} rounded-[10px] overflow-hidden bg-gray-800 flex-shrink-0 ${className}`}>
       <img 
         src={src} 
         alt={alt}

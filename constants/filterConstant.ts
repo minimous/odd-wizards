@@ -19,8 +19,7 @@ export class OPERATOR_CONSTANTS2 {
 
 
 export const TIME_FILTER = [
-    { key: '6H', label: '6h' },
-    { key: '1D', label: '1d' },
+    { key: '1D', label: '24h' },
     { key: '7D', label: '7d', active: true },
     { key: '30D', label: '30d' }
   ];

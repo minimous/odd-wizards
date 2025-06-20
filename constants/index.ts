@@ -9,3 +9,9 @@ export enum REWARD_TYPE {
 }
 
 export const DEFAULT_IMAGE_PROFILE = "/images/profile/default.png";
+
+
+export const NETWORK_CONSTANT = {
+    STARGAZE: 'stargaze',
+    INTERGAZE: 'intergaze'
+}

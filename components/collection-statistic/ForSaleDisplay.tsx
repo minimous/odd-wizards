@@ -11,11 +11,11 @@ const ForSaleDisplay = ({
   return (
     <div className={alignClass}>
       <div className="text-white font-medium">
-        {percentage}%
-      </div>
-      <div className="text-xs text-gray-400 mt-0.5">
         {count}
       </div>
+      {/* <div className="text-xs text-gray-400 mt-0.5">
+        {percentage}%
+      </div> */}
     </div>
   );
 };

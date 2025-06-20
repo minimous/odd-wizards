@@ -32,8 +32,8 @@ const TableRow = ({
       onClick={handleRowClick}
     >
       {/* Collection Info */}
-      <td className="px-4 py-4">
-        <div className="flex items-center gap-3">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
           {/* <span className="text-gray-400 font-medium w-4 text-sm">
             {index + 1}
           </span> */}
@@ -48,7 +48,7 @@ const TableRow = ({
       </td>
 
       {/* Floor Price */}
-      <td className="px-4 py-4">
+      <td className="px-4 py-3">
         <PriceDisplay
           value={collection.floorPrice.value}
           currency={collection.floorPrice.currency}
@@ -58,7 +58,7 @@ const TableRow = ({
       </td>
 
       {/* Best Offer */}
-      <td className="px-4 py-4">
+      <td className="px-4 py-3">
         <PriceDisplay
           value={collection.bestOffer.value}
           currency={collection.bestOffer.currency}
@@ -68,7 +68,7 @@ const TableRow = ({
       </td>
 
       {/* Owners */}
-      <td className="px-4 py-4">
+      <td className="px-4 py-3">
         <OwnersDisplay
           count={collection.owners.count}
           unique={collection.owners.unique}
@@ -76,7 +76,7 @@ const TableRow = ({
       </td>
 
       {/* For Sale */}
-      <td className="px-4 py-4">
+      <td className="px-4 py-3">
         <ForSaleDisplay
           percentage={collection.forSale.percentage}
           count={collection.forSale.count}
@@ -84,9 +84,16 @@ const TableRow = ({
       </td>
 
       {/* Volume */}
-      <td className="px-4 py-4">
+      <td className="px-4 py-3">
         <VolumeDisplay
           value={collection.volume.value}
+          // change={collection.volume.change}
+          align='right'
+        />
+      </td>
+      <td className="px-4 py-3">
+        <VolumeDisplay
+          // value={collection.volume.value}
           change={collection.volume.change}
           align='right'
         />

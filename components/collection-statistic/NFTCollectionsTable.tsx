@@ -47,7 +47,7 @@ const NFTCollectionsTable = () => {
 
     const handleSortClick = (columnKey: string) => {
 
-        if(loadingMore) return;
+        if (loadingMore) return;
 
         const sortMapping: Record<string, string> = {
             'floorPrice': 'floor',
@@ -142,6 +142,16 @@ const NFTCollectionsTable = () => {
                                 onSort={handleSortClick}
                             >
                                 Volume
+                            </TableHeader>
+                            <TableHeader
+                                align="right"
+                                // sortable
+                                // sortBy={sortBy}
+                                // sortOrder={sortOrder}
+                                // columnKey="volume"
+                                // onSort={handleSortClick}
+                            >
+                                %
                             </TableHeader>
                         </tr>
                     </thead>
