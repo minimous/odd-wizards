@@ -12,7 +12,7 @@ interface NFTResponse {
   tokens: any[]; // You can define a more specific type for tokens
 }
 
-export class StargazeService {
+export class IntergazeService {
   private readonly baseUrl = "https://api.intergaze-apis.com/api/v1/profiles";
   private readonly defaultLimit = 60;
 

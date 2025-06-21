@@ -17,7 +17,7 @@ const VolumeDisplay = ({
       </div>
       }
       {change && (
-        <div className={`text-xs mt-0.5 ${changeFormatted.colorClass}`}>
+        <div className={`font-medium ${changeFormatted.colorClass}`}>
           {changeFormatted.text}
         </div>
       )}

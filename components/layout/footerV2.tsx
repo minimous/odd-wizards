@@ -5,7 +5,7 @@ const FooterV2 = () => {
             <div className="bg-[#0B0810] w-full h-[250px] rounded-[10px] p-4 px-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-cetner gap-8 text-[#A1A1AA]">
-                        <a href="#">Apply as creator</a>
+                        <a className="text-muted">Apply as creator</a>
                         <a href="#">Contact</a>
                     </div>
                     <div className="flex flex-col justify-end">

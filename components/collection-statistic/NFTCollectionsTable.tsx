@@ -191,7 +191,7 @@ const NFTCollectionsTable = () => {
                         {/* No collections found */}
                         {!loading && collections.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="text-center py-8 text-[#857F94]">
+                                <td colSpan={7} className="text-center py-8 text-[#857F94]">
                                     No collections found
                                 </td>
                             </tr>
@@ -200,7 +200,7 @@ const NFTCollectionsTable = () => {
                     {hasNextPage && (
                         <tfoot>
                             <tr>
-                                <td colSpan={6} className="py-4 text-center">
+                                <td colSpan={7} className="py-4 text-center">
                                     <button
                                         onClick={loadMore}
                                         disabled={loadingMore}

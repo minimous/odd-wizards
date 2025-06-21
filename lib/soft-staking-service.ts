@@ -2,6 +2,7 @@ import { mst_attributes_reward, mst_project, Prisma } from "@prisma/client";
 import calculatePoint, { fetchAllStargazeTokens, fetchStargazeTokens, getToken, getUserStakedNFTs } from "./utils";
 import prisma from '@/prisma/prisma';
 import { NETWORK_CONSTANT } from "@/constants";
+import { IntergazeService } from "./intergaze/intergaze-service";
 
 export async function updateNftOwner(address: string, collection_address: string) {
     try {
@@ -248,8 +249,7 @@ export async function getLeaderboard(project_id: number, staker_address: string 
 }
 
 
-export const getAllTokens = async (staker_address: string, collection_address: string, network: string) => {
-
+export const getSampleNfts = async (staker_address: string, collection_address: string, network: string) => {
     switch(network){
         case NETWORK_CONSTANT.STARGAZE:
             return await fetchStargazeTokens({
@@ -258,9 +258,26 @@ export const getAllTokens = async (staker_address: string, collection_address: s
                 limit: 1,
                 offset: 0
             });
-            break;
         case NETWORK_CONSTANT.INTERGAZE:
+            return await new IntergazeService().getNftsWithPagination(
+                staker_address,
+                collection_address,
+                1,
+                0
+            );
+    }
+}
 
-            break;
+export const getAllNfts = async (staker_address: string, collection_address: string, network: string) => {
+    switch(network){
+        case NETWORK_CONSTANT.STARGAZE:
+            return await fetchStargazeTokens({
+                owner: staker_address,
+                collectionAddresses: [collection_address],
+                limit: 1,
+                offset: 0
+            });
+        case NETWORK_CONSTANT.INTERGAZE:
+            return await new IntergazeService().getNfts(staker_address, collection_address);
     }
 }

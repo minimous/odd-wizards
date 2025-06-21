@@ -241,7 +241,7 @@ const Banner = ({ items }: BannerProps) => {
                                 <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
                                     <div className="relative h-[calc(50vh)] md:h-[calc(50vh)]">
                                         <div className="w-full h-full rounded-[30px]">
-                                            <div className="relative w-full h-full rounded-[30px] overflow-hidden">
+                                            <div className="relative w-full h-full rounded-[30px]  border-2 border-[#2D253E] overflow-hidden">
                                                 {renderMedia(banner)}
                                                 <div className="absolute bottom-0 left-0 z-5 bg-gradient-to-b from-transparent via-black-75 to-black w-full p-10 pb-18 pl-8 md:pl-16">
                                                     <div className="flex gap-2">
@@ -340,7 +340,7 @@ const Banner = ({ items }: BannerProps) => {
                                                         className="relative transition-all duration-300 h-16 w-16 rounded-[5px] opacity-60 hover:opacity-100"
                                                     >
                                                         <img alt="banner preview" decoding="async"
-                                                            data-nimg="fill" className="object-cover absoulte w-full h-full"
+                                                            data-nimg="fill" className="object-cover absoulte w-full h-full rounded-[5px]"
                                                             src={bannerItem.banner_image}
                                                             style={{ inset: '0px', color: 'transparent' }}>
                                                         </img>
