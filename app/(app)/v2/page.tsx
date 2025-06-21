@@ -66,7 +66,7 @@ export default function HomePage() {
                         </div>
                     </div>
                     <div className="absolute top-[350px] top-[400px] transorm left-1/2 -translate-x-1/2 z-[999]">
-                        <a href="" className="flex items-center gap-2">Go To Leaderboard <MoveRight /> 🏆</a>
+                        <a className="flex items-center gap-2 text-muted">Go To Leaderboard <MoveRight /> 🏆</a>
                     </div>
                     <Globe className="top-[175px]" />
                     <div className="pointer-events-none absolute inset-0 h-full bg-[radial-gradient(circle_at_50%_200%,rgba(0,0,0,0.2),rgba(255,255,255,0))]" />

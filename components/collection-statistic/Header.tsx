@@ -25,10 +25,10 @@ const Header = ({
     onFiltersClick
 }: HeaderProps) => {
     return (
-        <div className="bg-[#15111D] rounded-[10px] py-2 px-4 flex items-center justify-between mb-2">
+        <div className="rounded-[10px] py-2 px-4 flex items-center justify-between mb-2">
             {/* Left Section */}
             <div className="flex items-center gap-4">
-                <a className='text-white cursor-pointer'>Collection</a>
+                <a className='text-white cursor-pointer text-lg'>Trending</a>
                 {/* <a className='text-sm text-[#857F94] cursor-pointer'>Holding</a> */}
             </div>
 

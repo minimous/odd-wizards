@@ -199,7 +199,7 @@ export default function ConnectButtonV2({ showProfile = true, className }: Conne
                 ) : (
                     <div className="flex items-center gap-x-3">
                         <Button
-                            className="px-5 py-2 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
+                            className="px-4 py-2 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
                             onClick={handleDisconnectWallet}
                             aria-label={address}
                         >

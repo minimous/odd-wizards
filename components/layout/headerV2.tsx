@@ -41,14 +41,14 @@ export default function HeaderV2() {
   }, []);
 
   return (
-    <header className="sticky inset-x-0 top-0 z-40 w-full bg-[#0D0A13] px-10 py-2">
-      <nav className="flex items-center justify-between mb-1">
+    <header className="sticky inset-x-0 top-0 z-40 w-full bg-[#0D0A13] px-10 border-b-2 border-[#2D253E]">
+      <nav className="flex items-center justify-between">
         <div className="flex items-center gap-8">
           <div className="relative">
             <Link
               href="/"
               aria-label="Home"
-              className="group rounded-[10px] overflow-hidden w-[50px] md:w-[55px] h-[40px] md:h-[50px] flex items-center justify-center"
+              className="group rounded-[10px] overflow-hidden w-[55px] md:w-[75px] h-[50px] md:h-[70px] flex items-center justify-center"
             >
               <img
                 src="/images/logov2.png"
@@ -64,7 +64,7 @@ export default function HeaderV2() {
           </div>
           <Link
             href="/v2"
-            className={cn("font-semibold hidden md:!flex transition-transform ", (path == "/" ? "text-white" : "text-gray-400 hover:text-white"))}
+            className={cn("font-semibold hidden md:!flex transition-transform ", (path == "/v2" ? "text-white" : "text-gray-400 hover:text-white"))}
           >
             NFT
           </Link>
