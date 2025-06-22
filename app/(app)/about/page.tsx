@@ -1,11 +1,11 @@
 'use client';
 import StakeSection from '@/components/home/StakeSection';
-import Header from '@/components/layout/header';
 import Carousel from '@/components/Carausel';
 import Leaderboard from '@/components/Leaderboard';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Footer } from '@/components/layout/footer';
 import Snowfall from 'react-snowfall';
+import HeaderV2 from '@/components/layout/headerV2';
 
 export default function About() {
   return (

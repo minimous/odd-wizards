@@ -1,5 +1,5 @@
 'use client';
-import Header from '@/components/layout/header';
+import HeaderV2 from '@/components/layout/headerV2';
 import { Footer } from '@/components/layout/footer';
 import { useEffect, useState } from 'react';
 import { mst_project } from '@prisma/client';
