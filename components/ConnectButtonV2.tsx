@@ -1,232 +1,237 @@
-"use client";
+'use client';
 
-import { useChain, useWallet } from "@cosmos-kit/react";
-import { Button } from "@/components/ui/button";
-import { WalletStatus } from '@cosmos-kit/core';
-import { useUser } from "@/hooks/useUser";
-import { DEFAULT_IMAGE_PROFILE } from "@/constants";
-import { cn, formatAddress } from "@/lib/utils";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import WalletConnectModal from "./modal/wallet-connect-modal";
-
-declare global {
-    interface Window {
-        ethereum?: {
-            request: (args: { method: string; params?: any[] }) => Promise<any>;
-        };
-    }
-}
+import { Button } from '@/components/ui/button';
+import { useUser } from '@/hooks/useUser';
+import { useWallet } from '@/hooks/useWallet';
+import { DEFAULT_IMAGE_PROFILE } from '@/constants';
+import { cn, formatAddress } from '@/lib/utils';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import WalletConnectModal from './modal/wallet/wallet-connect-modal';
 
 export interface ConnectButtonProps {
-    showProfile?: boolean,
-    className?: string
+  showProfile?: boolean;
+  className?: string;
+  defaultChain?: string;
 }
 
-export default function ConnectButtonV2({ showProfile = true, className }: ConnectButtonProps) {
-    const wallet = useWallet();
-    const { user: dataUser } = useUser();
-    const [user, setUser] = useState(dataUser);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isConnecting, setIsConnecting] = useState(false);
-    const { connect, disconnect, address } = useChain("stargaze");
-    const { toast } = useToast();
+export default function ConnectButtonV2({
+  showProfile = true,
+  className,
+  defaultChain = 'stargaze'
+}: ConnectButtonProps) {
+  const { user: dataUser } = useUser();
+  const [user, setUser] = useState(dataUser);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
 
-    // Pre-initialize chain hooks for supported Cosmos chains
-    const stargazeChain = useChain("stargaze");
-    const osmosisChain = useChain("osmosis");
-    const junoChain = useChain("juno");
-    // Add other Cosmos chains as needed
+  // Use the new wallet hook
+  const {
+    isConnected,
+    isConnecting,
+    isDisconnecting,
+    address,
+    walletId,
+    chainName,
+    currentWallet,
+    connectWallet,
+    disconnectWallet,
+    error,
+    clearError,
+    refreshWalletInfo
+  } = useWallet(defaultChain);
 
-    useEffect(() => {
-        setUser(dataUser);
-    }, [dataUser])
+  useEffect(() => {
+    setUser(dataUser);
+  }, [dataUser]);
 
-    // Helper function to get the appropriate chain hook
-    const getChainHook = (chainId: string) => {
-        switch (chainId) {
-            case "stargaze":
-                return stargazeChain;
-            case "osmosis":
-                return osmosisChain;
-            case "juno":
-                return junoChain;
-            // Add other cases as needed
-            default:
-                return stargazeChain; // fallback
-        }
-    };
+  // Handle wallet connection success from modal
+  const handleConnectWallet = async (
+    selectedWalletId: string,
+    selectedWalletType: 'stargaze' | 'ethereum'
+  ) => {
+    try {
+      clearError();
 
-    // Handle connecting to specific chain
-    const handleConnectChain = async (chainId: string, chainType: 'cosmos' | 'evm') => {
-        setIsConnecting(true);
-        try {
-            if (chainType === 'cosmos') {
-                // Handle Cosmos chains connection
-                const chainHook = getChainHook(chainId);
-                await chainHook.connect();
-                toast({
-                    title: "Connected!",
-                    description: `Successfully connected to ${chainId}`,
-                });
-            } else {
-                // Handle EVM chains connection
-                if (typeof window !== 'undefined' && window.ethereum) {
-                    const chainConfigs: { [key: string]: any } = {
-                        ethereum: { chainId: '0x1', chainName: 'Ethereum Mainnet' },
-                        polygon: { 
-                            chainId: '0x89', 
-                            chainName: 'Polygon Mainnet',
-                            rpcUrls: ['https://polygon-rpc.com/'],
-                            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }
-                        },
-                        bsc: { 
-                            chainId: '0x38', 
-                            chainName: 'BNB Smart Chain',
-                            rpcUrls: ['https://bsc-dataseed.binance.org/'],
-                            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }
-                        },
-                        arbitrum: { 
-                            chainId: '0xa4b1', 
-                            chainName: 'Arbitrum One',
-                            rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-                            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }
-                        }
-                    };
+      // Map modal wallet types to hook wallet types
+      const walletTypeMap = {
+        stargaze: 'stargaze' as const,
+        ethereum: 'evm' as const
+      };
 
-                    const chainConfig = chainConfigs[chainId];
-                    if (chainConfig && chainId !== 'ethereum') {
-                        try {
-                            await window.ethereum.request({
-                                method: 'wallet_addEthereumChain',
-                                params: [chainConfig],
-                            });
-                        } catch (addError: any) {
-                            if (addError.code === 4902) {
-                                await window.ethereum.request({
-                                    method: 'wallet_switchEthereumChain',
-                                    params: [{ chainId: chainConfig.chainId }],
-                                });
-                            }
-                        }
-                    } else if (chainId === 'ethereum') {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: '0x1' }],
-                        });
-                    }
+      const mappedWalletType = walletTypeMap[selectedWalletType];
 
-                    const accounts = await window.ethereum.request({
-                        method: 'eth_requestAccounts',
-                    });
+      await connectWallet(selectedWalletId, mappedWalletType);
 
-                    toast({
-                        title: "Connected!",
-                        description: `Successfully connected to ${chainConfig.chainName}`,
-                    });
-                } else {
-                    toast({
-                        title: "MetaMask not found",
-                        description: "Please install MetaMask to connect to EVM chains",
-                        variant: "destructive"
-                    });
-                }
-            }
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error("Error connecting to chain:", error);
-            toast({
-                title: "Connection failed",
-                description: "Failed to connect to the selected chain",
-                variant: "destructive"
-            });
-        } finally {
-            setIsConnecting(false);
-        }
-    };
+      toast({
+        variant: 'success',
+        title: 'Connected!',
+        description: `Successfully connected to ${selectedWalletId}`
+      });
 
-    // Handle disconnecting the wallet
-    const handleDisconnectWallet = async () => {
-        try {
-            await disconnect();
-        } catch (error) {
-            console.error("Error disconnecting wallet:", error);
-        }
-    };
+      setIsModalOpen(false);
+    } catch (error: any) {
+      console.error('Error connecting wallet:', error);
+      toast({
+        title: 'Connection failed',
+        description: error.message || 'Failed to connect wallet',
+        variant: 'destructive'
+      });
+    }
+  };
 
-    return (
-        <>
-            <div className="">
-                {wallet.status != WalletStatus.Connected ? (
-                    <Button
-                        variant="ghost"
-                        className={cn("px-4 py-2 h-max text-black rounded-xl bg-white hover:bg-white hover:text-black", className)}
-                        onClick={() => setIsModalOpen(true)}
-                        aria-label="Connect"
-                    >
-                        <div className="text-sm font-bold flex items-center">
-                            {wallet.status == WalletStatus.Connecting || isConnecting ? (
-                                <div className="flex items-center gap-2">
-                                    <svg
-                                        className="animate-spin h-5 w-5 mr-3"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        stroke="black"
-                                    >
-                                        <circle
-                                            className="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            strokeWidth="4"
-                                        ></circle>
-                                        <path
-                                            className="opacity-75"
-                                            fill="black"
-                                            d="M4 12a8 8 0 018-8V0C6.373 0 0 6.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                        ></path>
-                                    </svg>
-                                    Connecting
-                                </div>
-                            ) : (
-                                <span>Connect Wallet</span>
-                            )}
-                        </div>
-                    </Button>
-                ) : (
-                    <div className="flex items-center gap-x-3">
-                        <Button
-                            className="px-4 py-2 h-max font-black text-black rounded-xl bg-white hover:bg-white hover:text-black"
-                            onClick={handleDisconnectWallet}
-                            aria-label={address}
-                        >
-                            <span className="text-sm md:!text-2xl font-black">{formatAddress(address)}</span>
-                        </Button>
-                        <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                            <Link href={`/p/${address}`} >
-                                <img 
-                                    hidden={!showProfile} 
-                                    src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} 
-                                    onError={(e: any) => {
-                                        e.target.src = DEFAULT_IMAGE_PROFILE;
-                                    }} 
-                                    className="w-[50px] h-[50px] rounded-full hover:scale-105" 
-                                />
-                            </Link>
-                        </div>
-                    </div>
+  // Handle disconnecting the wallet
+  const handleDisconnectWallet = async () => {
+    try {
+      clearError();
+      await disconnectWallet();
+
+      toast({
+        variant: 'success',
+        title: 'Disconnected',
+        description: 'Wallet disconnected successfully'
+      });
+    } catch (error: any) {
+      console.error('Error disconnecting wallet:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to disconnect wallet',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Show error toast when error occurs
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Wallet Error',
+        description: error,
+        variant: 'destructive'
+      });
+    }
+  }, [error, toast]);
+
+  // Refresh wallet info periodically
+  useEffect(() => {
+    if (isConnected && currentWallet) {
+      const interval = setInterval(() => {
+        refreshWalletInfo();
+      }, 30000); // Refresh every 30 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [isConnected, currentWallet, refreshWalletInfo]);
+
+  const isLoading = isConnecting || isDisconnecting;
+
+  return (
+    <>
+      <div className="">
+        {!isConnected ? (
+          <Button
+            variant="ghost"
+            className={cn(
+              'h-max rounded-xl bg-white px-4 py-2 text-black transition-all duration-200 hover:bg-white hover:text-black',
+              isLoading && 'cursor-not-allowed opacity-75',
+              className
+            )}
+            onClick={() => setIsModalOpen(true)}
+            disabled={isLoading}
+            aria-label="Connect wallet"
+          >
+            <div className="flex items-center text-sm font-bold">
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <svg
+                    className="mr-3 h-5 w-5 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke="black"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="black"
+                      d="M4 12a8 8 0 018-8V0C6.373 0 0 6.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  {isConnecting ? 'Connecting' : 'Disconnecting'}
+                </div>
+              ) : (
+                <span>Connect Wallet</span>
+              )}
+            </div>
+          </Button>
+        ) : (
+          <div className="flex items-center gap-x-3">
+            <div className="flex flex-col items-end">
+              <Button
+                className={cn(
+                  'h-max rounded-xl bg-white px-4 py-2 font-black text-black transition-all duration-200 hover:bg-white hover:text-black',
+                  isLoading && 'cursor-not-allowed opacity-75'
                 )}
+                onClick={handleDisconnectWallet}
+                disabled={isLoading}
+                aria-label={`Disconnect wallet - ${address}`}
+              >
+                <span className="text-sm font-black">
+                  {formatAddress(address ?? '-')}
+                </span>
+              </Button>
+
+              {/* Wallet info */}
+              {/* <div className="text-xs text-gray-400 mt-1 text-right">
+                                <div className="flex items-center gap-1">
+                                    <span className={cn(
+                                        "inline-block w-2 h-2 rounded-full",
+                                        walletType === 'stargaze' ? "bg-purple-500" : "bg-blue-500"
+                                    )} />
+                                    <span>{currentWallet?.name}</span>
+                                    {chainName && (
+                                        <>
+                                            <span>•</span>
+                                            <span>{chainName}</span>
+                                        </>
+                                    )}
+                                </div>
+                            </div> */}
             </div>
 
-            <WalletConnectModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                loading={isConnecting}
-                onConnectWallet={handleConnectChain}
-            />
-        </>
-    )
+            {showProfile && (
+              <div className="h-[40px] w-[40px] overflow-hidden rounded-full">
+                <Link href={`/p/${address}`}>
+                  <img
+                    src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE}
+                    onError={(e: any) => {
+                      e.target.src = DEFAULT_IMAGE_PROFILE;
+                    }}
+                    className="h-[40px] w-[40px] rounded-full transition-transform duration-200 hover:scale-105"
+                    alt="Profile"
+                  />
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <WalletConnectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        loading={isLoading}
+        onConnectWallet={handleConnectWallet}
+        chainName={defaultChain}
+      />
+    </>
+  );
 }
