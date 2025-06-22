@@ -379,7 +379,8 @@ export default function WalletConnectModal({
                           No Wallets Found
                         </h3>
                         <p className="mb-4 text-sm text-gray-400">
-                          You don't have any {selectedType} wallets installed.
+                          You don&apos;t have any {selectedType} wallets
+                          installed.
                         </p>
                       </div>
                       <Button
