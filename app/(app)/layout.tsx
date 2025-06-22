@@ -8,8 +8,8 @@ export const metadata = {
   title: 'Odds Wizard',
   description: 'Stake, Win, and LFGODDS!',
   openGraph: {
-    type: "website",
-    url: "https://www.oddsgarden.io",
+    type: 'website',
+    url: 'https://www.oddsgarden.io',
     title: 'Odds Wizard',
     description: 'Stake, Win, and LFGODDS!',
     images: [
@@ -34,16 +34,15 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-
   return (
     <div className="relative flex bg-black">
       <main className="h-screen w-full bg-black">
         <ChainProviderWrapper>
           <HeaderMobile />
           {/* <MobileComingSoon /> */}
-          {/* <Header /> */}
+          {/* <HeaderV2 /> */}
           {/* <NavPrice /> */}
-          <ScrollArea className="w-full h-screen">
+          <ScrollArea className="h-screen w-full">
             <div className="mx-auto w-screen 2xl:max-w-[1920px]">
               {children}
             </div>
