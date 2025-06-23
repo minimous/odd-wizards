@@ -1,4 +1,5 @@
 import HeaderMobile from '@/components/layout/HeaderMobile';
+import HeaderV2 from '@/components/layout/headerV2';
 import { MobileComingSoon } from '@/components/MobileComingSoon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ChainProviderWrapper from '@/providers/chain-provider-wrapper';
@@ -40,9 +41,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <ChainProviderWrapper>
           <HeaderMobile />
           {/* <MobileComingSoon /> */}
-          {/* <HeaderV2 /> */}
+          <HeaderV2 />
           {/* <NavPrice /> */}
-          <ScrollArea className="h-screen w-full">
+          <ScrollArea className="h-[calc(100vh-70px)] w-full">
             <div className="mx-auto w-screen 2xl:max-w-[1920px]">
               {children}
             </div>

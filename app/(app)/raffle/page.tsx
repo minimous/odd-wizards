@@ -163,10 +163,9 @@ export default function Stake() {
 
   return (
     <div className="relative w-full bg-black">
-      <HeaderV2 />
       <div>
         <div className="grid">
-          <div className="mx-auto mt-16 grid items-center justify-between gap-x-32 px-0 py-4 text-left md:!mt-16 md:flex md:!px-16 md:!py-6">
+          <div className="mx-auto grid items-center justify-between gap-x-32 px-0 py-4 text-left md:flex md:!px-16 md:!py-6">
             <div>
               <div>
                 <div

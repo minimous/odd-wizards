@@ -39,7 +39,7 @@ export default function HeaderV2() {
   }, []);
 
   return (
-    <header className="sticky inset-x-0 top-0 z-40 w-full border-b-2 border-[#2D253E] bg-[#0D0A13] px-10">
+    <header className="sticky inset-x-0 top-0 z-40 w-full border-b border-[#2D253E] bg-[#0D0A13] px-10">
       <nav className="flex items-center justify-between">
         <div className="flex items-center gap-8">
           <div className="relative">
@@ -124,7 +124,7 @@ export default function HeaderV2() {
             href="/raffle"
             className={cn(
               'hidden font-semibold transition-transform md:!flex ',
-              path == '/challenge'
+              path == '/raffle'
                 ? 'text-white'
                 : 'text-gray-400 hover:text-white'
             )}
