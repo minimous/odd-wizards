@@ -15,7 +15,7 @@ import { useToast } from '../../ui/use-toast';
 import { ScrollArea } from '../../ui/scroll-area';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wallet, ExternalLink, Download } from 'lucide-react';
+import { ArrowLeft, Wallet, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import useChainRegistry from '@/hooks/useChainRegistry';
 import { WalletConfig } from '@/types/wallet';
@@ -46,7 +46,6 @@ export default function WalletConnectModal({
     'stargaze' | 'ethereum' | null
   >(null);
   const [connecting, setConnecting] = useState<string | null>(null);
-  const [showMoreWallets, setShowMoreWallets] = useState(false);
   const { toast } = useToast();
 
   // Use chain registry data
@@ -145,6 +144,11 @@ export default function WalletConnectModal({
   };
 
   const handleWalletSelect = async (wallet: WalletConfig) => {
+    // Only proceed if wallet is installed
+    if (!isWalletInstalled(wallet.id)) {
+      return;
+    }
+
     if (selectedType === 'stargaze') {
       await handleStargazeWalletSelect(wallet);
     } else if (selectedType === 'ethereum') {
@@ -162,36 +166,40 @@ export default function WalletConnectModal({
     return [];
   };
 
-  // Separate installed and not installed wallets
-  const getInstalledWallets = (
+  // New function to get sorted wallets (installed first)
+  const getSortedWalletsForType = (
     type: 'stargaze' | 'ethereum'
-  ): WalletConfig[] => {
-    return getWalletsForType(type).filter((wallet) =>
-      isWalletInstalled(wallet.id)
-    );
-  };
+  ): WalletConfig[] | [] => {
+    const wallets = getWalletsForType(type);
 
-  const getNotInstalledWallets = (
-    type: 'stargaze' | 'ethereum'
-  ): WalletConfig[] => {
-    return getWalletsForType(type).filter(
-      (wallet) => !isWalletInstalled(wallet.id)
-    );
+    // Sort wallets: installed first, then non-installed
+    return wallets.sort((a, b) => {
+      const aInstalled = isWalletInstalled(a.id);
+      const bInstalled = isWalletInstalled(b.id);
+
+      // If both are installed or both are not installed, maintain original order
+      if (aInstalled === bInstalled) {
+        return 0;
+      }
+
+      // If a is installed and b is not, a comes first
+      if (aInstalled && !bInstalled) {
+        return -1;
+      }
+
+      // If b is installed and a is not, b comes first
+      return 1;
+    });
   };
 
   const resetModal = () => {
     setSelectedType(null);
     setConnecting(null);
-    setShowMoreWallets(false);
     onClose();
   };
 
   const handleBackToWallets = () => {
-    if (showMoreWallets) {
-      setShowMoreWallets(false);
-    } else {
-      setSelectedType(null);
-    }
+    setSelectedType(null);
   };
 
   const isWalletConnecting = (walletId: string) => {
@@ -215,7 +223,7 @@ export default function WalletConnectModal({
         <div className="w-full text-white">
           {/* Header */}
           <div className="flex items-center gap-4 px-6 pb-4 pt-6">
-            {(selectedType || showMoreWallets) && (
+            {selectedType && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -233,9 +241,7 @@ export default function WalletConnectModal({
               <div>
                 <h2 className="text-2xl font-bold">Connect Wallet</h2>
                 <p className="text-sm text-gray-400">
-                  {showMoreWallets
-                    ? 'Install additional wallets'
-                    : selectedType
+                  {selectedType
                     ? `Choose your ${selectedType.toUpperCase()} wallet`
                     : 'Choose your preferred blockchain'}
                 </p>
@@ -243,11 +249,9 @@ export default function WalletConnectModal({
             </div>
           </div>
 
-          <ScrollArea
-            className={cn((selectedType || showMoreWallets) && 'h-[60vh]')}
-          >
+          <ScrollArea className={cn(selectedType && 'h-[60vh]')}>
             <div className="px-6 py-6">
-              {!selectedType && !showMoreWallets ? (
+              {!selectedType ? (
                 // Chain Type Selection
                 <div className="space-y-4">
                   <div
@@ -301,95 +305,75 @@ export default function WalletConnectModal({
                     </div>
                   </div>
                 </div>
-              ) : showMoreWallets ? (
-                // More Wallets (Not Installed)
-                <div className="space-y-3">
-                  {getNotInstalledWallets(selectedType!).map((wallet) => (
-                    <div
-                      key={wallet.id}
-                      className="rounded-xl border border-gray-700 bg-gray-800/50 p-4 transition-all duration-200 hover:border-gray-600"
-                    >
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={wallet.logo}
-                          alt={wallet.name}
-                          className="h-10 w-10 rounded-lg"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-white">
-                            {wallet.name}
-                          </h3>
-                          <p className="text-sm text-gray-400">Not installed</p>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={() => handleInstallWallet(wallet)}
-                          className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                          <Download className="h-4 w-4" />
-                          Install
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                  {getNotInstalledWallets(selectedType!).length === 0 && (
-                    <div className="py-8 text-center text-gray-400">
-                      <p>All wallets are already installed!</p>
-                    </div>
-                  )}
-                </div>
               ) : (
-                // Installed Wallet Selection
+                // All Wallets List (Sorted: Installed first, then Not Installed)
                 <div className="space-y-3">
-                  {getInstalledWallets(selectedType!).map((wallet) => (
-                    <WalletItem
-                      key={wallet.id}
-                      wallet={wallet}
-                      isConnecting={isWalletConnecting(wallet.id)}
-                      isInstalled={true}
-                      onConnect={handleWalletSelect}
-                      chainInfo={
-                        selectedType === 'stargaze' ? chainInfo : undefined
-                      }
-                    />
-                  ))}
+                  {getSortedWalletsForType(selectedType!).map((wallet) => {
+                    const installed = isWalletInstalled(wallet.id);
+                    const connecting = isWalletConnecting(wallet.id);
 
-                  {/* Show More Wallets Button */}
-                  {getNotInstalledWallets(selectedType!).length > 0 && (
-                    <div className="border-t border-gray-700 pt-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowMoreWallets(true)}
-                        className="w-full gap-2 border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-                        disabled={!!connecting}
+                    return (
+                      <div
+                        key={wallet.id}
+                        className={cn(
+                          'group rounded-xl p-2 transition-all duration-200',
+                          !connecting && 'cursor-pointer'
+                        )}
+                        onClick={() =>
+                          installed && !connecting && handleWalletSelect(wallet)
+                        }
                       >
-                        <ExternalLink className="h-4 w-4" />
-                        More Wallets (
-                        {getNotInstalledWallets(selectedType!).length})
-                      </Button>
-                    </div>
-                  )}
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={wallet.logo}
+                            alt={wallet.name}
+                            className="h-10 w-10 rounded-[10px]"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-white">
+                              {wallet.name}
+                            </h3>
+                          </div>
+                          <div className="flex min-w-[80px] items-center justify-end text-right">
+                            {installed ? (
+                              <div className="relative">
+                                <span className="text-gray-400 transition-opacity duration-100 group-hover:opacity-0">
+                                  Installed
+                                </span>
+                                <span className="absolute inset-0 text-white opacity-0 transition-opacity duration-100 group-hover:opacity-100">
+                                  Connect
+                                </span>
+                              </div>
+                            ) : (
+                              <a
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleInstallWallet(wallet);
+                                }}
+                                className="flex items-center gap-2 bg-transparent text-gray-400 group-hover:text-white"
+                              >
+                                <Download className="h-4 w-4" />
+                                Install
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
 
-                  {/* No Wallets Installed Message */}
-                  {getInstalledWallets(selectedType!).length === 0 && (
+                  {/* No Wallets Available Message */}
+                  {getSortedWalletsForType(selectedType!).length === 0 && (
                     <div className="py-8 text-center">
                       <div className="mb-4">
                         <Wallet className="mx-auto mb-2 h-12 w-12 text-gray-500" />
                         <h3 className="mb-2 text-lg font-semibold text-white">
-                          No Wallets Found
+                          No Wallets Available
                         </h3>
-                        <p className="mb-4 text-sm text-gray-400">
-                          You don&apos;t have any {selectedType} wallets
-                          installed.
+                        <p className="text-sm text-gray-400">
+                          No {selectedType} wallets are configured.
                         </p>
                       </div>
-                      <Button
-                        onClick={() => setShowMoreWallets(true)}
-                        className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
-                      >
-                        <Download className="h-4 w-4" />
-                        Install Wallets
-                      </Button>
                     </div>
                   )}
                 </div>

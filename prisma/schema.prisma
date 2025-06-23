@@ -284,4 +284,8 @@ model mst_banners {
   banner_discord      String?
   banner_seqn         Int?
   banner_type         String?
+  banner_network      String?
+  banner_creator      String?
+  banner_minted_date  DateTime?
+  banner_title        String?
 }

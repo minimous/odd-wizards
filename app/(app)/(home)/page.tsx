@@ -45,8 +45,8 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="h-full w-full">
-      <HeaderV2 />
+    <div className="relative h-full w-full">
+      {/* <HeaderV2 /> */}
       <Banner items={banners} />
       <div className="mt-4">
         <NFTCollectionsTable />

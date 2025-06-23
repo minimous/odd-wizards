@@ -56,7 +56,7 @@ export default function Stake({ params }: { params: { projectid: string } }) {
 
   return (
     <div className="relative w-full bg-black">
-      <HeaderV2 />
+      {/* <HeaderV2 /> */}
       <div className="relative h-[175px] w-full overflow-hidden bg-black md:h-[70vh]">
         <div className="absolute top-0 z-10 h-[100px] w-full bg-gradient-to-b from-black to-transparent md:h-[250px]" />
         <div className="absolute bottom-0 z-10 h-[100px] w-full bg-gradient-to-b from-transparent to-black md:h-[250px]" />

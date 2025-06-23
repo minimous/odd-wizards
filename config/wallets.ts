@@ -1,6 +1,17 @@
 import { wallets } from 'cosmos-kit';
 import { WalletConfig } from '@/types/wallet';
 
+const stargazeWallets = [
+  'keplr-extension',
+  'keplr-mobile',
+  'leap-extension',
+  'leap-cosmos-mobile',
+  'leap-metamask-cosmos-snap',
+  'xdefi-extension',
+  'station-extension',
+  'cosmostation-extension'
+];
+
 // Helper function to get wallet logo
 const getWalletLogo = (walletName: string, logo?: string): string => {
   if (logo) return logo;
@@ -56,7 +67,7 @@ export const STARGAZE_WALLETS: WalletConfig[] = wallets
   .filter((wallet) => {
     // Most cosmos-kit wallets support multiple chains including Stargaze
     // We'll include all wallets and let the user choose
-    return true;
+    return stargazeWallets.includes(wallet.walletName);
   })
   .map((wallet) => ({
     id: wallet.walletName,
