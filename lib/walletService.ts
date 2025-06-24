@@ -28,6 +28,8 @@ export interface WalletConnectionResult {
 }
 
 export default class WalletService {
+  private static readonly LEAP_SNAP_ID = 'npm:@leapwallet/metamask-cosmos-snap';
+
   /**
    * Connect to any supported wallet by ID
    */
@@ -92,8 +94,9 @@ export default class WalletService {
       case 'walletconnect':
         return await this.connectWalletConnect(chainConfig);
 
+      case 'leap-metamask-cosmos-snap':
       case 'metamask':
-        return await this.connectMetaMask();
+        return await this.connectLeapSnap(chainConfig);
 
       default:
         // Try generic cosmos wallet connection for unlisted wallets
@@ -162,6 +165,14 @@ export default class WalletService {
     }
 
     try {
+      // Try to suggest chain first if available
+      if (window.cosmostation.providers?.keplr) {
+        await this.suggestChain(
+          window.cosmostation.providers.keplr,
+          chainConfig
+        );
+      }
+
       const account = await window.cosmostation.cosmos.request({
         method: 'cos_requestAccount',
         params: {
@@ -343,6 +354,16 @@ export default class WalletService {
       throw new Error('Ledger extension not found');
     }
 
+    // Ledger might not support experimentalSuggestChain, so we try to enable directly
+    try {
+      await this.suggestChain(window.ledger, chainConfig);
+    } catch (error) {
+      console.warn(
+        'Ledger chain suggestion failed, continuing with enable:',
+        error
+      );
+    }
+
     await window.ledger.enable(chainConfig.chainId);
 
     const key = await window.ledger.getKey(chainConfig.chainId);
@@ -387,6 +408,258 @@ export default class WalletService {
   }
 
   /**
+   * Check if Leap Cosmos Snap is installed and initialized
+   */
+  private static async isSnapInstalled(): Promise<boolean> {
+    if (!window.ethereum) return false;
+
+    try {
+      const snaps = await window.ethereum.request({
+        method: 'wallet_getSnaps'
+      });
+      return Object.keys(snaps).includes(this.LEAP_SNAP_ID);
+    } catch (error) {
+      console.warn('Error checking snap installation:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Install Leap Cosmos Snap if not already installed
+   */
+  private static async installSnap(): Promise<void> {
+    if (!window.ethereum) {
+      throw new Error('MetaMask not found');
+    }
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_requestSnaps',
+        params: {
+          [this.LEAP_SNAP_ID]: {
+            version: '^0.1.0'
+          }
+        }
+      });
+    } catch (error: any) {
+      if (error.code === 4001) {
+        throw new Error('User rejected snap installation');
+      }
+      throw new Error(`Failed to install Leap Cosmos Snap: ${error.message}`);
+    }
+  }
+
+  /**
+   * Check if snap is initialized
+   */
+  private static async isSnapInitialized(): Promise<boolean> {
+    try {
+      const response = await window.ethereum.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: this.LEAP_SNAP_ID,
+          request: {
+            method: 'initialized'
+          }
+        }
+      });
+      return response?.data?.initialized === true;
+    } catch (error) {
+      console.warn('Error checking snap initialization:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Initialize Leap Cosmos Snap
+   */
+  private static async initializeSnap(): Promise<void> {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: this.LEAP_SNAP_ID,
+          request: {
+            method: 'initialize'
+          }
+        }
+      });
+    } catch (error: any) {
+      throw new Error(
+        `Failed to initialize Leap Cosmos Snap: ${error.message}`
+      );
+    }
+  }
+
+  /**
+   * Setup Leap Cosmos Snap (install and initialize if needed)
+   */
+  private static async setupLeapSnap(): Promise<void> {
+    // Check if snap is installed
+    if (!(await this.isSnapInstalled())) {
+      await this.installSnap();
+    }
+
+    // Check if snap is initialized
+    // if (!(await this.isSnapInitialized())) {
+    //   await this.initializeSnap();
+    // }
+  }
+
+  /**
+   * Suggest chain to Leap Cosmos Snap
+   */
+  private static async suggestChainToSnap(
+    chainConfig: ChainConfig
+  ): Promise<void> {
+    try {
+      const chainInfo = {
+        chainId: chainConfig.chainId,
+        chainName: chainConfig.chainName,
+        rpc: chainConfig.rpc,
+        rest: chainConfig.rest,
+        bip44: {
+          coinType: chainConfig.coinType
+        },
+        bech32Config: {
+          bech32PrefixAccAddr: chainConfig.bech32Prefix,
+          bech32PrefixAccPub: `${chainConfig.bech32Prefix}pub`,
+          bech32PrefixValAddr: `${chainConfig.bech32Prefix}valoper`,
+          bech32PrefixValPub: `${chainConfig.bech32Prefix}valoperpub`,
+          bech32PrefixConsAddr: `${chainConfig.bech32Prefix}valcons`,
+          bech32PrefixConsPub: `${chainConfig.bech32Prefix}valconspub`
+        },
+        currencies: chainConfig.currencies || [
+          {
+            coinDenom: chainConfig.currency?.coinDenom || 'STARS',
+            coinMinimalDenom:
+              chainConfig.currency?.coinMinimalDenom || 'ustars',
+            coinDecimals: chainConfig.currency?.coinDecimals || 6
+          }
+        ],
+        feeCurrencies: chainConfig.feeCurrencies || [
+          {
+            coinDenom: chainConfig.currency?.coinDenom || 'STARS',
+            coinMinimalDenom:
+              chainConfig.currency?.coinMinimalDenom || 'ustars',
+            coinDecimals: chainConfig.currency?.coinDecimals || 6,
+            gasPriceStep: chainConfig.gasPriceStep || {
+              low: 0.01,
+              average: 0.025,
+              high: 0.04
+            }
+          }
+        ],
+        stakeCurrency: chainConfig.stakeCurrency || {
+          coinDenom: chainConfig.currency?.coinDenom || 'STARS',
+          coinMinimalDenom: chainConfig.currency?.coinMinimalDenom || 'ustars',
+          coinDecimals: chainConfig.currency?.coinDecimals || 6
+        }
+      };
+
+      await window.ethereum.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: this.LEAP_SNAP_ID,
+          request: {
+            method: 'suggestChain',
+            params: {
+              chainInfo
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.warn('Chain suggestion to snap failed:', error);
+      // Continue without throwing, as the chain might already be added
+    }
+  }
+
+  /**
+   * Get account from Leap Cosmos Snap
+   */
+  private static async getSnapAccount(chainId: string): Promise<any> {
+    try {
+      const response = await window.ethereum.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: this.LEAP_SNAP_ID,
+          request: {
+            method: 'getKey',
+            params: {
+              chainId: chainId
+            }
+          }
+        }
+      });
+
+      return response;
+    } catch (error: any) {
+      if (
+        error.code === -32603 &&
+        error.message?.includes('Method not found')
+      ) {
+        throw new Error(
+          'Snap method not supported. Please update Leap Cosmos Snap.'
+        );
+      }
+      if (error.code === -32601) {
+        throw new Error(
+          'Snap method not found. Please ensure you have the latest version.'
+        );
+      }
+      throw new Error(`Failed to get account: ${error.message}`);
+    }
+  }
+
+  /**
+   * Connect to Leap Cosmos Snap for MetaMask
+   */
+  static async connectLeapSnap(
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    if (!window.ethereum?.isMetaMask) {
+      throw new Error('MetaMask extension not found');
+    }
+
+    try {
+      // Setup snap (install and initialize if needed)
+      await this.setupLeapSnap();
+
+      // Suggest chain to snap
+      await this.suggestChainToSnap(chainConfig);
+
+      // Get account info
+      const account = await this.getSnapAccount(chainConfig.chainId);
+
+      if (!account?.address) {
+        throw new Error(`No account found for ${chainConfig.chainName}`);
+      }
+
+      return {
+        address: account.address,
+        publicKey: account.pubKey,
+        name: account.name || `Leap Snap ${chainConfig.chainName} Account`,
+        algo: account.algo || 'secp256k1'
+      };
+    } catch (error: any) {
+      if (error.code === 4001) {
+        throw new Error('User rejected the connection request');
+      }
+
+      // Re-throw our custom errors
+      if (
+        error.message.includes('Snap method') ||
+        error.message.includes('No account found')
+      ) {
+        throw error;
+      }
+
+      throw new Error(`Leap Cosmos Snap connection failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Connect to WalletConnect
    */
   static async connectWalletConnect(
@@ -412,9 +685,7 @@ export default class WalletService {
 
     try {
       // Try to suggest chain if the method exists
-      if (wallet.experimentalSuggestChain) {
-        await this.suggestChain(wallet, chainConfig);
-      }
+      await this.suggestChain(wallet, chainConfig);
 
       // Enable the chain
       if (wallet.enable) {
@@ -448,7 +719,7 @@ export default class WalletService {
     if (!wallet.experimentalSuggestChain) return;
 
     try {
-      await wallet.experimentalSuggestChain({
+      const chainInfo = {
         chainId: chainConfig.chainId,
         chainName: chainConfig.chainName,
         rpc: chainConfig.rpc,
@@ -464,18 +735,20 @@ export default class WalletService {
           bech32PrefixConsAddr: `${chainConfig.bech32Prefix}valcons`,
           bech32PrefixConsPub: `${chainConfig.bech32Prefix}valconspub`
         },
-        currencies: [
+        currencies: chainConfig.currencies || [
           {
-            coinDenom: 'STARS',
-            coinMinimalDenom: 'ustars',
-            coinDecimals: 6
+            coinDenom: chainConfig.currency?.coinDenom || 'STARS',
+            coinMinimalDenom:
+              chainConfig.currency?.coinMinimalDenom || 'ustars',
+            coinDecimals: chainConfig.currency?.coinDecimals || 6
           }
         ],
-        feeCurrencies: [
+        feeCurrencies: chainConfig.feeCurrencies || [
           {
-            coinDenom: 'STARS',
-            coinMinimalDenom: 'ustars',
-            coinDecimals: 6,
+            coinDenom: chainConfig.currency?.coinDenom || 'STARS',
+            coinMinimalDenom:
+              chainConfig.currency?.coinMinimalDenom || 'ustars',
+            coinDecimals: chainConfig.currency?.coinDecimals || 6,
             gasPriceStep: chainConfig.gasPriceStep || {
               low: 0.01,
               average: 0.025,
@@ -483,14 +756,17 @@ export default class WalletService {
             }
           }
         ],
-        stakeCurrency: {
-          coinDenom: 'STARS',
-          coinMinimalDenom: 'ustars',
-          coinDecimals: 6
+        stakeCurrency: chainConfig.stakeCurrency || {
+          coinDenom: chainConfig.currency?.coinDenom || 'STARS',
+          coinMinimalDenom: chainConfig.currency?.coinMinimalDenom || 'ustars',
+          coinDecimals: chainConfig.currency?.coinDecimals || 6
         }
-      });
+      };
+
+      await wallet.experimentalSuggestChain(chainInfo);
     } catch (error) {
       console.warn('Failed to suggest chain:', error);
+      // Don't throw error here, as the chain might already be added
     }
   }
 
@@ -520,6 +796,7 @@ export default class WalletService {
       'ledger-extension': () => !!window.ledger,
       ledger: () => !!window.ledger,
       metamask: () => !!window.ethereum?.isMetaMask,
+      'leap-metamask-cosmos-snap': () => !!window.ethereum?.isMetaMask,
       walletconnect: () => true // WalletConnect doesn't require installation
     };
 
@@ -661,6 +938,53 @@ export default class WalletService {
         );
       }
       throw switchError;
+    }
+  }
+
+  /**
+   * Check if Leap Cosmos Snap is installed
+   */
+  static async isLeapSnapInstalled(): Promise<boolean> {
+    return await this.isSnapInstalled();
+  }
+
+  /**
+   * Debug: Get detailed error information for Leap Snap
+   */
+  static async debugLeapSnap(): Promise<any> {
+    if (!window.ethereum) {
+      return { error: 'MetaMask not found' };
+    }
+
+    try {
+      // Check installed snaps
+      const snaps = await window.ethereum.request({
+        method: 'wallet_getSnaps'
+      });
+
+      const isInstalled = this.LEAP_SNAP_ID in snaps;
+
+      if (!isInstalled) {
+        return {
+          error: 'Leap Cosmos Snap not installed',
+          installedSnaps: Object.keys(snaps)
+        };
+      }
+
+      // Get snap info
+      const snapInfo = snaps[this.LEAP];
+
+      return {
+        snapInstalled: true,
+        snapInfo: snapInfo,
+        snapId: snapId
+      };
+    } catch (error: any) {
+      return {
+        error: error.message,
+        code: error.code,
+        details: error
+      };
     }
   }
 }

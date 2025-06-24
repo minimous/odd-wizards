@@ -17,6 +17,16 @@ export interface ChainConfig {
   rest: string;
   bech32Prefix: string;
   coinType: number;
+  currency?: {
+    coinDenom: string;
+    coinMinimalDenom: string;
+    coinDecimals: number;
+  };
+  stakeCurrency?: {
+    coinDenom: string;
+    coinMinimalDenom: string;
+    coinDecimals: number;
+  };
   gasPriceStep: {
     low: number;
     average: number;

@@ -267,12 +267,14 @@ const Banner = ({ items }: BannerProps) => {
                             <Link
                               hidden={!banner.banner_twiter}
                               href={banner.banner_twiter ?? '#'}
+                              target="_blank"
                             >
                               <img src="/images/x.png" className="h-[35px]" />
                             </Link>
                             <Link
                               hidden={!banner.banner_discord}
                               href={banner.banner_discord ?? ''}
+                              target="_blank"
                             >
                               <img
                                 src="/images/discord.png"
