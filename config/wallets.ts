@@ -16,52 +16,38 @@ const stargazeWallets = [
 const getWalletLogo = (walletName: string, logo?: string): string => {
   if (logo) return logo;
 
-  // Fallback logos based on wallet name
+  // Fallback logos based on wallet name - using exact keys from stargazeWallets
   const logoMap: Record<string, string> = {
-    keplr: 'https://wallet.keplr.app/assets/favicon-32x32.png',
-    leap: 'https://assets.leapwallet.io/logo.svg',
-    cosmostation: 'https://wallet.cosmostation.io/favicon.ico',
-    station: 'https://assets.terra.money/img/wallet-providers/station.svg',
-    walletconnect:
-      'https://registry.walletconnect.com/v2/logo/lg/walletconnect-logo.png',
-    compass: 'https://compasswallet.io/favicon.ico',
-    owallet: 'https://owallet.dev/favicon.ico',
-    coin98: 'https://coin98.com/favicon.ico',
-    xdefi: 'https://xdefi.io/favicon.ico',
-    trust:
-      'https://trustwallet.com/assets/images/media/assets/trust_platform.svg',
-    metamask: 'https://metamask.io/img/favicon.ico',
-    ledger: 'https://www.ledger.com/favicon.ico'
+    'keplr-extension': 'https://wallet.keplr.app/assets/favicon-32x32.png',
+    'keplr-mobile': 'https://wallet.keplr.app/assets/favicon-32x32.png',
+    'leap-extension': 'https://assets.leapwallet.io/logo.svg',
+    'leap-cosmos-mobile': 'https://assets.leapwallet.io/logo.svg',
+    'leap-metamask-cosmos-snap': 'https://metamask.io/img/favicon.ico',
+    'xdefi-extension': 'https://xdefi.io/favicon.ico',
+    'station-extension':
+      'https://assets.terra.money/img/wallet-providers/station.svg',
+    'cosmostation-extension': 'https://wallet.cosmostation.io/favicon.ico'
   };
 
-  const key = Object.keys(logoMap).find((k) =>
-    walletName.toLowerCase().includes(k)
-  );
-  return logoMap[key!] || 'https://via.placeholder.com/32x32?text=W';
+  return logoMap[walletName] || 'https://via.placeholder.com/32x32?text=W';
 };
 
 // Helper function to get wallet color scheme
 const getWalletColor = (walletName: string): string => {
   const colorMap: Record<string, string> = {
-    keplr: 'from-blue-500 to-purple-600',
-    leap: 'from-orange-500 to-red-600',
-    cosmostation: 'from-purple-500 to-indigo-600',
-    station: 'from-green-500 to-blue-600',
-    walletconnect: 'from-blue-400 to-cyan-500',
-    compass: 'from-indigo-500 to-purple-600',
-    owallet: 'from-pink-500 to-rose-600',
-    coin98: 'from-yellow-500 to-orange-600',
-    xdefi: 'from-cyan-500 to-blue-600',
-    trust: 'from-blue-600 to-indigo-700',
-    metamask: 'from-orange-400 to-yellow-500',
-    ledger: 'from-gray-600 to-gray-800'
+    'keplr-extension': 'from-blue-500 to-purple-600',
+    'keplr-mobile': 'from-blue-500 to-purple-600',
+    'leap-extension': 'from-orange-500 to-red-600',
+    'leap-cosmos-mobile': 'from-orange-500 to-red-600',
+    'leap-metamask-cosmos-snap': 'from-orange-400 to-yellow-500',
+    'xdefi-extension': 'from-cyan-500 to-blue-600',
+    'station-extension': 'from-green-500 to-blue-600',
+    'cosmostation-extension': 'from-purple-500 to-indigo-600'
   };
 
-  const key = Object.keys(colorMap).find((k) =>
-    walletName.toLowerCase().includes(k)
-  );
-  return colorMap[key!] || 'from-gray-500 to-gray-700';
+  return colorMap[walletName] || 'from-gray-500 to-gray-700';
 };
+
 // Generate STARGAZE_WALLETS from cosmos-kit wallets
 export const STARGAZE_WALLETS: WalletConfig[] = wallets
   .filter((wallet) => {
@@ -72,7 +58,10 @@ export const STARGAZE_WALLETS: WalletConfig[] = wallets
   .map((wallet) => ({
     id: wallet.walletName,
     name: wallet.walletInfo.prettyName || wallet.walletName,
-    logo: getWalletLogo(wallet.walletName, wallet.walletInfo.logo as string),
+    logo:
+      typeof wallet.walletInfo.logo === 'string'
+        ? (wallet.walletInfo.logo as string)
+        : wallet.walletInfo.logo?.major ?? '',
     description:
       wallet.walletInfo.description ||
       `${
@@ -80,7 +69,9 @@ export const STARGAZE_WALLETS: WalletConfig[] = wallets
       } wallet for Stargaze network`,
     color: getWalletColor(wallet.walletName),
     supportedTypes: ['stargaze'] as ('stargaze' | 'evm')[],
-    downloadUrl: wallet.appUrl ? String(wallet.appUrl) : undefined
+    downloadUrl:
+      wallet.walletInfo?.downloads?.[0]?.link ??
+      (typeof wallet.appUrl === 'string' ? wallet.appUrl : undefined)
   }))
   .filter(
     (wallet, index, self) =>

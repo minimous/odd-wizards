@@ -13,7 +13,7 @@ declare global {
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useToast } from '../../ui/use-toast';
 import { ScrollArea } from '../../ui/scroll-area';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Wallet, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -46,10 +46,30 @@ export default function WalletConnectModal({
     'stargaze' | 'ethereum' | null
   >(null);
   const [connecting, setConnecting] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
 
   // Use chain registry data
   const chainInfo = useChainRegistry(chainName);
+
+  // Detect if running on mobile device
+  useEffect(() => {
+    const checkIsMobile = () => {
+      const userAgent =
+        navigator.userAgent || navigator.vendor || (window as any).opera;
+      const isMobileDevice =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+          userAgent.toLowerCase()
+        );
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice || isSmallScreen);
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   const handleStargazeWalletSelect = async (wallet: WalletConfig) => {
     try {
@@ -156,11 +176,22 @@ export default function WalletConnectModal({
     }
   };
 
+  // Filter wallets based on platform
+  const filterWalletsByPlatform = (wallets: WalletConfig[]): WalletConfig[] => {
+    if (isMobile) {
+      // On mobile, show all wallets
+      return wallets;
+    } else {
+      // On web, hide wallets with "-mobile" in their id
+      return wallets.filter((wallet) => !wallet.id.includes('-mobile'));
+    }
+  };
+
   const getWalletsForType = (
     type: 'stargaze' | 'ethereum'
   ): WalletConfig[] | [] => {
     if (type === 'stargaze') {
-      return STARGAZE_WALLETS;
+      return filterWalletsByPlatform(STARGAZE_WALLETS);
     }
 
     return [];
