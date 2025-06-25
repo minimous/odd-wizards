@@ -3,33 +3,35 @@ import React from 'react';
 import { ArrowDown, ArrowUp, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface TableHeaderProps {
-    children: React.ReactNode 
-    sortable?: boolean 
-    align?: 'left' | 'center' | 'right'
-    sortBy?: string | null
-    sortOrder?: string | null
-    columnKey?: string
-    onSort?: Function
-    className?: string
+  children: React.ReactNode;
+  sortable?: boolean;
+  align?: 'left' | 'center' | 'right';
+  sortBy?: string | null;
+  sortOrder?: string | null;
+  columnKey?: string;
+  onSort?: Function;
+  className?: string;
 }
 
-const TableHeader = ({ 
-  children, 
-  sortable = false, 
-  align = "left",
+const TableHeader = ({
+  children,
+  sortable = false,
+  align = 'left',
   sortBy,
   sortOrder,
   columnKey,
   onSort,
-  className = ""
+  className = ''
 }: TableHeaderProps) => {
   const alignClasses = {
-    left: "text-left justify-start",
-    center: "text-center justify-center", 
-    right: "text-right justify-end"
+    left: 'text-left justify-start',
+    center: 'text-center justify-center',
+    right: 'text-right justify-end'
   };
 
-  const isActive = sortBy === columnKey;
+  const isActive = ['volume24h', 'volume7d', 'volume30d'].includes(
+    columnKey ?? ''
+  );
   const alignClass = alignClasses[align];
 
   const handleClick = () => {
@@ -39,21 +41,24 @@ const TableHeader = ({
   };
 
   return (
-    <th className={`px-4 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider ${sortable ? 'cursor-pointer hover:text-gray-300' : ''} ${className}`}>
-      <div 
+    <th
+      className={`px-4 py-3 text-xs font-medium uppercase tracking-wider text-gray-400 ${
+        sortable ? 'cursor-pointer hover:text-gray-300' : ''
+      } ${className}`}
+    >
+      <div
         className={`flex items-center gap-1 ${alignClass}`}
         onClick={handleClick}
       >
         {children}
         {sortable && (
           <div className="flex flex-col">
-            {isActive && (
-              sortOrder === 'asc' ? (
-                <ArrowUp className="w-3 h-3 text-pink-400" />
+            {isActive &&
+              (sortOrder === 'asc' ? (
+                <ArrowUp className="h-3 w-3 text-pink-400" />
               ) : (
-                <ArrowDown className="w-3 h-3 text-pink-400" />
-              )
-            )}
+                <ArrowDown className="h-3 w-3 text-pink-400" />
+              ))}
           </div>
         )}
       </div>
