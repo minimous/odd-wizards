@@ -44,7 +44,7 @@ export default function WalletConnectModal({
 }: WalletConnectModalProps) {
   const [selectedType, setSelectedType] = useState<
     'stargaze' | 'ethereum' | null
-  >(null);
+  >('stargaze');
   const [connecting, setConnecting] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
@@ -75,9 +75,11 @@ export default function WalletConnectModal({
     try {
       setConnecting(wallet.id);
 
-      if (!chainInfo?.config) {
-        throw new Error('Chain configuration not found');
-      }
+      // console.log("chainInfo", chainInfo);
+
+      // if (!chainInfo?.config) {
+      //   throw new Error('Chain configuration not found');
+      // }
 
       if (onConnectWallet) {
         onConnectWallet(wallet.id, 'stargaze');
@@ -224,7 +226,7 @@ export default function WalletConnectModal({
   };
 
   const resetModal = () => {
-    setSelectedType(null);
+    setSelectedType('stargaze');
     setConnecting(null);
     onClose();
   };
@@ -253,8 +255,8 @@ export default function WalletConnectModal({
       <DialogContent className="max-w-[95%] rounded-2xl border-gray-800 bg-gradient-to-br from-gray-900 to-black px-0 md:!max-w-lg">
         <div className="w-full text-white">
           {/* Header */}
-          <div className="flex items-center gap-4 px-6 pb-4 pt-6">
-            {selectedType && (
+          <div className="flex items-center gap-4 px-6 pb-4">
+            {/* {selectedType && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -264,7 +266,7 @@ export default function WalletConnectModal({
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-            )}
+            )} */}
             <div className="flex items-center gap-3">
               <div className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-2">
                 <Wallet className="h-6 w-6 text-white" />

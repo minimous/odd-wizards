@@ -3,6 +3,7 @@ import HeaderV2 from '@/components/layout/headerV2';
 import { MobileComingSoon } from '@/components/MobileComingSoon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ChainProviderWrapper from '@/providers/chain-provider-wrapper';
+import { WalletProviderWrapper } from '@/providers/wallet-provider-wrapper';
 import type { ReactNode } from 'react';
 
 export const metadata = {
@@ -39,15 +40,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
     <div className="relative flex bg-black">
       <main className="h-screen w-full bg-black">
         <ChainProviderWrapper>
-          <HeaderMobile />
-          {/* <MobileComingSoon /> */}
-          <HeaderV2 />
-          {/* <NavPrice /> */}
-          <ScrollArea className="h-[calc(100vh-70px)] w-full">
-            <div className="mx-auto w-screen 2xl:max-w-[1920px]">
-              {children}
-            </div>
-          </ScrollArea>
+          <WalletProviderWrapper>
+            <HeaderMobile />
+            <MobileComingSoon />
+            <HeaderV2 />
+            {/* <NavPrice /> */}
+            <ScrollArea className="h-[calc(100vh-70px)] w-full">
+              <div className="mx-auto w-screen 2xl:max-w-[1920px]">
+                {children}
+              </div>
+            </ScrollArea>
+          </WalletProviderWrapper>
         </ChainProviderWrapper>
       </main>
     </div>

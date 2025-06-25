@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import axios from 'axios';
+import { useUser } from '@/hooks/useUser';
 import WalletService, { WalletConnectionResult } from '@/lib/walletService';
-import { STARGAZE_WALLETS, getWalletConfig } from '@/config/wallets';
-import { ChainConfig, WalletConfig } from '@/types/wallet';
+import { getWalletConfig } from '@/config/wallets';
+import { ChainConfig } from '@/types/wallet';
 
 // Types
 export interface WalletInfo {
@@ -13,45 +15,32 @@ export interface WalletInfo {
   chainId: string;
   chainName: string;
   balance?: string;
-  isConnected: boolean;
   offlineSigner?: any;
 }
 
 export interface UseWalletReturn {
-  // Connection state
+  // State
   isConnected: boolean;
   isConnecting: boolean;
   isDisconnecting: boolean;
-
-  // Wallet info
   currentWallet: WalletInfo | null;
   address: string | null;
-  walletId: string | null;
-  chainId: string | null;
-  chainName: string | null;
-  offlineSigner: any | null;
-
-  // Connection methods
-  connectWallet: (walletId: string, chainId?: string) => Promise<void>;
-  disconnectWallet: () => Promise<void>;
-  switchChain: (chainId: string) => Promise<void>;
-
-  // Utility methods
-  getBalance: () => Promise<string | null>;
-  refreshWalletInfo: () => Promise<void>;
-  isWalletInstalled: (walletId: string) => boolean;
-  getAvailableWallets: () => WalletConfig[];
-  getSupportedWallets: () => WalletConfig[];
-
-  // Error state
   error: string | null;
+
+  // Actions
+  connect: (walletId: string, chainId?: string) => Promise<void>;
+  disconnect: () => Promise<void>;
   clearError: () => void;
+
+  // Utils
+  getBalance: () => Promise<string | null>;
+  isWalletInstalled: (walletId: string) => boolean;
 }
 
-// Stargaze chain configurations
+// Chain configurations
 const STARGAZE_CHAINS: Record<string, ChainConfig> = {
-  stargaze: {
-    chainId: 'stargaze',
+  'stargaze-1': {
+    chainId: 'stargaze-1',
     chainName: 'Stargaze',
     rpc: 'https://rpc.stargaze-apis.com',
     rest: 'https://rest.stargaze-apis.com',
@@ -69,130 +58,115 @@ const STARGAZE_CHAINS: Record<string, ChainConfig> = {
         coinDenom: 'STARS',
         coinMinimalDenom: 'ustars',
         coinDecimals: 6,
-        gasPriceStep: {
-          low: 0.01,
-          average: 0.025,
-          high: 0.04
-        }
+        gasPriceStep: { low: 0.01, average: 0.025, high: 0.04 }
       }
     ],
-    gasPriceStep: {
-      low: 0.01,
-      average: 0.025,
-      high: 0.04
-    }
-  },
-  'elgafar-1': {
-    chainId: 'elgafar-1',
-    chainName: 'Stargaze Testnet',
-    rpc: 'https://rpc.elgafar-1.stargaze-apis.com',
-    rest: 'https://rest.elgafar-1.stargaze-apis.com',
-    bech32Prefix: 'stars',
-    coinType: 118,
-    currencies: [
-      {
-        coinDenom: 'STARS',
-        coinMinimalDenom: 'ustars',
-        coinDecimals: 6
-      }
-    ],
-    feeCurrencies: [
-      {
-        coinDenom: 'STARS',
-        coinMinimalDenom: 'ustars',
-        coinDecimals: 6,
-        gasPriceStep: {
-          low: 0.01,
-          average: 0.025,
-          high: 0.04
-        }
-      }
-    ],
-    gasPriceStep: {
-      low: 0.01,
-      average: 0.025,
-      high: 0.04
-    }
+    gasPriceStep: { low: 0.01, average: 0.025, high: 0.04 }
   }
 };
 
-const WALLET_STORAGE_KEY = 'stargaze_wallet_info';
-const DEFAULT_CHAIN_ID = 'stargaze-1';
+const STORAGE_KEY = 'wallet_connection';
+const DEFAULT_CHAIN = 'stargaze-1';
 
 export function useWallet(
-  defaultChainId: string = DEFAULT_CHAIN_ID
+  defaultChainId: string = DEFAULT_CHAIN
 ): UseWalletReturn {
-  // States
+  // Global state
+  const {
+    wallet: globalWallet,
+    setWalletConnected,
+    setWalletDisconnected,
+    setUser,
+    setStaker
+  } = useUser();
+
+  // Local state
   const [currentWallet, setCurrentWallet] = useState<WalletInfo | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get chain config
-  const getChainConfig = useCallback((chainId: string): ChainConfig => {
-    const chainConfig = STARGAZE_CHAINS[chainId];
-    if (!chainConfig) {
-      throw new Error(`Unsupported chain: ${chainId}`);
-    }
-    return chainConfig;
-  }, []);
+  // Prevent multiple simultaneous operations
+  const operationRef = useRef<string | null>(null);
 
-  // Load wallet info from storage on mount
-  useEffect(() => {
-    const loadStoredWallet = async () => {
+  // Fetch user data
+  const fetchUserData = useCallback(
+    async (address: string) => {
       try {
-        let stored;
-        try {
-          stored = JSON.parse(localStorage.getItem(WALLET_STORAGE_KEY) || '{}');
-        } catch {
-          return; // Invalid JSON, skip loading
-        }
-
-        if (stored && stored.id && stored.chainId) {
-          const walletInfo: WalletInfo = stored;
-
-          // Verify wallet is still installed and connected
-          const isInstalled = WalletService.isWalletInstalled(walletInfo.id);
-          const isStillConnected = isInstalled
-            ? await WalletService.getWalletConnectionStatus(
-                walletInfo.id,
-                walletInfo.chainId
-              )
-            : false;
-
-          if (isStillConnected) {
-            setCurrentWallet(walletInfo);
-            await refreshWalletInfo();
-          } else {
-            // Clear stored info if no longer connected
-            localStorage.removeItem(WALLET_STORAGE_KEY);
-          }
+        const response = await axios.get(`/api/user/${address}`);
+        if (response.data?.data) {
+          setUser(response.data.data.user);
+          setStaker(response.data.data.staker);
         }
       } catch (error) {
-        console.error('Error loading stored wallet:', error);
-        localStorage.removeItem(WALLET_STORAGE_KEY);
+        console.error('Failed to fetch user data:', error);
       }
-    };
+    },
+    [setUser, setStaker]
+  );
 
-    loadStoredWallet();
-  }, []); // Empty dependency array for mount only
-
-  // Save wallet info to storage
-  const saveWalletInfo = useCallback((walletInfo: WalletInfo | null) => {
+  // Save wallet to storage
+  const saveWallet = useCallback((wallet: WalletInfo | null) => {
     try {
-      if (walletInfo) {
-        localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(walletInfo));
+      if (wallet) {
+        const { offlineSigner, ...serializable } = wallet;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
       } else {
-        localStorage.removeItem(WALLET_STORAGE_KEY);
+        localStorage.removeItem(STORAGE_KEY);
       }
     } catch (error) {
-      console.error('Error saving wallet info:', error);
+      console.error('Failed to save wallet:', error);
     }
   }, []);
 
+  // Load wallet from storage
+  const loadStoredWallet = useCallback(async () => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return;
+
+      const walletData = JSON.parse(stored);
+      if (!walletData.id || !walletData.address) return;
+
+      // Check if wallet is still connected
+      const isInstalled = WalletService.isWalletInstalled(walletData.id);
+      if (!isInstalled) {
+        localStorage.removeItem(STORAGE_KEY);
+        return;
+      }
+
+      const isConnected = await WalletService.getWalletConnectionStatus(
+        walletData.id,
+        walletData.chainId
+      );
+
+      if (isConnected) {
+        setCurrentWallet(walletData);
+        setWalletConnected(
+          walletData.id,
+          walletData.address,
+          walletData.chainId,
+          'custom'
+        );
+        fetchUserData(walletData.address);
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Failed to load stored wallet:', error);
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [setWalletConnected, fetchUserData]);
+
   // Connect wallet
-  const connectWallet = useCallback(
+  const connect = useCallback(
     async (walletId: string, chainId: string = defaultChainId) => {
+      // Prevent concurrent operations
+      if (operationRef.current) {
+        throw new Error(`Already ${operationRef.current}`);
+      }
+
+      operationRef.current = 'connecting';
       setIsConnecting(true);
       setError(null);
 
@@ -200,281 +174,165 @@ export function useWallet(
         // Check if wallet is installed
         if (!WalletService.isWalletInstalled(walletId)) {
           const walletConfig = getWalletConfig(walletId);
-          throw new Error(
-            `${
-              walletConfig?.name || walletId
-            } is not installed. Please install the extension first.`
-          );
+          throw new Error(`${walletConfig?.name || walletId} is not installed`);
         }
 
-        // Get chain configuration
-        const chainConfig = getChainConfig(chainId);
+        // Get chain config
+        const chainConfig = STARGAZE_CHAINS[chainId];
+        if (!chainConfig) {
+          throw new Error(`Unsupported chain: ${chainId}`);
+        }
 
-        // Connect using the enhanced WalletService
-        const connectionResult: WalletConnectionResult =
-          await WalletService.connect(walletId, chainConfig);
-
-        // Get wallet configuration for display name
+        // Connect to wallet
+        const result: WalletConnectionResult = await WalletService.connect(
+          walletId,
+          chainConfig
+        );
         const walletConfig = getWalletConfig(walletId);
 
         const walletInfo: WalletInfo = {
           id: walletId,
-          name: walletConfig?.name || connectionResult.name || walletId,
-          address: connectionResult.address,
-          publicKey: connectionResult.publicKey,
-          algo: connectionResult.algo,
+          name: walletConfig?.name || result.name || walletId,
+          address: result.address,
+          publicKey: result.publicKey,
+          algo: result.algo,
           chainId: chainConfig.chainId,
           chainName: chainConfig.chainName,
-          isConnected: true,
-          offlineSigner: connectionResult.offlineSigner
+          offlineSigner: result.offlineSigner
         };
 
+        // Update states
         setCurrentWallet(walletInfo);
-        saveWalletInfo(walletInfo);
+        saveWallet(walletInfo);
+        setWalletConnected(
+          walletId,
+          result.address,
+          chainConfig.chainId,
+          'custom'
+        );
 
-        // Get initial balance
-        await getBalance();
+        // Fetch user data
+        await fetchUserData(result.address);
       } catch (err: any) {
         const errorMessage = err.message || 'Failed to connect wallet';
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
         setIsConnecting(false);
+        operationRef.current = null;
       }
     },
-    [defaultChainId, getChainConfig, saveWalletInfo]
+    [defaultChainId, setWalletConnected, saveWallet, fetchUserData]
   );
 
   // Disconnect wallet
-  const disconnectWallet = useCallback(async () => {
-    if (!currentWallet) return;
+  const disconnect = useCallback(async () => {
+    if (operationRef.current) return;
 
+    operationRef.current = 'disconnecting';
     setIsDisconnecting(true);
     setError(null);
 
     try {
-      // Use WalletService to disconnect (though most wallets handle this internally)
-      await WalletService.disconnectWallet(currentWallet.id);
+      if (currentWallet) {
+        await WalletService.disconnectWallet(currentWallet.id);
+      }
 
       setCurrentWallet(null);
-      saveWalletInfo(null);
+      saveWallet(null);
+      setWalletDisconnected();
     } catch (err: any) {
-      const errorMessage = err.message || 'Failed to disconnect wallet';
-      setError(errorMessage);
-      console.warn(errorMessage);
+      console.error('Disconnect error:', err);
+      // Continue with cleanup even if disconnect fails
     } finally {
-      setIsDisconnecting(false);
-      // Always clear the wallet state even if disconnect fails
+      // Ensure cleanup happens
       setCurrentWallet(null);
-      saveWalletInfo(null);
+      saveWallet(null);
+      setWalletDisconnected();
+      setIsDisconnecting(false);
+      operationRef.current = null;
     }
-  }, [currentWallet, saveWalletInfo]);
+  }, [currentWallet, saveWallet, setWalletDisconnected]);
 
-  // Switch chain
-  const switchChain = useCallback(
-    async (chainId: string) => {
-      if (!currentWallet) {
-        throw new Error('No wallet connected');
-      }
-
-      setError(null);
-
-      try {
-        // Get new chain configuration
-        const chainConfig = getChainConfig(chainId);
-
-        // Reconnect to the new chain
-        const connectionResult: WalletConnectionResult =
-          await WalletService.connect(currentWallet.id, chainConfig);
-
-        // Update wallet info with new chain
-        const updatedWallet: WalletInfo = {
-          ...currentWallet,
-          address: connectionResult.address,
-          publicKey: connectionResult.publicKey,
-          chainId: chainConfig.chainId,
-          chainName: chainConfig.chainName,
-          offlineSigner: connectionResult.offlineSigner
-        };
-
-        setCurrentWallet(updatedWallet);
-        saveWalletInfo(updatedWallet);
-
-        // Refresh balance for new chain
-        await getBalance();
-      } catch (err: any) {
-        const errorMessage = err.message || 'Failed to switch chain';
-        setError(errorMessage);
-        throw new Error(errorMessage);
-      }
-    },
-    [currentWallet, getChainConfig, saveWalletInfo]
-  );
-
-  // Get wallet balance using RPC
+  // Get balance
   const getBalance = useCallback(async (): Promise<string | null> => {
     if (!currentWallet) return null;
 
     try {
-      const chainConfig = getChainConfig(currentWallet.chainId);
-
-      // Query balance using REST API
+      const chainConfig = STARGAZE_CHAINS[currentWallet.chainId];
       const response = await fetch(
         `${chainConfig.rest}/cosmos/bank/v1beta1/balances/${currentWallet.address}`
       );
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch balance');
-      }
+      if (!response.ok) throw new Error('Failed to fetch balance');
 
       const data = await response.json();
-      const balances = data.balances || [];
-
-      // Find STARS balance
-      const starsBalance = balances.find(
-        (balance: any) => balance.denom === 'ustars'
+      const starsBalance = data.balances?.find(
+        (b: any) => b.denom === 'ustars'
       );
 
       if (starsBalance) {
-        // Convert from ustars to STARS (6 decimal places)
-        const balanceInStars = parseInt(starsBalance.amount) / Math.pow(10, 6);
-        return balanceInStars.toFixed(6);
+        return (parseInt(starsBalance.amount) / 1_000_000).toFixed(6);
       }
-
       return '0';
     } catch (error) {
       console.error('Error getting balance:', error);
       return null;
     }
-  }, [currentWallet, getChainConfig]);
+  }, [currentWallet]);
 
-  // Refresh wallet info
-  const refreshWalletInfo = useCallback(async () => {
-    if (!currentWallet) return;
-
-    try {
-      // Check if wallet is still connected
-      const isStillConnected = await WalletService.getWalletConnectionStatus(
-        currentWallet.id,
-        currentWallet.chainId
-      );
-
-      if (!isStillConnected) {
-        setCurrentWallet(null);
-        saveWalletInfo(null);
-        return;
-      }
-
-      // Get updated balance
-      const balance = await getBalance();
-
-      const updatedWallet = {
-        ...currentWallet,
-        balance: balance || undefined
-      };
-
-      setCurrentWallet(updatedWallet);
-      saveWalletInfo(updatedWallet);
-    } catch (error) {
-      console.error('Error refreshing wallet info:', error);
-    }
-  }, [currentWallet, getBalance, saveWalletInfo]);
+  // Clear error
+  const clearError = useCallback(() => setError(null), []);
 
   // Check if wallet is installed
   const isWalletInstalled = useCallback((walletId: string): boolean => {
     return WalletService.isWalletInstalled(walletId);
   }, []);
 
-  // Get available wallets (installed)
-  const getAvailableWallets = useCallback((): WalletConfig[] => {
-    return WalletService.getAvailableWallets();
-  }, []);
-
-  // Get all supported wallets
-  const getSupportedWallets = useCallback((): WalletConfig[] => {
-    return WalletService.getSupportedWallets();
-  }, []);
-
-  // Clear error
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  // Listen to wallet events (if supported by wallet)
+  // Load stored wallet on mount
   useEffect(() => {
-    if (!currentWallet) return;
+    loadStoredWallet();
+  }, [loadStoredWallet]);
 
-    // Set up wallet event listeners for account/chain changes
-    // This is wallet-specific and may not be supported by all wallets
-    const setupWalletListeners = async () => {
-      try {
-        // Example for Keplr
-        if (currentWallet.id === 'keplr-extension' && window.keplr) {
-          const handleKeyStoreChange = () => {
-            refreshWalletInfo();
-          };
-
-          window.addEventListener('keplr_keystorechange', handleKeyStoreChange);
-
-          return () => {
-            window.removeEventListener(
-              'keplr_keystorechange',
-              handleKeyStoreChange
-            );
-          };
-        }
-      } catch (error) {
-        console.error('Error setting up wallet listeners:', error);
-      }
-    };
-
-    let cleanup: (() => void) | undefined;
-    setupWalletListeners().then((fn) => {
-      cleanup = fn;
-    });
-
-    return () => {
-      if (cleanup) cleanup();
-    };
-  }, [currentWallet, refreshWalletInfo]);
-
-  // Auto-refresh wallet info periodically
+  // Sync with global wallet state
   useEffect(() => {
-    if (!currentWallet) return;
+    if (
+      globalWallet.isConnected &&
+      globalWallet.connectionType === 'cosmos-kit' &&
+      !currentWallet
+    ) {
+      // Another component connected via cosmos-kit, don't interfere
+      return;
+    }
 
-    const intervalId = setInterval(() => {
-      refreshWalletInfo();
-    }, 30000); // Refresh every 30 seconds
-
-    return () => clearInterval(intervalId);
-  }, [currentWallet, refreshWalletInfo]);
+    if (!globalWallet.isConnected && currentWallet) {
+      // Global state was cleared, clear local state
+      setCurrentWallet(null);
+      saveWallet(null);
+    }
+  }, [
+    globalWallet.isConnected,
+    globalWallet.connectionType,
+    currentWallet,
+    saveWallet
+  ]);
 
   return {
-    // Connection state
-    isConnected: !!currentWallet?.isConnected,
+    // State
+    isConnected: !!currentWallet,
     isConnecting,
     isDisconnecting,
-
-    // Wallet info
     currentWallet,
     address: currentWallet?.address || null,
-    walletId: currentWallet?.id || null,
-    chainId: currentWallet?.chainId || null,
-    chainName: currentWallet?.chainName || null,
-    offlineSigner: currentWallet?.offlineSigner || null,
-
-    // Methods
-    connectWallet,
-    disconnectWallet,
-    switchChain,
-    getBalance,
-    refreshWalletInfo,
-    isWalletInstalled,
-    getAvailableWallets,
-    getSupportedWallets,
-
-    // Error state
     error,
-    clearError
+
+    // Actions
+    connect,
+    disconnect,
+    clearError,
+
+    // Utils
+    getBalance,
+    isWalletInstalled
   };
 }
