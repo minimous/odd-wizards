@@ -972,12 +972,12 @@ export default class WalletService {
       }
 
       // Get snap info
-      const snapInfo = snaps[this.LEAP];
+      const snapInfo = snaps[this.LEAP_SNAP_ID];
 
       return {
         snapInstalled: true,
         snapInfo: snapInfo,
-        snapId: snapId
+        snapId: this.LEAP_SNAP_ID
       };
     } catch (error: any) {
       return {
