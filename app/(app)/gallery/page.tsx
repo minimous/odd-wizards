@@ -58,7 +58,7 @@ export default function Gallery() {
 
   return (
     <div className="relative w-full bg-black">
-      <HeaderV2 />
+      {/* <HeaderV2 /> */}
       <div className="flex min-h-screen flex-col  items-center justify-center pt-20 md:!pt-28">
         <div className="mb-10 mt-6 flex flex-col items-center justify-center px-20">
           <CustomGradualSpacing

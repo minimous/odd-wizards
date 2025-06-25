@@ -155,7 +155,7 @@ export default function Stake({ searchParams }: paramsProps) {
 
   return (
     <div className="relative w-full bg-black">
-      <HeaderV2 />
+      {/* <HeaderV2 /> */}
       <CollectionModal
         isOpen={collectionModal}
         onClose={() => setCollectionModal(false)}

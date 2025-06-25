@@ -31,7 +31,7 @@ export default function About() {
   return (
     <div className="relative min-h-screen w-full bg-[url('/images/Cosmos.gif')] bg-cover bg-center">
       <div className="absolute bottom-0 left-0 right-0 top-0 z-0 bg-black/50" />
-      <HeaderV2 />
+      {/* <HeaderV2 /> */}
       <div className="relative pt-28">
         <h1 className="text-center text-5xl font-black">Challenges</h1>
         {loading ? (
