@@ -251,7 +251,7 @@ export default function Profile({ params }: { params: { address: string } }) {
 
   return (
     <div className="relative">
-      <HeaderV2 />
+      {/* <HeaderV2 /> */}
       <div>
         <div className="h-screen w-full bg-[url('/images/Account.gif')] bg-cover bg-center">
           <div className="relative flex h-screen items-end pb-4">
