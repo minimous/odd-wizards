@@ -14,6 +14,7 @@ import confetti from 'canvas-confetti';
 import { BorderBeam } from './ui/border-beam';
 import InfoModal from './modal/info-modal';
 import ConnectButtonV2 from './ConnectButtonV2';
+import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
 
 export interface StakeCardProps {
   collection: mst_collection;
@@ -25,7 +26,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
   const [isFetch, setIsFetch] = useState<boolean>(false);
   // const [point, setPoints] = useState<number>(0);
   const wallet = useWallet();
-  const { address } = useChain('stargaze'); // Use the 'stargaze' chain from your Cosmos setup
+  const { address } = useSyncedWallet(); // Use the 'stargaze' chain from your Cosmos setup
   const { toast } = useToast();
   const { claim, setClaim } = useClaim();
   const claimRef = useRef<HTMLButtonElement>(null);
@@ -165,7 +166,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
         <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-4">
           {wallet.status != WalletStatus.Connected ? (
             <div className="">
-              <ConnectButtonV2 showProfile={false} />
+              <ConnectButtonV2 className="w-full" showProfile={false} />
             </div>
           ) : isFetch ? (
             <div className="">
