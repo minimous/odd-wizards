@@ -14,6 +14,7 @@ import confetti from 'canvas-confetti';
 import { BorderBeam } from './ui/border-beam';
 import InfoModal from './modal/info-modal';
 import ConnectButtonV2 from './ConnectButtonV2';
+import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
 
 export interface StakeCardProps {
   collection: mst_collection;
@@ -25,7 +26,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
   const [isFetch, setIsFetch] = useState<boolean>(false);
   // const [point, setPoints] = useState<number>(0);
   const wallet = useWallet();
-  const { address } = useChain('stargaze'); // Use the 'stargaze' chain from your Cosmos setup
+  const { address } = useSyncedWallet(); // Use the 'stargaze' chain from your Cosmos setup
   const { toast } = useToast();
   const { claim, setClaim } = useClaim();
   const claimRef = useRef<HTMLButtonElement>(null);
