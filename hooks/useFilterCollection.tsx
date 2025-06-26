@@ -89,7 +89,7 @@ const SORT_MAPPING: Record<string, string> = {
 const DEFAULT_FILTERS: UseMarketplaceCollectionsFilters = {
   activeFilter: '7D',
   view: 'list',
-  sortBy: 'volume7d',
+  sortBy: 'volume24h',
   sortOrder: 'desc',
   searchQuery: '',
   categories: [],
