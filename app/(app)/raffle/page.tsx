@@ -21,6 +21,7 @@ import { AnimatedList } from '@/components/ui/animated-list';
 import { Item, Notification } from '@/components/Notification';
 import { mst_project } from '@prisma/client';
 import RaffleTokensCard from '@/components/raffle/RaffleTokensCard';
+import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
 
 export default function Stake() {
   const config = getConfig();
@@ -34,7 +35,7 @@ export default function Stake() {
   const [tokens, setTokens] = useState<any[] | []>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [tokenType, setTokenType] = useState<string[] | []>([]);
-  const { address } = useChain('stargaze');
+  const { address } = useSyncedWallet();
   const LIMIT = 8;
 
   const fetchRaffles = async (pageNum: number, append: boolean = false) => {
