@@ -331,18 +331,7 @@ const Banner = ({ items }: BannerProps) => {
               </Button>
             </Link>
             <div className="flex items-center gap-2 opacity-70">
-              <span>
-                {banner?.launchpad.minter?.mintedTokens} /{' '}
-                {banner?.launchpad.minter?.numTokens} minted
-              </span>{' '}
-              |
-              <span>
-                {
-                  banner?.launchpad.minter?.currentStage?.addressTokenCounts
-                    ?.limit
-                }
-                x per wallet
-              </span>
+              <span>{banner?.launchpad.minter?.mintedTokens} Minted</span>
             </div>
           </div>
         );
