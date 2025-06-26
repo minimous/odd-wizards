@@ -3,15 +3,22 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/components/kanban/board-column';
 import { TaskDragData } from '@/components/kanban/task-card';
-import { REWARD_PERIODE } from "@/constants";
-import axios, { AxiosError } from "axios";
-import { FetchAllStargazeTokensOptions, OwnedTokensResponse, Token } from "@/types";
+import { REWARD_PERIODE } from '@/constants';
+import axios, { AxiosError } from 'axios';
+import {
+  FetchAllStargazeTokensOptions,
+  OwnedTokensResponse,
+  Token
+} from '@/types';
 import getConfig from '@/config/config';
 import { mst_attributes_reward } from '@prisma/client';
 import moment from 'moment';
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { SigningCosmWasmClient, CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { GasPrice } from "@cosmjs/stargate";
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
+import {
+  SigningCosmWasmClient,
+  CosmWasmClient
+} from '@cosmjs/cosmwasm-stargate';
+import { GasPrice } from '@cosmjs/stargate';
 import { OPERATOR_CONSTANTS } from '@/constants/filterConstant';
 import { UTApi } from 'uploadthing/server';
 
@@ -41,12 +48,10 @@ export function hasDraggableData<T extends Active | Over>(
   return false;
 }
 
-
 export function formatAmount(amount: number | undefined | null) {
   if (!amount) return '0';
   return amount.toLocaleString('en-US'); // Menggunakan lokasi 'en-US' untuk memastikan koma sebagai pemisah ribuan
 }
-
 
 export default function calculatePoint(
   attrreward: mst_attributes_reward,
@@ -79,13 +84,13 @@ export default function calculatePoint(
     case REWARD_PERIODE.MINUTE:
       // Calculate points for minute-based rewards
       const minutesPassed = timeDifferenceMs / (1000 * 60);
-      const minuteReward = minutesPassed * (attrreward.attr_reward || 0) / 60;
+      const minuteReward = (minutesPassed * (attrreward.attr_reward || 0)) / 60;
       return minuteReward || 0;
 
     case REWARD_PERIODE.HOUR:
       // Calculate points for hour-based rewards
       const hoursPassed = timeDifferenceMs / (1000 * 60 * 60);
-      const hourReward = hoursPassed * (attrreward.attr_reward || 0) / 24;
+      const hourReward = (hoursPassed * (attrreward.attr_reward || 0)) / 24;
       return hourReward || 0;
 
     case REWARD_PERIODE.DAY:
@@ -110,8 +115,10 @@ interface FetchStargazeTokensOptions {
   filterForSale?: string;
 }
 
-export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): Promise<OwnedTokensResponse> {
-  if (!config) throw Error("Config not found");
+export async function fetchStargazeTokens(
+  options: FetchStargazeTokensOptions
+): Promise<OwnedTokensResponse> {
+  if (!config) throw Error('Config not found');
 
   const {
     owner,
@@ -173,20 +180,27 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
     owner,
     limit: Math.min(limit, maxTokens),
     offset,
-    filterByCollectionAddrs: collectionAddresses && collectionAddresses.length > 0 ? collectionAddresses : undefined,
+    filterByCollectionAddrs:
+      collectionAddresses && collectionAddresses.length > 0
+        ? collectionAddresses
+        : undefined,
     sortBy,
     filterForSale
   };
 
   try {
-    const response = await axios.post(config.graphql_url, {
-      query,
-      variables
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await axios.post(
+      config.graphql_url,
+      {
+        query,
+        variables
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    });
+    );
 
     return response.data?.data?.tokens || {};
   } catch (error) {
@@ -195,9 +209,10 @@ export async function fetchStargazeTokens(options: FetchStargazeTokensOptions): 
   }
 }
 
-export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOptions): Promise<Token[]> {
-
-  if (!config) throw Error("Config not found");
+export async function fetchAllStargazeTokens(
+  options: FetchAllStargazeTokensOptions
+): Promise<Token[]> {
+  if (!config) throw Error('Config not found');
 
   const {
     owner,
@@ -233,14 +248,14 @@ export async function fetchAllStargazeTokens(options: FetchAllStargazeTokensOpti
     offset += limit;
 
     // Optional: Add a small delay to prevent rate limiting
-    await new Promise(resolve => setTimeout(resolve, 250));
+    await new Promise((resolve) => setTimeout(resolve, 250));
   }
 
   return allTokens;
 }
 
 export async function getCollection(collection_address: string) {
-  if (!config) throw Error("Config not found");
+  if (!config) throw Error('Config not found');
 
   const query = `
   query CollectionHeaderStats($collectionAddr: String!) {
@@ -305,12 +320,11 @@ export async function getCollection(collection_address: string) {
   }
 `;
 
-
   try {
     const response = await fetch(config.graphql_url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         query,
@@ -330,7 +344,7 @@ export async function getCollection(collection_address: string) {
 }
 
 export async function getAssosiatedName(associated_address: string) {
-  if (!config) throw Error("Config not found");
+  if (!config) throw Error('Config not found');
 
   const query = `
     query AssociatedName($associatedAddr: String!) {
@@ -410,7 +424,7 @@ export async function getAssosiatedName(associated_address: string) {
     const response = await fetch(config.graphql_url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         query,
@@ -430,7 +444,7 @@ export async function getAssosiatedName(associated_address: string) {
 }
 
 export async function getToken(collectionAddr: string, tokenId: string) {
-  if (!config) throw Error("Config not found");
+  if (!config) throw Error('Config not found');
 
   const query = `query Token($collectionAddr: String!, $tokenId: String!) {
     token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
@@ -574,7 +588,7 @@ export async function getToken(collectionAddr: string, tokenId: string) {
     const response = await fetch(config.graphql_url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         query,
@@ -594,9 +608,8 @@ export async function getToken(collectionAddr: string, tokenId: string) {
   }
 }
 
-
 export async function getLaunchpad(address: string, walletAddress?: string) {
-  if (!config) throw Error("Config not found");
+  if (!config) throw Error('Config not found');
 
   const query = `query MinterV2($address: String!, $walletAddress: String) {
     collection(address: $address) {
@@ -796,30 +809,33 @@ export async function getLaunchpad(address: string, walletAddress?: string) {
   }`;
 
   try {
-    const response = await fetch(`${config.graphql_url}?t=${new Date().getTime()}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache', // Untuk kompatibilitas dengan HTTP/1.0
-        'Expires': '0' // Untuk memastikan browser lama juga tidak menyimpan cache
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          address,
-          walletAddress
+    const response = await fetch(
+      `${config.graphql_url}?t=${new Date().getTime()}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache', // Untuk kompatibilitas dengan HTTP/1.0
+          Expires: '0' // Untuk memastikan browser lama juga tidak menyimpan cache
         },
-        operationName: 'MinterV2'
-      })
-    });
+        body: JSON.stringify({
+          query,
+          variables: {
+            address,
+            walletAddress
+          },
+          operationName: 'MinterV2'
+        })
+      }
+    );
 
     const data = await response.json();
     return data.data.collection;
-} catch (error) {
+  } catch (error) {
     console.error('Error fetching launchpad data:', error);
     throw error;
-}
+  }
 }
 
 export function formatToStars(value?: string | number): number {
@@ -832,33 +848,42 @@ export function formatToStars(value?: string | number): number {
   return number;
 }
 
-export function formatDecimal(value?: string | number | null | undefined, decimal: number = 2): string {
+export function formatDecimal(
+  value?: string | number | null | undefined,
+  decimal: number = 2
+): string {
   if (!value) return '0';
-  
+
   // Convert string to number if needed
   let number = typeof value === 'string' ? parseFloat(value) : value;
-  
+
   // Check if the number is a whole number (no decimal part)
   const isWholeNumber = Number.isInteger(number);
-  
+
   // Format based on size
   if (number >= 1_000_000) {
     // For millions, conditionally show decimals
     const divided = number / 1_000_000;
-    return isWholeNumber ? `${Math.floor(divided)}M` : `${divided.toFixed(decimal)}M`;
+    return isWholeNumber
+      ? `${Math.floor(divided)}M`
+      : `${divided.toFixed(decimal)}M`;
   } else if (number >= 1_000) {
     // For thousands, conditionally show decimals
     const divided = number / 1_000;
-    return isWholeNumber ? `${Math.floor(divided)}K` : `${divided.toFixed(decimal)}K`;
+    return isWholeNumber
+      ? `${Math.floor(divided)}K`
+      : `${divided.toFixed(decimal)}K`;
   }
-  
+
   // For numbers less than 1000, conditionally show decimals
   return isWholeNumber ? `${Math.floor(number)}` : `${number.toFixed(decimal)}`;
 }
 
 export function formatAddress(address: string | undefined) {
   if (!address) return '';
-  return `${address.substring(5, 9)}...${address.substring(address.length - 4)}`
+  return `${address.substring(5, 9)}...${address.substring(
+    address.length - 4
+  )}`;
 }
 
 export function formatDate(date: Date, format = 'YYYY-MM-DD HH:mm:ss') {
@@ -873,13 +898,13 @@ export function extractCollectionAndTokenId(url: string) {
   if (match) {
     return {
       collection: match[1],
-      tokenId: match[2],
+      tokenId: match[2]
     };
   } else {
     // throw new Error("URL format is invalid");
     return {
       collection: undefined,
-      tokenId: undefined,
+      tokenId: undefined
     };
   }
 }
@@ -891,22 +916,22 @@ export async function transferNFT(
   tokenId: string
 ) {
   try {
-    const rpcEndpoint = config?.rpc_url ?? ""; // Ganti dengan RPC Stargaze yang valid
+    const rpcEndpoint = config?.rpc_url ?? ''; // Ganti dengan RPC Stargaze yang valid
     // Create wallet instance from mnemonic
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
-      prefix: "stars" // Stargaze address prefix
+      prefix: 'stars' // Stargaze address prefix
     });
 
     // Get the wallet address
     const [firstAccount] = await wallet.getAccounts();
-    console.log("Sender address:", firstAccount.address);
+    console.log('Sender address:', firstAccount.address);
 
     // Create signing client
     const client = await SigningCosmWasmClient.connectWithSigner(
       rpcEndpoint,
       wallet,
       {
-        gasPrice: GasPrice.fromString("0.025ustars")
+        gasPrice: GasPrice.fromString('0.025ustars')
       }
     );
 
@@ -923,51 +948,55 @@ export async function transferNFT(
       firstAccount.address,
       contractAddress,
       transferMsg,
-      "auto", // automatic gas estimation
-      "",     // memo
-      []      // funds
+      'auto', // automatic gas estimation
+      '', // memo
+      [] // funds
     );
 
-    console.log("Transfer successful!");
-    console.log("Transaction hash:", result.transactionHash);
+    console.log('Transfer successful!');
+    console.log('Transaction hash:', result.transactionHash);
     return result;
-
   } catch (error) {
-    console.error("Error during transfer:", error);
+    console.error('Error during transfer:', error);
     throw error;
   }
 }
 
-
 export const arrayToString = (arr: any) => {
   return '[' + arr.join(', ') + ']';
-}
+};
 
-export const addSearch = (column: any, value: any | undefined, opr: any, opr2?: any) => {
+export const addSearch = (
+  column: any,
+  value: any | undefined,
+  opr: any,
+  opr2?: any
+) => {
   if (!value) return;
   return {
     column,
     value,
     opr,
     opr2
-  }
-}
+  };
+};
 
 export const buildSearch = (data: any, params: any) => {
   if (!data) return;
 
-  let filterStr = "";
+  let filterStr = '';
   let i = 0;
   for (let filter of data) {
     if (!filter) continue;
-    let comma = i > 0 ? "," : "";
+    let comma = i > 0 ? ',' : '';
     if (OPERATOR_CONSTANTS.LIKE == filter.opr) {
       filterStr += `${comma}${filter.column}=%${filter.value}%`;
     } else {
-
       if (Array.isArray(filter.value)) {
         if (filter.value.length == 0) continue;
-        let value = encodeURIComponent("[" + buildSearch(filter.value, undefined) + "]");
+        let value = encodeURIComponent(
+          '[' + buildSearch(filter.value, undefined) + ']'
+        );
 
         filterStr += `${comma}${filter.column}${filter.opr}${value}`;
       } else {
@@ -976,20 +1005,20 @@ export const buildSearch = (data: any, params: any) => {
     }
 
     if (filter.opr2 != undefined && filter.opr2 != null) {
-      filterStr += ":" + filter.opr2;
+      filterStr += ':' + filter.opr2;
     }
 
     i++;
   }
 
-  if (filterStr == "") return;
+  if (filterStr == '') return;
 
   if (params) {
-    params["filter"] = filterStr;
+    params['filter'] = filterStr;
   }
 
   return filterStr;
-}
+};
 
 export const uploadFile = async (file: File) => {
   const utapi = new UTApi({
@@ -1000,25 +1029,30 @@ export const uploadFile = async (file: File) => {
   const uploadResult = await utapi.uploadFiles(file);
 
   return uploadResult.data?.url;
-}
+};
 
-
-export async function getUserStakedNFTs(userAddress: string, daoAddress: string) {
+export async function getUserStakedNFTs(
+  userAddress: string,
+  daoAddress: string
+) {
   const rpc = config?.rpc_url;
   // const daoAddress = "stars1..."; // Replace with the DAO contract address
-  
-  if (!rpc) throw Error("Rpc not found");
+
+  if (!rpc) throw Error('Rpc not found');
 
   const cosmWasmClient = await CosmWasmClient.connect(rpc);
-  
+
   try {
     const queryMsg = {
       staked_nfts: {
         address: userAddress
       }
     };
-    
-    const response = await cosmWasmClient.queryContractSmart(daoAddress, queryMsg);
+
+    const response = await cosmWasmClient.queryContractSmart(
+      daoAddress,
+      queryMsg
+    );
     console.log(`Staked NFTs for ${userAddress}:`, response);
     return response;
   } catch (error) {
@@ -1026,3 +1060,69 @@ export async function getUserStakedNFTs(userAddress: string, daoAddress: string)
     throw error;
   }
 }
+
+// Helper functions for signing operations
+export const getAccountInfo = async (
+  chainId: string,
+  snapId: string = 'npm:@leapwallet/metamask-cosmos-snap'
+) => {
+  const result = await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: snapId,
+      request: {
+        method: 'getAccountInfo',
+        params: {
+          chain_id: chainId
+        }
+      }
+    }
+  });
+  return result.data;
+};
+
+export const signDirect = async (
+  chainId: string,
+  signer: string,
+  signDoc: any,
+  snapId: string = 'npm:@leapwallet/metamask-cosmos-snap'
+) => {
+  const result = await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: snapId,
+      request: {
+        method: 'signDirect',
+        params: {
+          chain_id: chainId,
+          sign_doc: signDoc,
+          signer: signer
+        }
+      }
+    }
+  });
+  return result.data;
+};
+
+export const signAmino = async (
+  chainId: string,
+  signer: string,
+  signDoc: any,
+  snapId: string = 'npm:@leapwallet/metamask-cosmos-snap'
+) => {
+  const result = await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: snapId,
+      request: {
+        method: 'signAmino',
+        params: {
+          chain_id: chainId,
+          sign_doc: signDoc,
+          signer: signer
+        }
+      }
+    }
+  });
+  return result.data;
+};

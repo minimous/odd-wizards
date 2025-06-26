@@ -13,10 +13,9 @@ const authConfig = {
       credentials: {
         wallet: {
           type: 'text'
-        },
+        }
       },
       async authorize(credentials, req) {
-
         // const secretKey = process.env.JWT_SECRET || '';
         // const payload = {
         //   sub: credentials.wallet as string,
@@ -28,12 +27,12 @@ const authConfig = {
         //   expiresIn: '24h', // Token berlaku selama 24 jam
         // };
 
-        // // Generate token
+        // Generate token
         // const token = jwt.sign(payload, secretKey, options);
 
         const user = {
           id: credentials.wallet as string,
-          name: credentials.wallet as string,
+          name: credentials.wallet as string
         };
         if (user) {
           // Any object returned will be saved in `user` property of the JWT

@@ -1,21 +1,20 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-
-import { useState, useEffect } from "react";
-import ConnectButton from "@/components/ConnectButton";
-import { useChain, useWallet } from "@cosmos-kit/react";
-import axios from "axios";
-import { useUser } from "@/hooks/useUser";
-import getConfig from "@/config/config";
-import { usePathname } from "next/navigation";
-import { cn, formatAddress } from "@/lib/utils";
-import { useNavbarMobile } from "@/hooks/useNavbarMobile";
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import ConnectButton from '@/components/ConnectButton';
+import { useWallet } from '@/hooks/useWallet';
+import axios from 'axios';
+import { useUser } from '@/hooks/useUser';
+import getConfig from '@/config/config';
+import { usePathname } from 'next/navigation';
+import { cn, formatAddress } from '@/lib/utils';
+import { useNavbarMobile } from '@/hooks/useNavbarMobile';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useToast } from "../ui/use-toast";
-import { useLoading } from "@/hooks/useLoading";
-import { useTheme } from "next-themes";
-import RewardModalModal from "../modal/reward-modal";
+import { useToast } from '../ui/use-toast';
+import { useLoading } from '@/hooks/useLoading';
+import { useTheme } from 'next-themes';
+import RewardModalModal from '../modal/reward-modal';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -23,17 +22,19 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { mst_project } from "@prisma/client";
+  navigationMenuTriggerStyle
+} from '@/components/ui/navigation-menu';
+import { mst_project } from '@prisma/client';
+import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
-  setTheme("dark");
+  setTheme('dark');
 
-  const { address, isWalletConnected, getOfflineSigner } = useChain("stargaze"); // Use the 'stargaze' chain from your Cosmos setup
-  const { setUser, setStaker } = useUser();
-  const { wallet } = useWallet();
+  // Global state hooks
+  const { isConnected, address, user, isReady, error, connectionType } =
+    useSyncedWallet();
+
   const config = getConfig();
   const path = usePathname();
   const { isOpened, setOpen } = useNavbarMobile();
@@ -41,101 +42,104 @@ export default function Header() {
   const [rewardModal, setRewardModal] = useState<boolean>(false);
   const [projects, setProjects] = useState<mst_project[] | []>([]);
   const { toast } = useToast();
-
   const { showLoading, hideLoading } = useLoading();
 
+  // Fetch user and project data
   useEffect(() => {
-
     async function fetchData() {
       showLoading();
-      if (address) {
-        let resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
-        setUser(resp.data?.data?.user);
-        setStaker(resp.data?.data?.staker);
+
+      try {
+        // Fetch user data if wallet is connected
+        // if (address) {
+        //   const resp = await axios.get(`/api/user/${address}?collection_address=${config?.collection_address}`);
+        //   if (resp.data?.data) {
+        //     setUser(resp.data.data.user);
+        //     setStaker(resp.data.data.staker);
+        //   }
+        // }
+
+        // Fetch projects list
+        const projectResp = await axios.get(`/api/project/list`);
+        setProjects(projectResp.data.data ?? []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        hideLoading();
       }
-
-      const projectResp = await axios.get(`/api/project/list`);
-      setProjects(projectResp.data.data ?? []);
-
-      hideLoading();
     }
 
     fetchData();
+  }, [address, config?.collection_address, showLoading, hideLoading]);
 
-  }, [address]);
-
+  // Handle authentication when wallet connects
   useEffect(() => {
-    if (isWalletConnected && address) {
+    if (isConnected && address) {
       handleAuthentication();
     }
-  }, [isWalletConnected, address]);
+  }, [isConnected, address]);
 
   const handleAuthentication = async () => {
-    if (!isWalletConnected || !address) {
-      alert("Please connect your wallet first!");
+    if (!isConnected || !address) {
       toast({
         variant: 'destructive',
         title: 'Ups! Something wrong.',
         description: 'Please connect your wallet first!'
       });
-
       return;
     }
 
     setIsAuthenticating(true);
 
     try {
-
-      // Kirim signature ke server untuk autentikasi
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         wallet: address,
-        // signature: JSON.stringify(signature),
-        // message: signMessage,
-        redirect: false,
+        redirect: false
       });
 
-      console.log("Authentication successful!");
+      console.log('Authentication successful!');
     } catch (error) {
-      console.error("Authentication failed:", error);
+      console.error('Authentication failed:', error);
     } finally {
       setIsAuthenticating(false);
     }
   };
 
-  // Check for complete page load
+  // Check for winner status and show reward modal
   useEffect(() => {
-    if (address) {
-      // Wait for the window load event
+    if (address && user) {
       const handleLoad = async () => {
-        let resp = await axios.get(`/api/user/${address}`);
-        const user = resp.data?.data?.user;
-        if (user.is_winner == "Y" && address) {
-          // Add a small delay to ensure all components are rendered
-          setTimeout(() => {
-            setRewardModal(true);
-            // triggerConffeti();
-            // axios.post("/api/user/trigger-event", {
-            //   wallet_address: address
-            // })
-          }, 500); // Half second delay to ensure everything is rendered
+        try {
+          // Check if user is a winner
+          if (user?.is_winner === 'Y' && address) {
+            setTimeout(() => {
+              setRewardModal(true);
+            }, 500);
+          }
+        } catch (error) {
+          console.error('Error checking winner status:', error);
         }
       };
 
-      // If the page is already loaded
       if (document.readyState === 'complete') {
         handleLoad();
       } else {
         window.addEventListener('load', handleLoad);
-        // Cleanup
         return () => window.removeEventListener('load', handleLoad);
       }
     }
-  }, [address]);
+  }, [address, user]);
 
   return (
-    <nav className="absolute top-0 left-0 right-0 flex items-center justify-between md:px-14 py-5 bg-transparent z-50">
-      <RewardModalModal isOpen={rewardModal} setOpen={setRewardModal} onClose={() => { }} wallet={address} />
-      <div className="container mx-auto flex items-center justify-between w-full">
+    <nav className="absolute left-0 right-0 top-0 z-50 flex items-center justify-between bg-transparent py-5 md:px-14">
+      <RewardModalModal
+        isOpen={rewardModal}
+        setOpen={setRewardModal}
+        onClose={() => {}}
+        wallet={address ?? ''}
+      />
+
+      <div className="container mx-auto flex w-full items-center justify-between">
         {/* Logo and Links */}
         <div className="flex items-center space-x-4 md:space-x-10">
           {/* Logo */}
@@ -143,80 +147,110 @@ export default function Header() {
             <Link
               href="/"
               aria-label="Home"
-              className="group rounded-[12px] md:rounded-[16px] overflow-hidden w-[50px] md:w-[65px] h-[40px] md:h-[50px] flex items-center justify-center"
+              className="group flex h-[40px] w-[50px] items-center justify-center overflow-hidden rounded-[12px] md:h-[50px] md:w-[65px] md:rounded-[16px]"
             >
               <img
                 src="/images/logo.png"
                 alt="Logo"
-                className="group-hover:hidden object-contain"
+                className="object-contain group-hover:hidden"
               />
               <img
                 src="/images/logo.gif"
                 alt="Logo"
-                className="hidden group-hover:block object-contain"
+                className="hidden object-contain group-hover:block"
               />
             </Link>
           </div>
+
           <Link
             href="/challenge"
-            className={cn("text-xl hidden md:!flex font-bold transition-transform ", (path == "/challenge" ? "text-white" : "text-gray-400 hover:text-white"))}
-          // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            className={cn(
+              'hidden text-xl font-bold transition-transform md:!flex ',
+              path === '/challenge'
+                ? 'text-white'
+                : 'text-gray-400 hover:text-white'
+            )}
           >
             Challenge
           </Link>
+
           {/* Navigation Links */}
-          <div className="hidden md:!flex space-x-8">
+          <div className="hidden space-x-8 md:!flex">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem className="bg-transparent hover:!bg-transparent focus:!bg-transparent data-[active]:!bg-transparent data-[state=open]:!bg-transparent">
-                  <NavigationMenuTrigger className={cn("bg-transparent py-0 px-0 hover:!bg-transparent focus:!bg-transparent data-[active]:!bg-transparent data-[state=open]:!bg-transparent text-xl font-bold", (path == "/stake" ? "text-white hover:text-white" : "text-gray-400 hover:text-gray-400 hover:text-white"))}>Stake</NavigationMenuTrigger>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      'bg-transparent px-0 py-0 text-xl font-bold hover:!bg-transparent focus:!bg-transparent data-[active]:!bg-transparent data-[state=open]:!bg-transparent',
+                      path === '/stake'
+                        ? 'text-white hover:text-white'
+                        : 'text-gray-400 hover:text-gray-400 hover:text-white'
+                    )}
+                  >
+                    Stake
+                  </NavigationMenuTrigger>
                   <NavigationMenuContent className="p-0">
-                    <div className="grid gap-2 w-[250px] p-4 !bg-white">
-                      {
-                        projects.map((project, index) => {
-                          return <div key={index}>
-                            {
-                              project.project_status == "N" ?
-                                <div className="grid grid-cols-12 items-center hover:scale-105 hover:font-semibold">
-                                  <span className="col-span-2 opacity-30">{project.project_icon}</span>
-                                  <div className="text-[#156E7E] opacity-30 col-span-10 flex">{project.project_name} (Soon)</div>
-                                </div>
-                                :
-                                <Link href={`/stake/${project.project_code}`} className="grid grid-cols-12 items-center hover:scale-105 hover:font-semibold">
-                                  <span className="col-span-2">{project.project_icon}</span>
-                                  <span className="text-[#156E7E] col-span-10">{project.project_name}</span>
-                                </Link>
-                            }
-                          </div>
-                        })
-                      }
+                    <div className="grid w-[250px] gap-2 !bg-white p-4">
+                      {projects.map((project, index) => (
+                        <div key={index}>
+                          {project.project_status === 'N' ? (
+                            <div className="grid grid-cols-12 items-center hover:scale-105 hover:font-semibold">
+                              <span className="col-span-2 opacity-30">
+                                {project.project_icon}
+                              </span>
+                              <div className="col-span-10 flex text-[#156E7E] opacity-30">
+                                {project.project_name} (Soon)
+                              </div>
+                            </div>
+                          ) : (
+                            <Link
+                              href={`/stake/${project.project_code}`}
+                              className="grid grid-cols-12 items-center hover:scale-105 hover:font-semibold"
+                            >
+                              <span className="col-span-2">
+                                {project.project_icon}
+                              </span>
+                              <span className="col-span-10 text-[#156E7E]">
+                                {project.project_name}
+                              </span>
+                            </Link>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </div>
+
           <Link
             href="/raffle"
-            className={cn("text-xl hidden md:!flex font-bold transition-transform ", (path == "/raffle" ? "text-white" : "text-gray-400 hover:text-white"))}
-          // style={{ textShadow: 'rgb(100 100 100 / 50%) 0px 0px 12px' }}
+            className={cn(
+              'hidden text-xl font-bold transition-transform md:!flex ',
+              path === '/raffle'
+                ? 'text-white'
+                : 'text-gray-400 hover:text-white'
+            )}
           >
             Raffle
           </Link>
         </div>
+
         {/* Connect Wallet Button */}
         <div className="hidden md:!block">
           <ConnectButton />
         </div>
+
         {/* Mobile Menu Button */}
-        <div className="md:!hidden flex items-center gap-x-3">
+        <div className="flex items-center gap-x-3 md:!hidden">
           <button
             onClick={() => setOpen(true)}
             aria-label="Open Menu"
-            className="text-black focus:outline-none bg-white p-2 rounded-[5px]"
+            className="rounded-[5px] bg-white p-2 text-black focus:outline-none"
           >
             <svg
-              className="w-6 h-5"
+              className="h-5 w-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -239,9 +273,6 @@ export default function Header() {
               )}
             </svg>
           </button>
-          {/* <img src={user?.user_image_url ?? DEFAULT_IMAGE_PROFILE} onError={(e: any) => {
-            e.target.src = DEFAULT_IMAGE_PROFILE;
-          }} className="w-[40px] h-[40px] rounded-full" /> */}
         </div>
       </div>
     </nav>

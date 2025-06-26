@@ -7,6 +7,88 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Tambahkan tabel wallet networks untuk mendefinisikan jaringan yang didukung
+model mst_wallet_networks {
+  network_id          Int     @id @default(autoincrement())
+  network_name        String  @unique // contoh: "stargaze", "osmosis", "juno"
+  network_display_name String // contoh: "Stargaze", "Osmosis", "Juno"
+  network_chain_id    String? // contoh: "stargaze-1", "osmosis-1"
+  network_rpc_url     String?
+  network_rest_url    String?
+  network_explorer_url String?
+  network_currency_symbol String? // contoh: "STARS", "OSMO", "JUNO"
+  network_status      String  @default("active") // active, inactive
+  network_icon_url    String?
+  network_order       Int?    @default(0)
+  created_date        DateTime @default(now())
+  updated_date        DateTime @updatedAt
+  
+  // Relasi dengan wallet
+  user_wallets        mst_user_wallets[]
+  network_support     mst_wallet_network_support[]
+}
+
+// Tabel untuk menyimpan supported wallet providers per network
+model mst_wallet_providers {
+  provider_id         Int     @id @default(autoincrement())
+  provider_name       String  // contoh: "keplr", "leap", "cosmostation"
+  provider_display_name String // contoh: "Keplr Wallet", "Leap Wallet"
+  provider_icon_url   String?
+  provider_website_url String?
+  provider_chrome_extension_url String?
+  provider_mobile_app_url String?
+  provider_status     String  @default("active")
+  provider_order      Int?    @default(0)
+  created_date        DateTime @default(now())
+  updated_date        DateTime @updatedAt
+  
+  // Relasi dengan network support
+  network_support     mst_wallet_network_support[]
+  user_wallets        mst_user_wallets[]
+}
+
+// Tabel untuk mapping wallet provider mana yang support network mana
+model mst_wallet_network_support {
+  support_id          Int     @id @default(autoincrement())
+  network_id          Int
+  provider_id         Int
+  is_supported        Boolean @default(true)
+  is_recommended      Boolean @default(false)
+  created_date        DateTime @default(now())
+  
+  network             mst_wallet_networks @relation(fields: [network_id], references: [network_id])
+  provider            mst_wallet_providers @relation(fields: [provider_id], references: [provider_id])
+  
+  @@unique([network_id, provider_id])
+}
+
+// Tabel utama untuk menyimpan wallet connection user
+model mst_user_wallets {
+  wallet_id           Int     @id @default(autoincrement())
+  user_address        String  // referensi ke user utama
+  network_id          Int     // jaringan yang digunakan
+  provider_id         Int     // wallet provider yang digunakan
+  wallet_address      String  // alamat wallet di jaringan tersebut
+  wallet_name         String? // nama wallet (optional, bisa custom dari user)
+  is_primary          Boolean @default(false) // apakah ini wallet utama untuk network ini
+  is_active           Boolean @default(true)
+  connected_date      DateTime @default(now())
+  last_used_date      DateTime @default(now())
+  disconnected_date   DateTime?
+  created_date        DateTime @default(now())
+  updated_date        DateTime @updatedAt
+  
+  // Relasi
+  user                mst_users @relation(fields: [user_address], references: [user_address])
+  network             mst_wallet_networks @relation(fields: [network_id], references: [network_id])
+  provider            mst_wallet_providers @relation(fields: [provider_id], references: [provider_id])
+  
+  // Constraint untuk memastikan satu user hanya punya satu primary wallet per network
+  @@unique([user_address, network_id, wallet_address])
+  @@index([user_address, network_id])
+  @@index([wallet_address, network_id])
+}
+
 model mst_users {
   user_address           String  @id
   user_discord_url       String?
@@ -16,9 +98,13 @@ model mst_users {
   user_total_points      Int?
   user_image_preview     String?
   user_trigger_event     String?
-  // Relasi dengan Staker
-  mst_staker mst_staker[]
-  participant trn_participant[]
+  
+  // Relasi yang sudah ada
+  mst_staker             mst_staker[]
+  participant            trn_participant[]
+  
+  // Relasi baru dengan wallet
+  user_wallets           mst_user_wallets[]
 }
 
 model mst_project {
@@ -47,6 +133,7 @@ model mst_project {
   project_chellange_note    String?
   project_chellange_img  String?
   project_chellange_status String? @default("N")
+  project_network        String?
 
   stakers mst_staker[]
   rewards mst_reward[]
@@ -188,6 +275,7 @@ model trn_participant {
 
 model mst_banners {
   banner_id           Int @id @default(autoincrement())
+  banner_thumbnail        String?
   banner_image        String?
   banner_status       String?
   banner_collection_address String?
@@ -196,4 +284,9 @@ model mst_banners {
   banner_discord      String?
   banner_seqn         Int?
   banner_type         String?
+  banner_network      String?
+  banner_creator      String?
+  banner_minted_date  DateTime?
+  banner_title        String?
+  banner_minted_link  String?
 }
