@@ -263,7 +263,7 @@ const Banner = ({ items }: BannerProps) => {
     } else {
       return (
         <span className="text-lg font-bold opacity-70">
-          Phase {stageName} Ends
+          {stageName} phase Ends
           <span className="text-[#49ED4A]">
             {timeLeft[banner.id] ? ` in ${timeLeft[banner.id]}` : ' soon'}
           </span>
