@@ -252,7 +252,7 @@ export async function getLeaderboard(
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
         WHERE 1=1
         ${
-          staker_address
+          project_id
             ? Prisma.sql`AND mc.collection_project_id = ${project_id}`
             : Prisma.empty
         }
