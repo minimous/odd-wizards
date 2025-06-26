@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn, formatAmount } from '@/lib/utils';
 import { BannerWithLaunchpad } from '@/types/launchpad';
+import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
 
 type BannerProps = {
   items: BannerWithLaunchpad[];
@@ -30,6 +31,7 @@ const Banner = ({ items }: BannerProps) => {
     items[0]?.banner_id
   );
   const [api, setApi] = useState<any>(null);
+  const { isConnected, address } = useSyncedWallet();
 
   const formatTime = (difference: number) => {
     if (difference <= 0) return '';
@@ -261,7 +263,7 @@ const Banner = ({ items }: BannerProps) => {
     } else {
       return (
         <span className="text-lg font-bold opacity-70">
-          {stageName} Ends
+          Phase {stageName} Ends
           <span className="text-[#49ED4A]">
             {timeLeft[banner.id] ? ` in ${timeLeft[banner.id]}` : ' soon'}
           </span>
@@ -322,11 +324,27 @@ const Banner = ({ items }: BannerProps) => {
         );
       } else {
         return (
-          <Link href={getLaunchpadUrl(banner)} target="_blank">
-            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
-              Go to Launchpad
-            </Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href={getLaunchpadUrl(banner)} target="_blank">
+              <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+                Go to Launchpad
+              </Button>
+            </Link>
+            <div className="flex items-center gap-2 opacity-70">
+              <span>
+                {banner?.launchpad.minter?.mintedTokens} /{' '}
+                {banner?.launchpad.minter?.numTokens} minted
+              </span>{' '}
+              |
+              <span>
+                {
+                  banner?.launchpad.minter?.currentStage?.addressTokenCounts
+                    ?.limit
+                }
+                x per wallet
+              </span>
+            </div>
+          </div>
         );
       }
     }
