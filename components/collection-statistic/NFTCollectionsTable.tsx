@@ -12,7 +12,7 @@ import SkeletonTableRow from './SkeletonTableRow';
 const NFTCollectionsTable = () => {
   const collectionsHook = useMarketplaceCollections({
     limit: 10,
-    sortBy: 'volume7d'
+    sortBy: 'volume24h'
   });
 
   const {

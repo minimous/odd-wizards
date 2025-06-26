@@ -28,7 +28,44 @@ function formatPriceInfo(priceData: any): FormattedPriceInfo {
   };
 }
 
-function formatCollection(rawCollection: any): FormattedCollection {
+function getVolume(type: string | null, stats: any) {
+  if (!type) return stats.volumeUsd24hour;
+
+  switch (type) {
+    case 'VOLUME_USD_6_HOUR_DESC':
+      return stats.volumeUsd6hour;
+    case 'VOLUME_USD_24_HOUR_DESC':
+      return stats.volumeUsd24hour;
+    case 'VOLUME_USD_7_DAY_DESC':
+      return stats.volumeUsd7day;
+    case 'VOLUME_USD_30_DAY_DESC':
+      return stats.volumeUsd30day;
+    default:
+      return stats.volumeUsd24hour;
+  }
+}
+
+function getVolumePercn(type: string | null, stats: any) {
+  if (!type) return stats.changeUsd24hourPercent;
+
+  switch (type) {
+    case 'VOLUME_USD_6_HOUR_DESC':
+      return stats.changeUsd6hourPercent;
+    case 'VOLUME_USD_24_HOUR_DESC':
+      return stats.changeUsd24hourPercent;
+    case 'VOLUME_USD_7_DAY_DESC':
+      return stats.changeUsd7dayPercent;
+    case 'VOLUME_USD_30_DAY_DESC':
+      return stats.changeUsd30dayPercent;
+    default:
+      return stats.changeUsd24hourPercent;
+  }
+}
+
+function formatCollection(
+  rawCollection: any,
+  sortBy: string | null
+): FormattedCollection {
   const stats = rawCollection.stats || {};
   const tokenCounts = rawCollection.tokenCounts || {};
 
@@ -49,12 +86,12 @@ function formatCollection(rawCollection: any): FormattedCollection {
     floorPrice: formatPriceInfo(rawCollection.floor),
     bestOffer: formatPriceInfo(rawCollection.highestOffer?.offerPrice),
     volume: {
-      value: stats.volumeUsd7day || 0,
+      value: getVolume(sortBy, stats) || 0,
       change: stats.changeUsd7dayPercent || 0
     },
     owners: {
       count: stats.numOwners || 0,
-      unique: Math.round(stats.uniqueOwnerPercent || 0)
+      unique: Math.round(getVolumePercn(stats, sortBy) || 0)
     },
     forSale: {
       percentage: forSalePercentage,
@@ -116,7 +153,9 @@ export async function GET(req: NextRequest) {
     const rawResponse = await stargazeService.getMarketplaceCollection(params);
 
     // Format the response for your components
-    const formattedCollections = rawResponse.collections.map(formatCollection);
+    const formattedCollections = rawResponse.collections.map((item) =>
+      formatCollection(item, sortBy)
+    );
 
     // Build pagination info
     const pageInfo = {
