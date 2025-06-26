@@ -13,9 +13,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn, formatAmount } from '@/lib/utils';
+import { BannerWithLaunchpad } from '@/types/launchpad';
 
 type BannerProps = {
-  items: any[];
+  items: BannerWithLaunchpad[];
 };
 
 const Banner = ({ items }: BannerProps) => {
@@ -51,6 +52,50 @@ const Banner = ({ items }: BannerProps) => {
     return timeArray.join(' ');
   };
 
+  // Get the appropriate minter based on network
+  const getMinter = (banner: BannerWithLaunchpad) => {
+    if (!banner.launchpad) return null;
+
+    // For Stargaze, use minterV2; for Intergaze, use minter
+    if (banner.banner_network?.toLowerCase() === 'stargaze') {
+      return banner.launchpad.minterV2;
+    } else if (banner.banner_network?.toLowerCase() === 'intergaze') {
+      return banner.launchpad.minter;
+    }
+
+    return null;
+  };
+
+  // Get launchpad URL based on network
+  const getLaunchpadUrl = (banner: BannerWithLaunchpad) => {
+    if (!banner.launchpad) return '#';
+
+    if (banner.banner_network?.toLowerCase() === 'stargaze') {
+      return `https://www.stargaze.zone/l/${
+        banner.launchpad.contractUri ?? banner.launchpad.contractAddress
+      }`;
+    } else if (banner.banner_network?.toLowerCase() === 'intergaze') {
+      return `https://intergaze.xyz/l/${banner.launchpad.contractAddress}`;
+    }
+
+    return '#';
+  };
+
+  // Get trading URL based on network
+  const getTradingUrl = (banner: BannerWithLaunchpad) => {
+    if (!banner.launchpad) return '#';
+
+    if (banner.banner_network?.toLowerCase() === 'stargaze') {
+      return `https://www.stargaze.zone/m/${
+        banner.launchpad.contractUri ?? banner.launchpad.contractAddress
+      }/tokens`;
+    } else if (banner.banner_network?.toLowerCase() === 'intergaze') {
+      return `https://intergaze.xyz/m/${banner.launchpad.contractAddress}`;
+    }
+
+    return '#';
+  };
+
   // Callback untuk handle slide change - ini akan dipanggil baik manual maupun autoplay
   const onSlideChange = useCallback(
     (emblaApi: any) => {
@@ -83,13 +128,24 @@ const Banner = ({ items }: BannerProps) => {
       let liveTrading = false;
 
       items?.forEach((banner) => {
-        if (!banner.launchpad) return;
+        const minter = getMinter(banner);
 
-        const launchpad = banner.launchpad;
-        const currentStage = launchpad?.minterV2?.currentStage;
+        // Handle banner_minted_date countdown
+        if (banner.banner_minted_date) {
+          const mintedDate = new Date(banner.banner_minted_date).getTime();
+          if (now < mintedDate) {
+            const difference = mintedDate - now;
+            newTimeLeft[`mint_${banner.id}`] = formatTime(difference);
+          }
+        }
+
+        if (!banner.launchpad || !minter) return;
+
+        const currentStage = minter.currentStage;
 
         // Check if trading has started
-        const tradingStart = launchpad.startTradingTime / 1000000;
+        const tradingStart =
+          new Date(banner.launchpad.startTradingTime).getTime() / 1000;
         const isTradingStarted = now >= tradingStart;
 
         // If any banner is in live trading, set the global flag
@@ -107,10 +163,8 @@ const Banner = ({ items }: BannerProps) => {
           }
         } else {
           // Stage countdown
-          const startTime = new Date(
-            currentStage.startTime / 1000000
-          ).getTime();
-          const endTime = new Date(currentStage.endTime / 1000000).getTime();
+          const startTime = new Date(currentStage.startTime).getTime();
+          const endTime = new Date(currentStage.endTime).getTime();
 
           if (now < startTime) {
             newTimeLeft[banner.id] = formatTime(startTime - now);
@@ -155,34 +209,37 @@ const Banner = ({ items }: BannerProps) => {
     }
   }, [api, onSlideChange, items]);
 
-  const showCurrentStage = (launchpad: any) => {
-    if (!launchpad) return '';
+  const showCurrentStage = (banner: BannerWithLaunchpad) => {
+    const minter = getMinter(banner);
 
-    const stageName = launchpad?.minterV2?.currentStage?.name;
+    if (!banner.launchpad || !minter) return '';
+
+    const stageName = minter.currentStage?.name;
     const now = new Date().getTime();
-    const startTime = new Date(
-      launchpad?.minterV2?.currentStage?.startTime / 1000000
-    ).getTime();
-    const endTime = launchpad?.minterV2?.currentStage?.endTime
-      ? new Date(launchpad?.minterV2?.currentStage?.endTime / 1000000).getTime()
+    const startTime = minter.currentStage?.startTime
+      ? new Date(minter.currentStage.startTime).getTime()
+      : new Date().getTime();
+    const endTime = minter.currentStage?.endTime
+      ? new Date(minter.currentStage.endTime).getTime()
       : new Date().getTime();
 
     // Check if trading has started for this specific launchpad
-    const tradingStart = launchpad.startTradingTime / 1000000;
+    const tradingStart =
+      new Date(banner.launchpad.startTradingTime).getTime() / 1000;
     const isTradingStarted = now >= tradingStart;
 
     if (isTradingStarted) {
       return (
         <span className="text-lg font-bold opacity-70">
-          Live Trading on stargaze
+          Live Trading on {banner.banner_network}
         </span>
       );
-    } else if (!launchpad?.minterV2?.currentStage?.endTime) {
+    } else if (!minter.currentStage?.endTime) {
       return (
         <span className="text-lg font-bold opacity-70">
           Trading starts
           <span className="text-[#49ED4A]">
-            {timeLeft[launchpad.id] ? ` in ${timeLeft[launchpad.id]}` : ' soon'}
+            {timeLeft[banner.id] ? ` in ${timeLeft[banner.id]}` : ' soon'}
           </span>
         </span>
       );
@@ -191,7 +248,7 @@ const Banner = ({ items }: BannerProps) => {
         <span className="text-lg font-bold opacity-70">
           {stageName} Start
           <span className="text-[#49ED4A]">
-            {timeLeft[launchpad.id] ? ` in ${timeLeft[launchpad.id]}` : ' soon'}
+            {timeLeft[banner.id] ? ` in ${timeLeft[banner.id]}` : ' soon'}
           </span>
         </span>
       );
@@ -206,14 +263,14 @@ const Banner = ({ items }: BannerProps) => {
         <span className="text-lg font-bold opacity-70">
           {stageName} Ends
           <span className="text-[#49ED4A]">
-            {timeLeft[launchpad.id] ? ` in ${timeLeft[launchpad.id]}` : ' soon'}
+            {timeLeft[banner.id] ? ` in ${timeLeft[banner.id]}` : ' soon'}
           </span>
         </span>
       );
     }
   };
 
-  const renderMedia = (banner: any) => {
+  const renderMedia = (banner: BannerWithLaunchpad) => {
     const mediaUrl = banner.banner_image ?? '/images/Odds-Garden.png';
 
     if (banner.banner_type == 'V') {
@@ -239,6 +296,87 @@ const Banner = ({ items }: BannerProps) => {
         alt=""
         className="rounded-[30px] transition-all duration-300 ease-in-out hover:scale-[102%]"
       />
+    );
+  };
+
+  const renderActionButton = (banner: BannerWithLaunchpad) => {
+    const minter = getMinter(banner);
+
+    // Check if this banner has launchpad data
+    if (banner.launchpad && minter) {
+      const now = new Date().getTime();
+      const tradingStart =
+        new Date(banner.launchpad.startTradingTime).getTime() / 1000;
+      const isTradingStarted = now >= tradingStart;
+
+      if (isTradingStarted) {
+        return (
+          <Link href={getTradingUrl(banner)} target="_blank">
+            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+              Trade on{' '}
+              {banner.banner_network?.toLowerCase() === 'stargaze'
+                ? 'Stargaze'
+                : 'Intergaze'}
+            </Button>
+          </Link>
+        );
+      } else {
+        return (
+          <Link href={getLaunchpadUrl(banner)} target="_blank">
+            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+              Go to Launchpad
+            </Button>
+          </Link>
+        );
+      }
+    }
+
+    // Handle banners without launchpad data
+    if (banner.banner_minted_date) {
+      const now = new Date().getTime();
+      const mintedDate = new Date(banner.banner_minted_date).getTime();
+
+      if (now < mintedDate) {
+        // Show countdown for mint date
+        return (
+          <div className="my-2">
+            <span className="text-lg font-bold opacity-70">
+              Mint starts
+              <span className="text-[#49ED4A]">
+                {timeLeft[`mint_${banner.id}`]
+                  ? ` in ${timeLeft[`mint_${banner.id}`]}`
+                  : ' soon'}
+              </span>
+            </span>
+          </div>
+        );
+      } else if (banner.banner_minted_link) {
+        // Mint date has passed and link is available
+        return (
+          <Link href={banner.banner_minted_link} target="_blank">
+            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+              Go to Launchpad
+            </Button>
+          </Link>
+        );
+      }
+    }
+
+    // Fallback for banners without specific mint date or link
+    if (banner.banner_minted_link) {
+      return (
+        <Link href={banner.banner_minted_link} target="_blank">
+          <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+            Go to Launchpad
+          </Button>
+        </Link>
+      );
+    }
+
+    return (
+      <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+        Coming Soon
+      </Button>
     );
   };
 
@@ -308,56 +446,17 @@ const Banner = ({ items }: BannerProps) => {
                                   </span>
                                 </div>
                               </div>
-                              {banner?.launchpad ? (
-                                <div>
-                                  <div className="my-2">
-                                    {showCurrentStage(banner?.launchpad)}
-                                  </div>
-                                  {(() => {
-                                    // Check if trading has started for this specific banner
-                                    const now = new Date().getTime();
-                                    const tradingStart =
-                                      banner?.launchpad?.startTradingTime /
-                                      1000000;
-                                    const isTradingStarted =
-                                      tradingStart && now >= tradingStart;
 
-                                    return isTradingStarted ? (
-                                      <Link
-                                        hidden={!banner?.launchpad}
-                                        href={`https://www.stargaze.zone/m/${
-                                          banner?.launchpad?.contractUri ??
-                                          banner?.launchpad?.contractAddress
-                                        }/tokens`}
-                                        target="_blank"
-                                      >
-                                        <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
-                                          Trade on Stargaze
-                                        </Button>
-                                      </Link>
-                                    ) : (
-                                      <Link
-                                        hidden={!banner?.launchpad}
-                                        href={`https://www.stargaze.zone/l/${
-                                          banner?.launchpad?.contractUri ??
-                                          banner?.launchpad?.contractAddress
-                                        }`}
-                                        target="_blank"
-                                      >
-                                        <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
-                                          Go to Launchpad
-                                        </Button>
-                                      </Link>
-                                    );
-                                  })()}
-                                </div>
-                              ) : (
+                              {/* Show stage info if banner has launchpad */}
+                              {banner?.launchpad && getMinter(banner) && (
                                 <div className="my-2">
-                                  <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
-                                    Mint Soon
-                                  </Button>
+                                  {showCurrentStage(banner)}
                                 </div>
                               )}
+
+                              <div className="my-2">
+                                {renderActionButton(banner)}
+                              </div>
                             </div>
                           </div>
                         </div>

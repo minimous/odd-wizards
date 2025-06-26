@@ -1,3 +1,9 @@
+import {
+  MARKETPLACE_COLLECTIONS_QUERY,
+  LAUNCHPAD_QUERY
+} from './query-constants';
+
+// Existing interfaces from the original code
 export interface CollectionMinMaxFilters {
   floorMin?: number;
   floorMax?: number;
@@ -136,164 +142,121 @@ export interface MarketplaceCollectionsData {
   collections: CollectionsResponse;
 }
 
-export interface GraphQLResponse {
-  data: MarketplaceCollectionsData;
+// New interfaces for Launchpad functionality
+export interface NameRecord {
+  name: string;
+  value: string;
+  verified: boolean;
+  __typename: string;
+}
+
+export interface CreatorName {
+  name: string;
+  records: NameRecord[];
+  __typename: string;
+}
+
+export interface Creator {
+  address: string;
+  name: CreatorName;
+  __typename: string;
+}
+
+export interface RoyaltyInfo {
+  sharePercent: number;
+  __typename: string;
+}
+
+export interface BurnCondition {
+  collectionAddress: string;
+  amountToBurn: number;
+  __typename: string;
+}
+
+export interface AddressTokenCounts {
+  limit: number;
+  mintable: number;
+  minted: number;
+  __typename: string;
+}
+
+export interface StageCounts {
+  limit: number;
+  mintable: number;
+  minted: number;
+  __typename: string;
+}
+
+export interface MintStage {
+  id: string;
+  name: string;
+  type: string;
+  presaleType: string;
+  status: string;
+  startTime: string;
+  endTime: string;
+  salePrice: PriceInfo;
+  discountPrice: PriceInfo;
+  burnConditions: BurnCondition[];
+  addressTokenCounts: AddressTokenCounts;
+  stageCounts: StageCounts;
+  numMembers: number;
+  isMember: boolean;
+  proofs: string[];
+  __typename: string;
+}
+
+export interface MinterV2 {
+  minterType: string;
+  minterAddress: string;
+  mintableTokens: number;
+  mintedTokens: number;
+  airdroppedTokens: number;
+  numTokens: number;
+  currentStage: MintStage;
+  mintStages: MintStage[];
+  __typename: string;
+}
+
+export interface LaunchpadCollection {
+  __typename: string;
+  contractAddress: string;
+  contractUri: string;
+  name: string;
+  description: string;
+  website: string;
+  isExplicit: boolean;
+  minterAddress: string;
+  featured: boolean;
+  floor: PriceInfo;
+  creator: Creator;
+  royaltyInfo: RoyaltyInfo;
+  minterV2: MinterV2;
+  startTradingTime: string;
+  media: Media;
+}
+
+export interface LaunchpadData {
+  collection: LaunchpadCollection;
+}
+
+export interface GraphQLResponse<T = any> {
+  data: T;
   errors?: any[];
+}
+
+// Configuration interface (you may need to adjust this based on your config structure)
+interface Config {
+  graphql_url: string;
 }
 
 export class StargazeService {
   private readonly apiUrl = 'https://graphql.mainnet.stargaze-apis.com/graphql';
+  private config?: Config;
 
-  private readonly marketplaceCollectionsQuery = `
-      query MarketplaceCollections($offset: Int, $limit: Int, $sortBy: CollectionSort, $searchQuery: String, $filterByCategories: [String!], $minMaxFilters: CollectionMinMaxFilters, $filterByDenoms: [String!], $filterByVerified: Boolean = false) {
-        collections(
-          offset: $offset
-          limit: $limit
-          sortBy: $sortBy
-          searchQuery: $searchQuery
-          filterByCategories: $filterByCategories
-          minMaxFilters: $minMaxFilters
-          filterByDenoms: $filterByDenoms
-          filterByVerified: $filterByVerified
-        ) {
-          __typename
-          collections {
-            __typename
-            contractAddress
-            contractUri
-            name
-            description
-            isExplicit
-            categories {
-              public
-              __typename
-            }
-            tradingAsset {
-              denom
-              symbol
-              price
-              exponent
-              __typename
-            }
-            floor {
-              amount
-              amountUsd
-              denom
-              symbol
-              exponent
-              __typename
-            }
-            highestOffer {
-              offerPrice {
-                amount
-                amountUsd
-                denom
-                symbol
-                exponent
-                __typename
-              }
-              __typename
-            }
-            tokenCounts {
-              listed
-              active
-              __typename
-            }
-            categories {
-              public
-              __typename
-            }
-            stats {
-              collectionAddr
-              change6HourPercent
-              change24HourPercent
-              change7DayPercent
-              change30dayPercent
-              volume6Hour
-              volume24Hour
-              volume7Day
-              volume30Day
-              changeUsd6hourPercent
-              changeUsd24hourPercent
-              changeUsd7dayPercent
-              changeUsd30dayPercent
-              volumeUsd6hour
-              volumeUsd24hour
-              volumeUsd7day
-              volumeUsd30day
-              bestOffer
-              bestOfferUsd
-              numOwners
-              uniqueOwnerPercent
-              salesCountTotal
-              __typename
-            }
-            media {
-              ...MediaFields
-              __typename
-            }
-          }
-          pageInfo {
-            __typename
-            total
-            offset
-            limit
-          }
-        }
-      }
-  
-      fragment MediaFields on Media {
-        type
-        url
-        originalUrl
-        height
-        width
-        visualAssets {
-          xs {
-            type
-            url
-            height
-            width
-            staticUrl
-            __typename
-          }
-          sm {
-            type
-            url
-            height
-            width
-            staticUrl
-            __typename
-          }
-          md {
-            type
-            url
-            height
-            width
-            staticUrl
-            __typename
-          }
-          lg {
-            type
-            url
-            height
-            width
-            staticUrl
-            __typename
-          }
-          xl {
-            type
-            url
-            height
-            width
-            staticUrl
-            __typename
-          }
-          __typename
-        }
-        __typename
-      }
-    `;
+  constructor(config?: Config) {
+    this.config = config;
+  }
 
   async getMarketplaceCollection(
     params: MarketplaceCollectionParams = {}
@@ -329,7 +292,7 @@ export class StargazeService {
         body: JSON.stringify({
           operationName: 'MarketplaceCollections',
           variables,
-          query: this.marketplaceCollectionsQuery
+          query: MARKETPLACE_COLLECTIONS_QUERY
         })
       });
 
@@ -337,7 +300,8 @@ export class StargazeService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result: GraphQLResponse = await response.json();
+      const result: GraphQLResponse<MarketplaceCollectionsData> =
+        await response.json();
 
       if (result.errors) {
         throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
@@ -346,6 +310,55 @@ export class StargazeService {
       return result.data.collections;
     } catch (error) {
       console.error('Error fetching marketplace collections:', error);
+      throw error;
+    }
+  }
+
+  async getLaunchpad(
+    address: string,
+    walletAddress?: string
+  ): Promise<LaunchpadCollection> {
+    if (!this.config) {
+      throw new Error('Config not found');
+    }
+
+    const variables = {
+      address,
+      walletAddress
+    };
+
+    try {
+      const response = await fetch(
+        `${this.config.graphql_url}?t=${new Date().getTime()}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache', // For HTTP/1.0 compatibility
+            Expires: '0' // For older browsers
+          },
+          body: JSON.stringify({
+            query: LAUNCHPAD_QUERY,
+            variables,
+            operationName: 'MinterV2'
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: GraphQLResponse<LaunchpadData> = await response.json();
+
+      if (result.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
+      }
+
+      return result.data.collection;
+    } catch (error) {
+      console.error('Error fetching launchpad data:', error);
       throw error;
     }
   }
