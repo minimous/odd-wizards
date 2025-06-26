@@ -375,7 +375,7 @@ const Banner = ({ items }: BannerProps) => {
 
     return (
       <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
-        Coming Soon
+        Mint Soon
       </Button>
     );
   };
