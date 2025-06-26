@@ -165,7 +165,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
         <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-4">
           {wallet.status != WalletStatus.Connected ? (
             <div className="">
-              <ConnectButtonV2 />
+              <ConnectButtonV2 showProfile={false} />
             </div>
           ) : isFetch ? (
             <div className="">
