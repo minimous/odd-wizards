@@ -120,7 +120,7 @@ const MultipleStakeCard = ({ projectCode }: MultipleStakeCardProps) => {
       <div className="w-full">
         {/* <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p> */}
         <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-4">
-          {isConnected ? (
+          {!isConnected ? (
             <div className="">
               <ConnectButtonV2 className="w-full" showProfile={false} />
             </div>
