@@ -25,7 +25,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
   const [isFetch, setIsFetch] = useState<boolean>(false);
   // const [point, setPoints] = useState<number>(0);
-  const { address } = useSyncedWallet(); // Use the 'stargaze' chain from your Cosmos setup
+  const { isConnected, address } = useSyncedWallet(); // Use the 'stargaze' chain from your Cosmos setup
   const { toast } = useToast();
   const { claim, setClaim } = useClaim();
   const claimRef = useRef<HTMLButtonElement>(null);
@@ -45,7 +45,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
       setIsFetch(true);
     }
 
-    if (wallet.status == WalletStatus.Connected && address) {
+    if (isConnected && address) {
       fetchData();
     }
   }, [address, claim]);
@@ -163,7 +163,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
         </div>
         {/* <p className="text-xs md:!text-lg text-gray-400 leading-tight">guide and assist you in exploring the cosmos.</p> */}
         <div className="relative mx-auto mt-4 md:!mx-0 md:!mt-4">
-          {wallet.status != WalletStatus.Connected ? (
+          {isConnected ? (
             <div className="">
               <ConnectButtonV2 showProfile={false} />
             </div>
