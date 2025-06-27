@@ -25,7 +25,6 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
   const [staker, setStaker] = useState<mst_staker | undefined>(undefined);
   const [isFetch, setIsFetch] = useState<boolean>(false);
   // const [point, setPoints] = useState<number>(0);
-  const wallet = useWallet();
   const { address } = useSyncedWallet(); // Use the 'stargaze' chain from your Cosmos setup
   const { toast } = useToast();
   const { claim, setClaim } = useClaim();
