@@ -74,7 +74,7 @@ export const BoxStatStake = ({ collection, project }: BoxStatStakeProps) => {
                     className="text-center text-[#DB2877]"
                   >
                     <p className="text-[12px] font-bold md:text-[20px] ">
-                      {formatAddress(address)}
+                      {formatAddress(address ?? '')}
                     </p>
                   </Link>
                 </div>
