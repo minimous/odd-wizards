@@ -43,14 +43,14 @@ import {
 import Link from 'next/link';
 import { ArrowUp, ChevronUp, ChevronDown } from 'lucide-react';
 import { mst_project } from '@prisma/client';
+import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
 
 const config = getConfig();
 export default function Stake() {
   const { user, staker } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
   const [raffles, setRaffles] = useState([]);
-  const { address, isWalletConnecting, isWalletConnected } =
-    useChain('stargaze');
+  const { address, isConnected } = useSyncedWallet();
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [status, setStatus] = useState<'not_started' | 'active' | 'expired'>(
     'active'
