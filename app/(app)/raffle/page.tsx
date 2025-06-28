@@ -155,7 +155,13 @@ export default function Stake() {
           )
         );
 
-        setTokens(tokenFiltered);
+        setTokens(
+          tokenFiltered.sort((a, b) => {
+            if (a.project_symbol === 'WZRD') return -1;
+            if (b.project_symbol === 'WZRD') return 1;
+            return a.project_seqn.localeCompare(b.project_seqn);
+          })
+        );
       }
     }
 

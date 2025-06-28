@@ -47,42 +47,48 @@ export default function Profile({ params }: { params: { address: string } }) {
         data.associated.names.length > 0 ? data.associated.names[0] : undefined
       );
 
-      setTokens(
-        Object.values(
-          data.staker.reduce(
-            (acc: any, staker: any) => {
-              const projectId = staker.staker_project_id ?? 0;
-              const project = staker.projects; // Getting the related project data
+      const tokenFiltered: any[] = Object.values(
+        data.staker.reduce(
+          (acc: any, staker: any) => {
+            const projectId = staker.staker_project_id ?? 0;
+            const project = staker.projects; // Getting the related project data
 
-              if (!acc[projectId]) {
-                acc[projectId] = {
-                  project_id: projectId,
-                  project_seqn: project?.project_seqn,
-                  project_symbol: project?.project_symbol ?? '',
-                  project_symbol_img: project?.project_symbol_img ?? '',
-                  total_nft_staked: 0,
-                  total_points: 0
-                };
-              }
+            if (!acc[projectId]) {
+              acc[projectId] = {
+                project_id: projectId,
+                project_seqn: project?.project_seqn,
+                project_symbol: project?.project_symbol ?? '',
+                project_symbol_img: project?.project_symbol_img ?? '',
+                total_nft_staked: 0,
+                total_points: 0
+              };
+            }
 
-              acc[projectId].total_nft_staked += staker.staker_nft_staked ?? 0;
-              acc[projectId].total_points += staker.staker_total_points ?? 0;
+            acc[projectId].total_nft_staked += staker.staker_nft_staked ?? 0;
+            acc[projectId].total_points += staker.staker_total_points ?? 0;
 
-              return acc;
-            },
-            {} as Record<
-              number,
-              {
-                project_id: number;
-                project_seqn: number;
-                project_symbol: string;
-                project_symbol_img: string;
-                total_nft_staked: number;
-                total_points: number;
-              }
-            >
-          )
+            return acc;
+          },
+          {} as Record<
+            number,
+            {
+              project_id: number;
+              project_seqn: number;
+              project_symbol: string;
+              project_symbol_img: string;
+              total_nft_staked: number;
+              total_points: number;
+            }
+          >
         )
+      );
+
+      setTokens(
+        tokenFiltered.sort((a, b) => {
+          if (a.project_symbol === 'WZRD') return -1;
+          if (b.project_symbol === 'WZRD') return 1;
+          return a.project_seqn.localeCompare(b.project_seqn);
+        })
       );
 
       setLoading(false);
