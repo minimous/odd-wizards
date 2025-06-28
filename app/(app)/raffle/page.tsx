@@ -159,7 +159,11 @@ export default function Stake() {
           tokenFiltered.sort((a, b) => {
             if (a.project_symbol === 'WZRD') return -1;
             if (b.project_symbol === 'WZRD') return 1;
-            return a.project_seqn.localeCompare(b.project_seqn);
+
+            const seqnA = a.project_seqn ?? 999999; // atau 0, tergantung kebutuhan
+            const seqnB = b.project_seqn ?? 999999;
+
+            return seqnA - seqnB;
           })
         );
       }
