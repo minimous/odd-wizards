@@ -34,7 +34,7 @@ export default function Profile({ params }: { params: { address: string } }) {
   const [loading, setLoading] = useState<boolean>(true);
   const componentRef = useRef<HTMLDivElement>(null);
   const [html2pdf, setHtml2pdf] = useState<any>(null);
-  const [tokenType, setTokenType] = useState<string[] | []>(['oddswizard']);
+  const [tokenType, setTokenType] = useState<string[] | []>(['WZRD']);
 
   useEffect(() => {
     async function fetchData() {
