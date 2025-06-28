@@ -34,7 +34,7 @@ export default function Profile({ params }: { params: { address: string } }) {
   const [loading, setLoading] = useState<boolean>(true);
   const componentRef = useRef<HTMLDivElement>(null);
   const [html2pdf, setHtml2pdf] = useState<any>(null);
-  const [tokenType, setTokenType] = useState<string[] | []>([]);
+  const [tokenType, setTokenType] = useState<string[] | []>(['oddswizard']);
 
   useEffect(() => {
     async function fetchData() {
@@ -337,7 +337,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <div>
+                      {/* <div>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -350,7 +350,7 @@ export default function Profile({ params }: { params: { address: string } }) {
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                      </div>
+                      </div> */}
                     </div>
                     {/* <span className="md:!text-md text-gray-400 hover:text-white">Edit Profile</span> */}
                   </div>
