@@ -45,9 +45,16 @@ const TokensCard = ({ data, tokenType, setTokenType }: TokensCardProps) => {
   // Set initial token type once when data is loaded
   useEffect(() => {
     if (data.length > 0 && tokenType.length === 0) {
-      const sortedData = [...data].sort(
-        (a, b) => a.project_seqn - b.project_seqn
-      );
+      const sortedData = [...data].sort((a, b) => {
+        if (a.project_symbol === 'WZRD') return -1;
+        if (b.project_symbol === 'WZRD') return 1;
+
+        const seqnA = a.project_seqn ?? 999999; // atau 0, tergantung kebutuhan
+        const seqnB = b.project_seqn ?? 999999;
+
+        return seqnA - seqnB;
+      });
+
       if (sortedData.length > 0) {
         const hasOddsWizard = sortedData.some(
           (item) => item.project_symbol === 'WZRD'
@@ -58,7 +65,15 @@ const TokensCard = ({ data, tokenType, setTokenType }: TokensCardProps) => {
   }, [data, tokenType.length, setTokenType]);
 
   // Sort data based on project_seqn
-  const sortedData = [...data].sort((a, b) => a.project_seqn - b.project_seqn);
+  const sortedData = [...data].sort((a, b) => {
+    if (a.project_symbol === 'WZRD') return -1;
+    if (b.project_symbol === 'WZRD') return 1;
+
+    const seqnA = a.project_seqn ?? 999999; // atau 0, tergantung kebutuhan
+    const seqnB = b.project_seqn ?? 999999;
+
+    return seqnA - seqnB;
+  });
 
   // Determine number of items to show based on screen size
   const itemsPerView = isMobile ? 1.5 : 4.5;
