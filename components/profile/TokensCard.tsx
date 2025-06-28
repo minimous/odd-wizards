@@ -49,7 +49,12 @@ const TokensCard = ({ data, tokenType, setTokenType }: TokensCardProps) => {
         (a, b) => a.project_seqn - b.project_seqn
       );
       if (sortedData.length > 0) {
-        setTokenType(['oddswizard']);
+        const hasOddsWizard = sortedData.some(
+          (item) => item.project_symbol === 'oddswizard'
+        );
+        setTokenType([
+          hasOddsWizard ? 'oddswizard' : sortedData[0].project_symbol
+        ]);
       }
     }
   }, [data, tokenType.length, setTokenType]);
