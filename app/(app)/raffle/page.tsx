@@ -34,7 +34,7 @@ export default function Stake() {
   const [stakers, setStakers] = useState<any>();
   const [tokens, setTokens] = useState<any[] | []>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [tokenType, setTokenType] = useState<string[] | []>([]);
+  const [tokenType, setTokenType] = useState<string[] | []>(['WZRD']);
   const { address } = useSyncedWallet();
   const LIMIT = 8;
 

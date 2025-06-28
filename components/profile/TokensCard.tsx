@@ -50,11 +50,9 @@ const TokensCard = ({ data, tokenType, setTokenType }: TokensCardProps) => {
       );
       if (sortedData.length > 0) {
         const hasOddsWizard = sortedData.some(
-          (item) => item.project_symbol === 'oddswizard'
+          (item) => item.project_symbol === 'WZRD'
         );
-        setTokenType([
-          hasOddsWizard ? 'oddswizard' : sortedData[0].project_symbol
-        ]);
+        setTokenType([hasOddsWizard ? 'WZRD' : sortedData[0].project_symbol]);
       }
     }
   }, [data, tokenType.length, setTokenType]);
