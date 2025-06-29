@@ -107,7 +107,9 @@ function normalizeIntergazeLaunchpad(intergazeData: any): GeneralLaunchpad {
           mintStages: intergazeData.minter.mintStages
         }
       : undefined,
-    startTradingTime: intergazeData.startTradingTime,
+    startTradingTime: intergazeData.startTradingTime
+      ? intergazeData.startTradingTime / 1000000
+      : 1000000000000000,
     media: intergazeData.media
   };
 }

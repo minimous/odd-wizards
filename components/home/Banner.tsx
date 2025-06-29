@@ -233,7 +233,7 @@ const Banner = ({ items }: BannerProps) => {
     if (isTradingStarted) {
       return (
         <span className="text-lg font-bold opacity-70">
-          Live Trading on {banner.banner_network}
+          {banner?.launchpad.minter?.numTokens} Sold Out
         </span>
       );
     } else if (!minter.currentStage?.endTime) {
@@ -315,10 +315,7 @@ const Banner = ({ items }: BannerProps) => {
         return (
           <Link href={getTradingUrl(banner)} target="_blank">
             <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
-              Trade on{' '}
-              {banner.banner_network?.toLowerCase() === 'stargaze'
-                ? 'Stargaze'
-                : 'Intergaze'}
+              View Collection
             </Button>
           </Link>
         );
