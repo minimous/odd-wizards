@@ -81,7 +81,7 @@ export interface GeneralLaunchpad {
   // Use union type to support both Stargaze (minterV2) and Intergaze (minter)
   minterV2?: GeneralMinter;
   minter?: GeneralMinter;
-  startTradingTime: string;
+  startTradingTime: number;
   media: GeneralMedia;
 }
 
