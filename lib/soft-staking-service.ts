@@ -32,41 +32,113 @@ export async function updateNftOwner(
 
     if (!staker) throw new Error('Staker not found');
 
-    let allTokens = await fetchAllStargazeTokens({
-      owner: address,
-      collectionAddress: collection_address
-    });
+    let allTokens = [];
 
-    //cek if exists stake in daodao
-    if (collection.collection_staker_daodao) {
-      const staked_tokenIds = await getUserStakedNFTs(
+    // Handle different networks like in getTotalPoints
+    if (collection.collection_chain == NETWORK_CONSTANT.STARGAZE) {
+      allTokens = await fetchAllStargazeTokens({
+        owner: address,
+        collectionAddress: collection_address,
+        filterForSale: 'UNLISTED'
+      });
+
+      // Check if exists stake in daodao
+      if (collection.collection_staker_daodao) {
+        const staked_tokenIds = await getUserStakedNFTs(
+          address,
+          collection.collection_staker_daodao
+        );
+        const staked_nfts = await Promise.all(
+          staked_tokenIds.map(async (tokenId: string) => {
+            const token = await getToken(
+              collection.collection_code ?? '-',
+              tokenId
+            );
+            return token;
+          })
+        );
+
+        allTokens.push(...staked_nfts);
+      }
+    } else if (collection.collection_chain == NETWORK_CONSTANT.INTERGAZE) {
+      if (!collection.collection_address)
+        throw new Error('Collection address is null');
+      allTokens = await new IntergazeService().getAllNftsWithTraits(
         address,
-        collection.collection_staker_daodao
+        collection.collection_address
       );
-      const staked_nfts = await Promise.all(
-        staked_tokenIds.map(async (tokenId: string) => {
-          const token = await getToken(
-            collection.collection_code ?? '-',
-            tokenId
-          );
-          return token;
-        })
-      );
-
-      allTokens.push(...staked_nfts);
+    } else {
+      // throw new Error('Network not supported');
+      return;
     }
 
+    // Calculate total points similar to getTotalPoints
+    const attributes_rewards = await prisma.mst_attributes_reward.findMany({
+      where: { attr_collection_id: collection.collection_id }
+    });
+
+    let attrreward: mst_attributes_reward[] = [];
+
+    // Process trait-based rewards
+    allTokens.forEach((nft) => {
+      nft.traits.forEach((trait) => {
+        const matchingReward = attributes_rewards.find(
+          (reward) =>
+            reward.attr_key == trait.name && reward.attr_val == trait.value
+        );
+
+        if (matchingReward) {
+          attrreward.push(matchingReward);
+        }
+
+        if (!matchingReward) {
+          const matchingKeyReward = attributes_rewards.find(
+            (reward) =>
+              reward.attr_key == trait.name &&
+              (reward.attr_val == undefined || reward.attr_val == null)
+          );
+
+          if (matchingKeyReward) {
+            attrreward.push(matchingKeyReward);
+          }
+        }
+      });
+    });
+
+    // Add base rewards (rewards without specific attributes)
+    allTokens.forEach((item) => {
+      attrreward.push(
+        ...attributes_rewards.filter(
+          (reward) => !reward.attr_key && !reward.attr_val
+        )
+      );
+    });
+
+    // Calculate total points
+    const totalPoints = attrreward?.reduce(
+      (sum, reward) =>
+        sum + calculatePoint(reward, staker.staker_lastclaim_date),
+      0
+    );
+
+    // Update staker with both NFT count and total points
     const updatedStaker = await prisma.mst_staker.update({
       where: {
         staker_id: staker.staker_id,
         staker_collection_id: collection.collection_id
       },
       data: {
-        staker_nft_staked: allTokens.length
+        staker_nft_staked: allTokens.length,
+        staker_total_points: totalPoints
       }
     });
 
-    return updatedStaker;
+    return {
+      ...updatedStaker,
+      totalNfts: allTokens.length,
+      totalPoints: totalPoints,
+      attributeRewards: attrreward
+    };
   } catch (error) {
     console.error('Error in updateNftOwner:', error);
     throw error;
@@ -110,29 +182,43 @@ export async function getTotalPoints(address: string, project_id: number) {
       where: { attr_collection_id: collection.collection_id }
     });
 
-    let allTokens = await fetchAllStargazeTokens({
-      owner: address,
-      collectionAddress: collection.collection_address,
-      filterForSale: 'UNLISTED'
-    });
+    let allTokens = [];
 
-    //cek if exists stake in daodao
-    if (collection.collection_staker_daodao) {
-      const staked_tokenIds = await getUserStakedNFTs(
+    if (collection.collection_chain == NETWORK_CONSTANT.STARGAZE) {
+      allTokens = await fetchAllStargazeTokens({
+        owner: address,
+        collectionAddress: collection.collection_address,
+        filterForSale: 'UNLISTED'
+      });
+
+      //cek if exists stake in daodao
+      if (collection.collection_staker_daodao) {
+        const staked_tokenIds = await getUserStakedNFTs(
+          address,
+          collection.collection_staker_daodao
+        );
+        const staked_nfts = await Promise.all(
+          staked_tokenIds.map(async (tokenId: string) => {
+            const token = await getToken(
+              collection.collection_code ?? '-',
+              tokenId
+            );
+            return token;
+          })
+        );
+
+        allTokens.push(...staked_nfts);
+      }
+    } else if (collection.collection_chain == NETWORK_CONSTANT.INTERGAZE) {
+      if (!collection.collection_address)
+        throw new Error('Collection address is null');
+      allTokens = await new IntergazeService().getAllNftsWithTraits(
         address,
-        collection.collection_staker_daodao
+        collection.collection_address
       );
-      const staked_nfts = await Promise.all(
-        staked_tokenIds.map(async (tokenId: string) => {
-          const token = await getToken(
-            collection.collection_code ?? '-',
-            tokenId
-          );
-          return token;
-        })
-      );
-
-      allTokens.push(...staked_nfts);
+    } else {
+      // throw Error('Network not supported');
+      return;
     }
 
     let attrreward: mst_attributes_reward[] = [];
@@ -332,9 +418,11 @@ export const getAllNfts = async (
         offset: 0
       });
     case NETWORK_CONSTANT.INTERGAZE:
-      return await new IntergazeService().getNfts(
+      return await new IntergazeService().getNftsWithPagination(
         staker_address,
-        collection_address
+        collection_address,
+        1,
+        0
       );
   }
 };
