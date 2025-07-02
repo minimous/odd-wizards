@@ -1,7 +1,7 @@
 import { ChainConfig, WalletConfig } from '@/types/wallet';
 import { STARGAZE_WALLETS, getWalletConfig } from '@/config/wallets';
 
-// Extend Window interface for all wallet objects
+// Extend Window interface for all wallet objects including Initia
 declare global {
   interface Window {
     keplr?: any;
@@ -15,6 +15,7 @@ declare global {
     trustWallet?: any;
     ledger?: any;
     ethereum?: any;
+    createWalletWidget?: any; // Initia wallet widget
     [key: string]: any; // For dynamic wallet access
   }
 }
@@ -25,10 +26,12 @@ export interface WalletConnectionResult {
   name?: string;
   algo?: string;
   offlineSigner?: any;
+  widget?: any; // For Initia widget
 }
 
 export default class WalletService {
   private static readonly LEAP_SNAP_ID = 'npm:@leapwallet/metamask-cosmos-snap';
+  private static initiaWidget: any = null;
 
   /**
    * Connect to any supported wallet by ID
@@ -42,67 +45,255 @@ export default class WalletService {
       throw new Error(`Unsupported wallet: ${walletId}`);
     }
 
-    // Check if wallet is installed
-    if (!this.isWalletInstalled(walletId)) {
+    // Check if wallet is installed (except for Initia which loads dynamically)
+    if (walletId !== 'initia-widget' && !this.isWalletInstalled(walletId)) {
       throw new Error(
         `${walletConfig.name} is not installed. Please install the extension first.`
       );
     }
 
-    // Route to appropriate connection method based on wallet type
-    switch (walletId) {
-      case 'keplr-extension':
-      case 'keplr':
-        return await this.connectKeplr(chainConfig);
+    if (chainConfig.chainId === 'stargaze-1') {
+      // Route to appropriate connection method based on wallet type
+      switch (walletId) {
+        case 'keplr-extension':
+        case 'keplr':
+          return await this.connectKeplr(chainConfig);
 
-      case 'leap-extension':
-      case 'leap':
-        return await this.connectLeap(chainConfig);
+        case 'leap-extension':
+        case 'leap':
+          return await this.connectLeap(chainConfig);
 
-      case 'cosmostation-extension':
-      case 'cosmostation':
-        return await this.connectCosmostation(chainConfig);
+        case 'cosmostation-extension':
+        case 'cosmostation':
+          return await this.connectCosmostation(chainConfig);
 
-      case 'station-extension':
-      case 'station':
-        return await this.connectStation(chainConfig);
+        case 'station-extension':
+        case 'station':
+          return await this.connectStation(chainConfig);
 
-      case 'compass-extension':
-      case 'compass':
-        return await this.connectCompass(chainConfig);
+        case 'compass-extension':
+        case 'compass':
+          return await this.connectCompass(chainConfig);
 
-      case 'owallet-extension':
-      case 'owallet':
-        return await this.connectOWallet(chainConfig);
+        case 'owallet-extension':
+        case 'owallet':
+          return await this.connectOWallet(chainConfig);
 
-      case 'coin98-extension':
-      case 'coin98':
-        return await this.connectCoin98(chainConfig);
+        case 'coin98-extension':
+        case 'coin98':
+          return await this.connectCoin98(chainConfig);
 
-      case 'xdefi-extension':
-      case 'xdefi':
-        return await this.connectXDEFI(chainConfig);
+        case 'xdefi-extension':
+        case 'xdefi':
+          return await this.connectXDEFI(chainConfig);
 
-      case 'trust-extension':
-      case 'trust':
-        return await this.connectTrustWallet(chainConfig);
+        case 'trust-extension':
+        case 'trust':
+          return await this.connectTrustWallet(chainConfig);
 
-      case 'ledger-extension':
-      case 'ledger':
-        return await this.connectLedger(chainConfig);
+        case 'ledger-extension':
+        case 'ledger':
+          return await this.connectLedger(chainConfig);
 
-      case 'walletconnect':
-        return await this.connectWalletConnect(chainConfig);
+        case 'walletconnect':
+          return await this.connectWalletConnect(chainConfig);
 
-      case 'leap-metamask-cosmos-snap':
-      case 'metamask':
-        return await this.connectLeapSnap(chainConfig);
+        case 'leap-metamask-cosmos-snap':
+        case 'metamask':
+          return await this.connectLeapSnap(chainConfig);
 
-      default:
-        // Try generic cosmos wallet connection for unlisted wallets
-        return await this.connectGenericCosmosWallet(walletId, chainConfig);
+        default:
+          // Try generic cosmos wallet connection for unlisted wallets
+          return await this.connectGenericCosmosWallet(walletId, chainConfig);
+      }
+    } else if (
+      chainConfig.chainId === 'initia-1' ||
+      chainConfig.chainId.startsWith('intergaze')
+    ) {
+      // Use Initia widget for Initia-based chains
+      return await this.connectInitia(chainConfig);
+    } else {
+      throw new Error(`Unsupported chain: ${chainConfig.chainId}`);
     }
   }
+
+  /**
+   * Connect to Initia-based networks using the Initia wallet widget
+   */
+  static async connectInitia(
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    try {
+      // Load Initia wallet widget if not already loaded
+      if (!window.createWalletWidget) {
+        await this.loadInitiaWidget();
+      }
+
+      // Check if widget is available
+      if (!window.createWalletWidget) {
+        throw new Error('Initia wallet widget failed to load');
+      }
+
+      // Create widget configuration
+      let widgetConfig: any;
+
+      if (chainConfig.chainId === 'initia-1') {
+        // For mainnet Initia, use chainId directly
+        widgetConfig = { chainId: chainConfig.chainId };
+      } else {
+        // For custom layers like Intergaze, use customLayer configuration
+        widgetConfig = {
+          customLayer: {
+            chain_id: chainConfig.chainId,
+            chain_name: chainConfig.chainName,
+            apis: {
+              rpc: [{ address: chainConfig.rpc }],
+              rest: [{ address: chainConfig.rest }]
+            },
+            fees: {
+              fee_tokens: [
+                {
+                  denom: chainConfig.currency?.coinMinimalDenom || 'uinit',
+                  fixed_min_gas_price: chainConfig.gasPriceStep?.low || 0.15
+                }
+              ]
+            },
+            bech32_prefix: chainConfig.bech32Prefix || 'init'
+          }
+        };
+      }
+
+      // Create the wallet widget
+      const widget = await window.createWalletWidget(widgetConfig);
+      this.initiaWidget = widget;
+
+      // Get the current address
+      const address = widget.address$.value;
+
+      if (!address) {
+        // If no address, trigger onboard
+        await widget.onboard();
+
+        // Wait for address to be available
+        return new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Connection timeout - no address received'));
+          }, 30000); // 30 second timeout
+
+          const subscription = widget.address$.subscribe(
+            (newAddress: string) => {
+              if (newAddress) {
+                clearTimeout(timeout);
+                subscription.unsubscribe();
+                resolve({
+                  address: newAddress,
+                  name: 'Initia Wallet',
+                  widget: widget
+                });
+              }
+            }
+          );
+        });
+      }
+
+      return {
+        address: address,
+        name: 'Initia Wallet',
+        widget: widget
+      };
+    } catch (error: any) {
+      console.error('Initia connection error:', error);
+      throw new Error(`Failed to connect to Initia wallet: ${error.message}`);
+    }
+  }
+
+  /**
+   * Load Initia wallet widget script dynamically
+   */
+  private static async loadInitiaWidget(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Check if script is already loaded
+      if (window.createWalletWidget) {
+        resolve();
+        return;
+      }
+
+      // Check if script tag already exists
+      const existingScript = document.querySelector(
+        'script[src*="initia/wallet-widget"]'
+      );
+      if (existingScript) {
+        // Script exists, wait for it to load
+        existingScript.addEventListener('load', () => resolve());
+        existingScript.addEventListener('error', () =>
+          reject(new Error('Failed to load Initia widget'))
+        );
+        return;
+      }
+
+      // Create and load script
+      const script = document.createElement('script');
+      script.src =
+        'https://cdn.jsdelivr.net/npm/@initia/wallet-widget/dist/index.js';
+      script.type = 'module';
+      script.async = true;
+      script.defer = true;
+
+      script.onload = () => {
+        // Wait a bit for the module to initialize
+        setTimeout(() => {
+          if (window.createWalletWidget) {
+            resolve();
+          } else {
+            reject(
+              new Error('Initia wallet widget not available after loading')
+            );
+          }
+        }, 500);
+      };
+
+      script.onerror = () => {
+        reject(new Error('Failed to load Initia wallet widget script'));
+      };
+
+      document.head.appendChild(script);
+    });
+  }
+
+  /**
+   * Disconnect Initia wallet
+   */
+  static async disconnectInitia(): Promise<void> {
+    if (this.initiaWidget && this.initiaWidget.disconnect) {
+      await this.initiaWidget.disconnect();
+      this.initiaWidget = null;
+    }
+  }
+
+  /**
+   * Send transaction using Initia widget
+   */
+  static async sendInitiaTransaction(messages: any[]): Promise<string> {
+    if (!this.initiaWidget || !this.initiaWidget.requestTx) {
+      throw new Error('Initia wallet not connected');
+    }
+
+    try {
+      const transactionHash = await this.initiaWidget.requestTx({ messages });
+      return transactionHash;
+    } catch (error: any) {
+      throw new Error(`Transaction failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get Initia wallet address observable
+   */
+  static getInitiaAddressObservable() {
+    return this.initiaWidget?.address$ || null;
+  }
+
+  // ... (keep all existing methods like connectKeplr, connectLeap, etc. unchanged)
 
   /**
    * Connect to Keplr wallet
@@ -406,6 +597,8 @@ export default class WalletService {
       throw error;
     }
   }
+
+  // ... (keep all other existing methods like connectLeapSnap, suggestChain, etc.)
 
   /**
    * Check if Leap Cosmos Snap is installed and initialized
@@ -797,7 +990,8 @@ export default class WalletService {
       ledger: () => !!window.ledger,
       metamask: () => !!window.ethereum?.isMetaMask,
       'leap-metamask-cosmos-snap': () => !!window.ethereum?.isMetaMask,
-      walletconnect: () => true // WalletConnect doesn't require installation
+      walletconnect: () => true, // WalletConnect doesn't require installation
+      'initia-widget': () => true // Initia widget loads dynamically
     };
 
     const checker = walletMap[walletId];
@@ -821,6 +1015,11 @@ export default class WalletService {
       const walletConfig = getWalletConfig(walletId);
       if (!walletConfig || !this.isWalletInstalled(walletId)) {
         return false;
+      }
+
+      // Special handling for Initia widget
+      if (walletId === 'initia-widget') {
+        return this.initiaWidget?.address$?.value ? true : false;
       }
 
       if (walletConfig.supportedTypes.includes('evm')) {
@@ -875,6 +1074,12 @@ export default class WalletService {
    * Disconnect wallet (limited support as most wallets handle this internally)
    */
   static async disconnectWallet(walletId: string): Promise<void> {
+    // Special handling for Initia widget
+    if (walletId === 'initia-widget') {
+      await this.disconnectInitia();
+      return;
+    }
+
     console.log(`${walletId} disconnection is handled by the wallet extension`);
     // Most wallets don't support programmatic disconnect
     // The user needs to disconnect from the extension directly
@@ -896,6 +1101,12 @@ export default class WalletService {
 
       const walletConfig = getWalletConfig(walletId);
       if (!walletConfig) return [];
+
+      // Special handling for Initia widget
+      if (walletId === 'initia-widget') {
+        const address = this.initiaWidget?.address$?.value;
+        return address ? [{ address }] : [];
+      }
 
       if (walletConfig.supportedTypes.includes('evm')) {
         if (walletId === 'metamask' && window.ethereum?.isMetaMask) {

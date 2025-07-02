@@ -26,7 +26,8 @@ const getWalletLogo = (walletName: string, logo?: string): string => {
     'xdefi-extension': 'https://xdefi.io/favicon.ico',
     'station-extension':
       'https://assets.terra.money/img/wallet-providers/station.svg',
-    'cosmostation-extension': 'https://wallet.cosmostation.io/favicon.ico'
+    'cosmostation-extension': 'https://wallet.cosmostation.io/favicon.ico',
+    'initia-widget': 'https://initia.xyz/favicon.ico' // Add Initia logo
   };
 
   return logoMap[walletName] || 'https://via.placeholder.com/32x32?text=W';
@@ -42,14 +43,15 @@ const getWalletColor = (walletName: string): string => {
     'leap-metamask-cosmos-snap': 'from-orange-400 to-yellow-500',
     'xdefi-extension': 'from-cyan-500 to-blue-600',
     'station-extension': 'from-green-500 to-blue-600',
-    'cosmostation-extension': 'from-purple-500 to-indigo-600'
+    'cosmostation-extension': 'from-purple-500 to-indigo-600',
+    'initia-widget': 'from-emerald-500 to-teal-600' // Add Initia color scheme
   };
 
   return colorMap[walletName] || 'from-gray-500 to-gray-700';
 };
 
 // Generate STARGAZE_WALLETS from cosmos-kit wallets
-export const STARGAZE_WALLETS: WalletConfig[] = wallets
+const cosmosWallets: WalletConfig[] = wallets
   .filter((wallet) => {
     // Most cosmos-kit wallets support multiple chains including Stargaze
     // We'll include all wallets and let the user choose
@@ -68,7 +70,7 @@ export const STARGAZE_WALLETS: WalletConfig[] = wallets
         wallet.walletInfo.prettyName || wallet.walletName
       } wallet for Stargaze network`,
     color: getWalletColor(wallet.walletName),
-    supportedTypes: ['stargaze'] as ('stargaze' | 'evm')[],
+    supportedTypes: ['stargaze'] as ('stargaze' | 'evm' | 'intergaze')[],
     downloadUrl:
       wallet.walletInfo?.downloads?.[0]?.link ??
       (typeof wallet.appUrl === 'string' ? wallet.appUrl : undefined)
@@ -78,6 +80,24 @@ export const STARGAZE_WALLETS: WalletConfig[] = wallets
       // Remove duplicates based on wallet name
       index === self.findIndex((w) => w.name === wallet.name)
   );
+
+// Add Initia Widget to the wallet list
+const initiaWidget: WalletConfig = {
+  id: 'initia-widget',
+  name: 'Initia Wallet',
+  logo: getWalletLogo('initia-widget'),
+  description:
+    'Official Initia wallet widget for Initia-based networks including Intergaze',
+  color: getWalletColor('initia-widget'),
+  supportedTypes: ['intergaze'],
+  downloadUrl: 'https://initia.xyz/' // Replace with actual download URL if needed
+};
+
+// Combined wallet list including Initia widget
+export const STARGAZE_WALLETS: WalletConfig[] = [
+  ...cosmosWallets,
+  initiaWidget
+];
 
 // Export wallet names for cosmos-kit integration
 export const STARGAZE_WALLET_NAMES = STARGAZE_WALLETS.map(
@@ -91,6 +111,9 @@ export const getWalletConfig = (walletId: string): WalletConfig | undefined => {
 
 // Helper function to check if wallet is available
 export const isWalletAvailable = (walletId: string): boolean => {
+  if (walletId === 'initia-widget') {
+    return true; // Initia widget is always available as it loads dynamically
+  }
   return wallets.some((wallet) => wallet.walletName === walletId);
 };
 
@@ -105,5 +128,38 @@ export const checkStargazeSupport = async (
   } catch (error) {
     console.warn(`Could not check Stargaze support for ${walletName}:`, error);
     return false;
+  }
+};
+
+// Helper function to check if wallet supports Initia-based chains
+export const checkInitiaSupport = async (
+  walletName: string
+): Promise<boolean> => {
+  try {
+    // Only Initia widget supports Initia-based chains for now
+    return walletName === 'initia-widget';
+  } catch (error) {
+    console.warn(`Could not check Initia support for ${walletName}:`, error);
+    return false;
+  }
+};
+
+// Get wallets by supported chain type
+export const getWalletsByChainType = (
+  chainType: 'stargaze' | 'intergaze' | 'evm'
+): WalletConfig[] => {
+  return STARGAZE_WALLETS.filter((wallet) =>
+    wallet.supportedTypes.includes(chainType)
+  );
+};
+
+// Get wallets that support specific chain ID
+export const getWalletsForChain = (chainId: string): WalletConfig[] => {
+  if (chainId === 'stargaze-1') {
+    return getWalletsByChainType('stargaze');
+  } else if (chainId.startsWith('intergaze')) {
+    return getWalletsByChainType('intergaze');
+  } else {
+    return [];
   }
 };

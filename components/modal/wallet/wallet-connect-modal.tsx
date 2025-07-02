@@ -7,6 +7,7 @@ declare global {
     ethereum?: any;
     leap?: any;
     cosmostation?: any;
+    createWalletWidget?: any;
   }
 }
 
@@ -15,13 +16,31 @@ import { useToast } from '../../ui/use-toast';
 import { ScrollArea } from '../../ui/scroll-area';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wallet, Download } from 'lucide-react';
+import { ArrowLeft, Wallet, Download, Network } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import useChainRegistry from '@/hooks/useChainRegistry';
 import { WalletConfig } from '@/types/wallet';
 import WalletService from '@/lib/walletService';
-import { STARGAZE_WALLETS } from '@/config/wallets';
-import WalletItem from './wallet-item';
+import { getWalletsForChain, getWalletsByChainType } from '@/config/wallets';
+import { useInitiaWidget } from '@initia/widget-react';
+
+// Chain configurations
+const SUPPORTED_CHAINS = [
+  {
+    id: 'stargaze-1',
+    name: 'Stargaze',
+    type: 'stargaze' as const,
+    logo: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/stargaze/images/stars.png',
+    description: 'NFT marketplace and launchpad on Cosmos'
+  },
+  {
+    id: 'intergaze-1',
+    name: 'Intergaze',
+    type: 'initia' as const,
+    logo: 'https://registry.initia.xyz/images/intergaze.png',
+    description: 'The Launchpad and Marketplace for Interwoven NFTs'
+  }
+];
 
 // Main Component
 interface WalletConnectModalProps {
@@ -30,7 +49,8 @@ interface WalletConnectModalProps {
   loading: boolean;
   onConnectWallet?: (
     walletId: string,
-    walletType: 'stargaze' | 'ethereum'
+    walletType: 'stargaze' | 'initia' | 'ethereum',
+    chainId?: string
   ) => void;
   chainName?: string;
 }
@@ -42,8 +62,9 @@ export default function WalletConnectModal({
   onConnectWallet,
   chainName = 'stargaze'
 }: WalletConnectModalProps) {
+  const [selectedChain, setSelectedChain] = useState<string>('stargaze-1');
   const [selectedType, setSelectedType] = useState<
-    'stargaze' | 'ethereum' | null
+    'stargaze' | 'initia' | 'ethereum' | null
   >('stargaze');
   const [connecting, setConnecting] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -51,6 +72,8 @@ export default function WalletConnectModal({
 
   // Use chain registry data
   const chainInfo = useChainRegistry(chainName);
+
+  // const { address, username, openConnect, openWallet } = useInitiaWidget();
 
   // Detect if running on mobile device
   useEffect(() => {
@@ -71,29 +94,43 @@ export default function WalletConnectModal({
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
-  const handleStargazeWalletSelect = async (wallet: WalletConfig) => {
+  // Get current chain configuration
+  const getCurrentChain = () => {
+    return SUPPORTED_CHAINS.find((chain) => chain.id === selectedChain);
+  };
+
+  // Handle chain selection
+  const handleChainSelect = (chainId: string) => {
+    setSelectedChain(chainId);
+    const chain = SUPPORTED_CHAINS.find((c) => c.id === chainId);
+    if (chain) {
+      setSelectedType(chain.type);
+    }
+  };
+
+  // Handle wallet selection
+  const handleWalletSelect = async (wallet: WalletConfig) => {
     try {
       setConnecting(wallet.id);
 
-      // console.log("chainInfo", chainInfo);
-
-      // if (!chainInfo?.config) {
-      //   throw new Error('Chain configuration not found');
-      // }
+      const currentChain = getCurrentChain();
+      if (!currentChain) {
+        throw new Error('No chain selected');
+      }
 
       if (onConnectWallet) {
-        onConnectWallet(wallet.id, 'stargaze');
+        onConnectWallet(wallet.id, currentChain.type, selectedChain);
       }
 
       toast({
         variant: 'success',
         title: 'Connected!',
-        description: `Successfully connected to ${wallet.name}`
+        description: `Successfully connected to ${wallet.name} on ${currentChain.name}`
       });
 
       onClose();
     } catch (error: any) {
-      console.error('Stargaze wallet connection error:', error);
+      console.error('Wallet connection error:', error);
       let errorMessage = error.message;
 
       if (error.message?.includes('rejected')) {
@@ -115,69 +152,6 @@ export default function WalletConnectModal({
     }
   };
 
-  const handleEvmWalletSelect = async (wallet: WalletConfig) => {
-    try {
-      setConnecting(wallet.id);
-
-      switch (wallet.id) {
-        case 'metamask':
-          await WalletService.connectMetaMask();
-          break;
-        default:
-          if (onConnectWallet) {
-            await onConnectWallet(wallet.id, 'ethereum');
-          } else {
-            throw new Error(`${wallet.name} connection not implemented`);
-          }
-      }
-
-      toast({
-        variant: 'success',
-        title: 'Connected!',
-        description: `Successfully connected to ${wallet.name}`
-      });
-
-      if (onConnectWallet) {
-        onConnectWallet(wallet.id, 'ethereum');
-      }
-
-      onClose();
-    } catch (error: any) {
-      console.error('EVM wallet connection error:', error);
-      let errorMessage = error.message;
-
-      if (
-        error.message?.includes('not installed') ||
-        error.message?.includes('not found')
-      ) {
-        errorMessage = `${wallet.name} is not installed. Please install the extension.`;
-      } else if (error.message?.includes('rejected')) {
-        errorMessage = 'Connection was rejected by the user';
-      }
-
-      toast({
-        title: 'Connection failed',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setConnecting(null);
-    }
-  };
-
-  const handleWalletSelect = async (wallet: WalletConfig) => {
-    // Only proceed if wallet is installed
-    if (!isWalletInstalled(wallet.id)) {
-      return;
-    }
-
-    if (selectedType === 'stargaze') {
-      await handleStargazeWalletSelect(wallet);
-    } else if (selectedType === 'ethereum') {
-      await handleEvmWalletSelect(wallet);
-    }
-  };
-
   // Filter wallets based on platform
   const filterWalletsByPlatform = (wallets: WalletConfig[]): WalletConfig[] => {
     if (isMobile) {
@@ -189,21 +163,15 @@ export default function WalletConnectModal({
     }
   };
 
-  const getWalletsForType = (
-    type: 'stargaze' | 'ethereum'
-  ): WalletConfig[] | [] => {
-    if (type === 'stargaze') {
-      return filterWalletsByPlatform(STARGAZE_WALLETS);
-    }
-
-    return [];
+  // Get wallets for current chain
+  const getWalletsForCurrentChain = (): WalletConfig[] => {
+    const wallets = getWalletsForChain(selectedChain);
+    return filterWalletsByPlatform(wallets);
   };
 
-  // New function to get sorted wallets (installed first)
-  const getSortedWalletsForType = (
-    type: 'stargaze' | 'ethereum'
-  ): WalletConfig[] | [] => {
-    const wallets = getWalletsForType(type);
+  // Get sorted wallets (installed first)
+  const getSortedWallets = (): WalletConfig[] => {
+    const wallets = getWalletsForCurrentChain();
 
     // Sort wallets: installed first, then non-installed
     return wallets.sort((a, b) => {
@@ -226,12 +194,13 @@ export default function WalletConnectModal({
   };
 
   const resetModal = () => {
+    setSelectedChain('stargaze-1');
     setSelectedType('stargaze');
     setConnecting(null);
     onClose();
   };
 
-  const handleBackToWallets = () => {
+  const handleBackToChains = () => {
     setSelectedType(null);
   };
 
@@ -256,11 +225,12 @@ export default function WalletConnectModal({
         <div className="w-full text-white">
           {/* Header */}
           <div className="flex items-center gap-4 px-6 pb-4">
+            {/* <button onClick={openConnect}>Connect</button> */}
             {/* {selectedType && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleBackToWallets}
+                onClick={handleBackToChains}
                 className="rounded-full p-2 hover:bg-gray-800"
                 disabled={!!connecting}
               >
@@ -275,73 +245,100 @@ export default function WalletConnectModal({
                 <h2 className="text-2xl font-bold">Connect Wallet</h2>
                 <p className="text-sm text-gray-400">
                   {selectedType
-                    ? `Choose your ${selectedType.toUpperCase()} wallet`
+                    ? `Choose your wallet for ${
+                        getCurrentChain()?.name || 'selected chain'
+                      }`
                     : 'Choose your preferred blockchain'}
                 </p>
               </div>
             </div>
           </div>
 
-          <ScrollArea className={cn(selectedType && 'h-[60vh]')}>
+          <ScrollArea className={cn(selectedType && 'max-h-[60vh]')}>
             <div className="px-6 py-6">
               {!selectedType ? (
-                // Chain Type Selection
+                // Chain Selection
                 <div className="space-y-4">
-                  <div
-                    onClick={() => !connecting && setSelectedType('stargaze')}
-                    className={cn(
-                      'group cursor-pointer rounded-2xl border border-purple-500/20 bg-gradient-to-r from-purple-900/20 to-pink-900/20 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-purple-500/40',
-                      connecting && 'cursor-not-allowed opacity-50'
-                    )}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 p-3 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/25">
-                        <svg
-                          className="h-8 w-8 text-white"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-                          <path d="M2 17L12 22L22 17" />
-                          <path d="M2 12L12 17L22 12" />
-                        </svg>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white transition-colors group-hover:text-purple-300">
-                          Stargaze Network
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-400">
-                          NFT marketplace and launchpad on Cosmos
-                        </p>
-                        {chainInfo && (
-                          <p className="mt-1 text-xs text-purple-300">
-                            {chainInfo.chain?.pretty_name} (
-                            {chainInfo.nativeAsset?.symbol})
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-gray-400 transition-colors group-hover:text-white">
-                        <svg
-                          className="h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
+                  {SUPPORTED_CHAINS.map((chain) => (
+                    <div
+                      key={chain.id}
+                      onClick={() => !connecting && handleChainSelect(chain.id)}
+                      className={cn(
+                        'group cursor-pointer rounded-2xl border border-purple-500/20 bg-gradient-to-r from-purple-900/20 to-pink-900/20 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-purple-500/40',
+                        connecting && 'cursor-not-allowed opacity-50',
+                        selectedChain === chain.id &&
+                          'border-purple-500/60 bg-gradient-to-r from-purple-900/40 to-pink-900/40'
+                      )}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 p-3 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/25">
+                          <img
+                            src={chain.logo}
+                            alt={chain.name}
+                            className="h-8 w-8"
+                            onError={(e: any) => {
+                              e.target.src =
+                                'https://via.placeholder.com/32x32?text=?';
+                            }}
                           />
-                        </svg>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white transition-colors group-hover:text-purple-300">
+                            {chain.name}
+                          </h3>
+                          <p className="mt-1 text-sm text-gray-400">
+                            {chain.description}
+                          </p>
+                          <p className="mt-1 text-xs text-purple-300">
+                            Chain ID: {chain.id}
+                          </p>
+                        </div>
+                        <div className="text-gray-400 transition-colors group-hover:text-white">
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               ) : (
-                // All Wallets List (Sorted: Installed first, then Not Installed)
+                // Wallet Selection for Selected Chain
                 <div className="space-y-3">
-                  {getSortedWalletsForType(selectedType!).map((wallet) => {
+                  {/* Chain Info */}
+                  {/* <div className="mb-6 rounded-xl bg-gray-800/50 p-4">
+                    <div className="flex items-center gap-3">
+                      <img 
+                        src={getCurrentChain()?.logo || ''} 
+                        alt={getCurrentChain()?.name}
+                        className="h-8 w-8 rounded-full"
+                        onError={(e: any) => {
+                          e.target.src = 'https://via.placeholder.com/32x32?text=?';
+                        }}
+                      />
+                      <div>
+                        <h3 className="font-semibold text-white">
+                          {getCurrentChain()?.name}
+                        </h3>
+                        <p className="text-sm text-gray-400">
+                          {getCurrentChain()?.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div> */}
+
+                  {/* Wallet List */}
+                  {getSortedWallets().map((wallet) => {
                     const installed = isWalletInstalled(wallet.id);
                     const connecting = isWalletConnecting(wallet.id);
 
@@ -361,24 +358,35 @@ export default function WalletConnectModal({
                             src={wallet.logo}
                             alt={wallet.name}
                             className="h-10 w-10 rounded-[10px]"
+                            onError={(e: any) => {
+                              e.target.src =
+                                'https://via.placeholder.com/40x40?text=W';
+                            }}
                           />
                           <div className="flex-1">
                             <h3 className="font-semibold text-white">
                               {wallet.name}
                             </h3>
+                            {wallet.id === 'initia-widget' && (
+                              <p className="text-xs text-gray-400">
+                                Supports Initia & Intergaze networks
+                              </p>
+                            )}
                           </div>
                           <div className="flex min-w-[80px] items-center justify-end text-right">
                             {installed ? (
                               <div className="relative">
                                 <span className="text-gray-400 transition-opacity duration-100 group-hover:opacity-0">
-                                  Installed
+                                  {connecting ? 'Connecting...' : 'Installed'}
                                 </span>
-                                <span className="absolute inset-0 text-white opacity-0 transition-opacity duration-100 group-hover:opacity-100">
-                                  Connect
-                                </span>
+                                {!connecting && (
+                                  <span className="absolute inset-0 text-white opacity-0 transition-opacity duration-100 group-hover:opacity-100">
+                                    Connect
+                                  </span>
+                                )}
                               </div>
                             ) : (
-                              <a
+                              <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleInstallWallet(wallet);
@@ -387,7 +395,7 @@ export default function WalletConnectModal({
                               >
                                 <Download className="h-4 w-4" />
                                 Install
-                              </a>
+                              </button>
                             )}
                           </div>
                         </div>
@@ -396,7 +404,7 @@ export default function WalletConnectModal({
                   })}
 
                   {/* No Wallets Available Message */}
-                  {getSortedWalletsForType(selectedType!).length === 0 && (
+                  {getSortedWallets().length === 0 && (
                     <div className="py-8 text-center">
                       <div className="mb-4">
                         <Wallet className="mx-auto mb-2 h-12 w-12 text-gray-500" />
@@ -404,7 +412,8 @@ export default function WalletConnectModal({
                           No Wallets Available
                         </h3>
                         <p className="text-sm text-gray-400">
-                          No {selectedType} wallets are configured.
+                          No wallets are configured for{' '}
+                          {getCurrentChain()?.name}.
                         </p>
                       </div>
                     </div>
