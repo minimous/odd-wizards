@@ -31,6 +31,7 @@ export interface WalletConnectionResult {
   algo?: string;
   offlineSigner?: any;
   provider?: any;
+  widget?: any;
 }
 
 // Custom hooks for Initia address management

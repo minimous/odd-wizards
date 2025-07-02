@@ -36,7 +36,11 @@ export interface UseWalletReturn {
   // Utils
   getBalance: () => Promise<string | null>;
   isWalletInstalled: (walletId: string) => boolean;
-  sendTransaction: (messages: any[]) => Promise<string | null>; // New method for Initia transactions
+  sendTransaction: (
+    walletId: string,
+    chainId: string,
+    messages: any[]
+  ) => Promise<string | null>; // New method for Initia transactions
 }
 
 // Chain configurations - Updated to include Intergaze
@@ -366,7 +370,11 @@ export function useWallet(
 
   // Send transaction (for Initia-based chains)
   const sendTransaction = useCallback(
-    async (messages: any[]): Promise<string | null> => {
+    async (
+      walletId: string,
+      chainId: string,
+      messages: any[]
+    ): Promise<string | null> => {
       if (!currentWallet) {
         throw new Error('No wallet connected');
       }
@@ -378,7 +386,11 @@ export function useWallet(
 
       if (isInitiaBased && currentWallet.widget) {
         try {
-          const txHash = await WalletService.sendInitiaTransaction(messages);
+          const txHash = await WalletService.sendTransaction(
+            walletId,
+            chainId,
+            messages
+          );
           return txHash;
         } catch (error: any) {
           throw new Error(`Transaction failed: ${error.message}`);
