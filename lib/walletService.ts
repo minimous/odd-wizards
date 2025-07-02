@@ -1,6 +1,5 @@
 import { ChainConfig, WalletConfig } from '@/types/wallet';
 import { STARGAZE_WALLETS, getWalletConfig } from '@/config/wallets';
-import { useAccount } from 'wagmi';
 import { AddressUtils } from './utils';
 
 // Extend Window interface for all wallet objects
@@ -34,15 +33,36 @@ export interface WalletConnectionResult {
   provider?: any;
 }
 
-// Hooks for Initia address management
-export function getInitiaAddress(prefix: string = 'init') {
-  const hexAddress = getHexAddress();
+// Custom hooks for Initia address management
+export function useInitiaAddress(prefix: string = 'init') {
+  // Import useAccount here inside the custom hook
+  const { useAccount } = require('wagmi');
+  const { address } = useAccount();
+
+  if (!address) return '';
+  const hexAddress = AddressUtils.toPrefixedHex(address);
+  return AddressUtils.toBech32(hexAddress, prefix);
+}
+
+export function useHexAddress() {
+  // Import useAccount here inside the custom hook
+  const { useAccount } = require('wagmi');
+  const { address } = useAccount();
+
+  if (!address) return '';
+  return AddressUtils.toPrefixedHex(address);
+}
+
+// Utility functions that accept address as parameter (no hooks)
+export function getInitiaAddressFromHex(
+  hexAddress: string,
+  prefix: string = 'init'
+): string {
   if (!hexAddress) return '';
   return AddressUtils.toBech32(hexAddress, prefix);
 }
 
-export function getHexAddress() {
-  const { address } = useAccount();
+export function convertToHexAddress(address: string): string {
   if (!address) return '';
   return AddressUtils.toPrefixedHex(address);
 }
@@ -294,29 +314,26 @@ export default class WalletService {
   }
 
   /**
-   * Get current address for Initia chains using Wagmi hooks
+   * Get current address for Initia chains - UTILITY METHOD (no hooks)
+   * This method should be called from components that have access to the address
    */
-  static getCurrentInitiaAddress(chainId: string): string {
-    const prefix = this.getBech32Prefix(chainId);
+  static getInitiaAddressFromWagmi(
+    wagmiAddress: string,
+    chainId: string
+  ): string {
+    if (!wagmiAddress) return '';
 
-    // This would be called from a React component context
-    // Return empty string if not in component context
-    try {
-      return getInitiaAddress(prefix);
-    } catch {
-      return '';
-    }
+    const prefix = this.getBech32Prefix(chainId);
+    const hexAddress = AddressUtils.toPrefixedHex(wagmiAddress);
+    return AddressUtils.toBech32(hexAddress, prefix);
   }
 
   /**
-   * Get current hex address using Wagmi hooks
+   * Get current hex address from wagmi address - UTILITY METHOD (no hooks)
    */
-  static getCurrentHexAddress(): string {
-    try {
-      return getHexAddress();
-    } catch {
-      return '';
-    }
+  static getHexAddressFromWagmi(wagmiAddress: string): string {
+    if (!wagmiAddress) return '';
+    return AddressUtils.toPrefixedHex(wagmiAddress);
   }
 
   /**
