@@ -35,7 +35,10 @@ export async function updateNftOwner(
     let allTokens = [];
 
     // Handle different networks like in getTotalPoints
-    if (collection.collection_chain == NETWORK_CONSTANT.STARGAZE) {
+    if (
+      collection.collection_chain?.toLocaleLowerCase() ==
+      NETWORK_CONSTANT.STARGAZE
+    ) {
       allTokens = await fetchAllStargazeTokens({
         owner: address,
         collectionAddress: collection_address,
@@ -60,7 +63,10 @@ export async function updateNftOwner(
 
         allTokens.push(...staked_nfts);
       }
-    } else if (collection.collection_chain == NETWORK_CONSTANT.INTERGAZE) {
+    } else if (
+      collection.collection_chain?.toLocaleLowerCase() ==
+      NETWORK_CONSTANT.INTERGAZE
+    ) {
       if (!collection.collection_address)
         throw new Error('Collection address is null');
       allTokens = await new IntergazeService().getAllNftsWithTraits(
@@ -184,7 +190,10 @@ export async function getTotalPoints(address: string, project_id: number) {
 
     let allTokens = [];
 
-    if (collection.collection_chain == NETWORK_CONSTANT.STARGAZE) {
+    if (
+      collection.collection_chain?.toLocaleLowerCase() ==
+      NETWORK_CONSTANT.STARGAZE
+    ) {
       allTokens = await fetchAllStargazeTokens({
         owner: address,
         collectionAddress: collection.collection_address,
@@ -209,7 +218,10 @@ export async function getTotalPoints(address: string, project_id: number) {
 
         allTokens.push(...staked_nfts);
       }
-    } else if (collection.collection_chain == NETWORK_CONSTANT.INTERGAZE) {
+    } else if (
+      collection.collection_chain?.toLocaleLowerCase() ==
+      NETWORK_CONSTANT.INTERGAZE
+    ) {
       if (!collection.collection_address)
         throw new Error('Collection address is null');
       allTokens = await new IntergazeService().getAllNftsWithTraits(
