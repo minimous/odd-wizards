@@ -46,11 +46,12 @@ export default function HeaderV2() {
 
   // Check for winner status and show reward modal
   useEffect(() => {
-    if (address && user) {
+    if (address) {
       const handleLoad = async () => {
         try {
-          // Check if user is a winner
-          if (user?.is_winner === 'Y' && address) {
+          const resp = await axios.get(`/api/user/${address}`);
+          const userReward = resp.data.data.user;
+          if (userReward?.is_winner === 'Y' && address) {
             setTimeout(() => {
               setRewardModal(true);
             }, 500);
@@ -67,7 +68,7 @@ export default function HeaderV2() {
         return () => window.removeEventListener('load', handleLoad);
       }
     }
-  }, [address, user]);
+  }, [address]);
 
   return (
     <>

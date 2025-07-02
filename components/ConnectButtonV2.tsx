@@ -16,12 +16,14 @@ export interface ConnectButtonProps {
   showProfile?: boolean;
   className?: string;
   defaultChain?: string;
+  supportedChains?: string[]; // New prop to specify which chains this button supports
 }
 
 export default function ConnectButtonV2({
   showProfile = true,
   className,
-  defaultChain = 'stargaze-1'
+  defaultChain = 'stargaze-1',
+  supportedChains = ['stargaze-1', 'initia-1', 'intergaze-1']
 }: ConnectButtonProps) {
   const [user, setUser] = useState<mst_users | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,27 +51,41 @@ export default function ConnectButtonV2({
     }
 
     fetchData();
-  }, [isConnected]);
+  }, [isConnected, address]);
 
   // Handle wallet connection from modal
   const handleConnectWallet = async (
     selectedWalletId: string,
-    selectedWalletType: 'stargaze' | 'ethereum'
+    selectedWalletType: 'stargaze' | 'initia' | 'ethereum',
+    chainId?: string
   ) => {
     try {
       clearError();
 
-      // Only support Stargaze for now
-      if (selectedWalletType !== 'stargaze') {
-        throw new Error('Only Stargaze wallets are supported');
+      // Use the provided chainId or fall back to defaultChain
+      const targetChain = chainId || defaultChain;
+
+      // Validate that the target chain is supported
+      if (!supportedChains.includes(targetChain)) {
+        throw new Error(
+          `Chain ${targetChain} is not supported by this component`
+        );
       }
 
-      await connect(selectedWalletId, defaultChain);
+      await connect(selectedWalletId, targetChain);
+
+      const chainNames: Record<string, string> = {
+        'stargaze-1': 'Stargaze',
+        'initia-1': 'Initia',
+        'intergaze-1': 'Intergaze'
+      };
 
       toast({
         variant: 'success',
         title: 'Connected!',
-        description: `Successfully connected to ${selectedWalletId}`
+        description: `Successfully connected to ${selectedWalletId} on ${
+          chainNames[targetChain] || targetChain
+        }`
       });
 
       setIsModalOpen(false);
