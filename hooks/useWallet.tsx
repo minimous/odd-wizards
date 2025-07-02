@@ -16,6 +16,7 @@ export interface WalletInfo {
   chainName: string;
   balance?: string;
   offlineSigner?: any;
+  widget?: any; // For Initia widget
 }
 
 export interface UseWalletReturn {
@@ -35,10 +36,11 @@ export interface UseWalletReturn {
   // Utils
   getBalance: () => Promise<string | null>;
   isWalletInstalled: (walletId: string) => boolean;
+  sendTransaction: (messages: any[]) => Promise<string | null>; // New method for Initia transactions
 }
 
-// Chain configurations
-const STARGAZE_CHAINS: Record<string, ChainConfig> = {
+// Chain configurations - Updated to include Intergaze
+const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
   'stargaze-1': {
     chainId: 'stargaze-1',
     chainName: 'Stargaze',
@@ -62,6 +64,56 @@ const STARGAZE_CHAINS: Record<string, ChainConfig> = {
       }
     ],
     gasPriceStep: { low: 0.01, average: 0.025, high: 0.04 }
+  },
+  'initia-1': {
+    chainId: 'initia-1',
+    chainName: 'Initia',
+    rpc: 'https://rpc.initia.tech',
+    rest: 'https://lcd.initia.tech',
+    bech32Prefix: 'init',
+    coinType: 118,
+    currencies: [
+      {
+        coinDenom: 'INIT',
+        coinMinimalDenom: 'uinit',
+        coinDecimals: 6
+      }
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: 'INIT',
+        coinMinimalDenom: 'uinit',
+        coinDecimals: 6,
+        gasPriceStep: { low: 0.15, average: 0.25, high: 0.4 }
+      }
+    ],
+    gasPriceStep: { low: 0.15, average: 0.25, high: 0.4 }
+  },
+  'intergaze-1': {
+    chainId: 'intergaze-1',
+    chainName: 'Intergaze',
+    rpc: 'https://rpc.intergaze-apis.com',
+    rest: 'https://rest.intergaze-apis.com',
+    bech32Prefix: 'init',
+    coinType: 60, // From slip44 in the config
+    currencies: [
+      {
+        coinDenom: 'IGZ', // Display name for the fee token
+        coinMinimalDenom:
+          'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
+        coinDecimals: 6 // Assuming 6 decimals
+      }
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: 'IGZ',
+        coinMinimalDenom:
+          'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
+        coinDecimals: 6,
+        gasPriceStep: { low: 0.03, average: 0.03, high: 0.03 }
+      }
+    ],
+    gasPriceStep: { low: 0.03, average: 0.03, high: 0.03 }
   }
 };
 
@@ -109,7 +161,7 @@ export function useWallet(
   const saveWallet = useCallback((wallet: WalletInfo | null) => {
     try {
       if (wallet) {
-        const { offlineSigner, ...serializable } = wallet;
+        const { offlineSigner, widget, ...serializable } = wallet;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
       } else {
         localStorage.removeItem(STORAGE_KEY);
@@ -171,14 +223,17 @@ export function useWallet(
       setError(null);
 
       try {
-        // Check if wallet is installed
-        if (!WalletService.isWalletInstalled(walletId)) {
+        // Check if wallet is installed (except for Initia widget)
+        if (
+          walletId !== 'initia-widget' &&
+          !WalletService.isWalletInstalled(walletId)
+        ) {
           const walletConfig = getWalletConfig(walletId);
           throw new Error(`${walletConfig?.name || walletId} is not installed`);
         }
 
         // Get chain config
-        const chainConfig = STARGAZE_CHAINS[chainId];
+        const chainConfig = SUPPORTED_CHAINS[chainId];
         if (!chainConfig) {
           throw new Error(`Unsupported chain: ${chainId}`);
         }
@@ -198,7 +253,8 @@ export function useWallet(
           algo: result.algo,
           chainId: chainConfig.chainId,
           chainName: chainConfig.chainName,
-          offlineSigner: result.offlineSigner
+          offlineSigner: result.offlineSigner,
+          widget: result.widget // Store Initia widget if available
         };
 
         // Update states
@@ -211,8 +267,28 @@ export function useWallet(
           'custom'
         );
 
-        // Fetch user data
-        await fetchUserData(result.address);
+        // Fetch user data (only for supported APIs)
+        if (chainId === 'stargaze-1') {
+          await fetchUserData(result.address);
+        }
+
+        // Set up address subscription for Initia widget
+        if (result.widget && result.widget.address$) {
+          result.widget.address$.subscribe((newAddress: string) => {
+            if (newAddress && newAddress !== walletInfo.address) {
+              // Address changed, update wallet info
+              const updatedWallet = { ...walletInfo, address: newAddress };
+              setCurrentWallet(updatedWallet);
+              saveWallet(updatedWallet);
+              setWalletConnected(
+                walletId,
+                newAddress,
+                chainConfig.chainId,
+                'custom'
+              );
+            }
+          });
+        }
       } catch (err: any) {
         const errorMessage = err.message || 'Failed to connect wallet';
         setError(errorMessage);
@@ -259,7 +335,9 @@ export function useWallet(
     if (!currentWallet) return null;
 
     try {
-      const chainConfig = STARGAZE_CHAINS[currentWallet.chainId];
+      const chainConfig = SUPPORTED_CHAINS[currentWallet.chainId];
+      if (!chainConfig) return null;
+
       const response = await fetch(
         `${chainConfig.rest}/cosmos/bank/v1beta1/balances/${currentWallet.address}`
       );
@@ -267,12 +345,17 @@ export function useWallet(
       if (!response.ok) throw new Error('Failed to fetch balance');
 
       const data = await response.json();
-      const starsBalance = data.balances?.find(
-        (b: any) => b.denom === 'ustars'
+      const currency = chainConfig.currencies?.[0];
+      if (!currency) return null;
+
+      const balance = data.balances?.find(
+        (b: any) => b.denom === currency.coinMinimalDenom
       );
 
-      if (starsBalance) {
-        return (parseInt(starsBalance.amount) / 1_000_000).toFixed(6);
+      if (balance) {
+        const amount =
+          parseInt(balance.amount) / Math.pow(10, currency.coinDecimals);
+        return amount.toFixed(6);
       }
       return '0';
     } catch (error) {
@@ -280,6 +363,34 @@ export function useWallet(
       return null;
     }
   }, [currentWallet]);
+
+  // Send transaction (for Initia-based chains)
+  const sendTransaction = useCallback(
+    async (messages: any[]): Promise<string | null> => {
+      if (!currentWallet) {
+        throw new Error('No wallet connected');
+      }
+
+      // Check if this is an Initia-based chain
+      const isInitiaBased =
+        currentWallet.chainId === 'initia-1' ||
+        currentWallet.chainId.startsWith('intergaze');
+
+      if (isInitiaBased && currentWallet.widget) {
+        try {
+          const txHash = await WalletService.sendInitiaTransaction(messages);
+          return txHash;
+        } catch (error: any) {
+          throw new Error(`Transaction failed: ${error.message}`);
+        }
+      } else {
+        throw new Error(
+          'Transaction sending not supported for this wallet/chain combination'
+        );
+      }
+    },
+    [currentWallet]
+  );
 
   // Clear error
   const clearError = useCallback(() => setError(null), []);
@@ -333,6 +444,7 @@ export function useWallet(
 
     // Utils
     getBalance,
-    isWalletInstalled
+    isWalletInstalled,
+    sendTransaction
   };
 }

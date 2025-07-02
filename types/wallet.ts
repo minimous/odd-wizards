@@ -5,7 +5,7 @@ export interface WalletConfig {
   logo: string;
   description: string;
   color: string;
-  supportedTypes: ('stargaze' | 'evm')[];
+  supportedTypes: ('intergaze' | 'stargaze' | 'evm')[];
   downloadUrl?: string;
   deepLink?: string;
 }
