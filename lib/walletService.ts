@@ -35,13 +35,13 @@ export interface WalletConnectionResult {
 }
 
 // Hooks for Initia address management
-export function useInitiaAddress(prefix: string = 'init') {
-  const hexAddress = useHexAddress();
+export function getInitiaAddress(prefix: string = 'init') {
+  const hexAddress = getHexAddress();
   if (!hexAddress) return '';
   return AddressUtils.toBech32(hexAddress, prefix);
 }
 
-export function useHexAddress() {
+export function getHexAddress() {
   const { address } = useAccount();
   if (!address) return '';
   return AddressUtils.toPrefixedHex(address);
@@ -302,7 +302,7 @@ export default class WalletService {
     // This would be called from a React component context
     // Return empty string if not in component context
     try {
-      return useInitiaAddress(prefix);
+      return getInitiaAddress(prefix);
     } catch {
       return '';
     }
@@ -313,7 +313,7 @@ export default class WalletService {
    */
   static getCurrentHexAddress(): string {
     try {
-      return useHexAddress();
+      return getHexAddress();
     } catch {
       return '';
     }
