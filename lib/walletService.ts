@@ -1,7 +1,9 @@
 import { ChainConfig, WalletConfig } from '@/types/wallet';
 import { STARGAZE_WALLETS, getWalletConfig } from '@/config/wallets';
+import { useAccount } from 'wagmi';
+import { AddressUtils } from './utils';
 
-// Extend Window interface for all wallet objects including Initia
+// Extend Window interface for all wallet objects
 declare global {
   interface Window {
     keplr?: any;
@@ -15,8 +17,11 @@ declare global {
     trustWallet?: any;
     ledger?: any;
     ethereum?: any;
-    createWalletWidget?: any; // Initia wallet widget
-    [key: string]: any; // For dynamic wallet access
+    phantom?: {
+      solana?: any;
+      ethereum?: any;
+    };
+    [key: string]: any;
   }
 }
 
@@ -26,12 +31,24 @@ export interface WalletConnectionResult {
   name?: string;
   algo?: string;
   offlineSigner?: any;
-  widget?: any; // For Initia widget
+  provider?: any;
+}
+
+// Hooks for Initia address management
+export function useInitiaAddress(prefix: string = 'init') {
+  const hexAddress = useHexAddress();
+  if (!hexAddress) return '';
+  return AddressUtils.toBech32(hexAddress, prefix);
+}
+
+export function useHexAddress() {
+  const { address } = useAccount();
+  if (!address) return '';
+  return AddressUtils.toPrefixedHex(address);
 }
 
 export default class WalletService {
   private static readonly LEAP_SNAP_ID = 'npm:@leapwallet/metamask-cosmos-snap';
-  private static initiaWidget: any = null;
 
   /**
    * Connect to any supported wallet by ID
@@ -45,15 +62,15 @@ export default class WalletService {
       throw new Error(`Unsupported wallet: ${walletId}`);
     }
 
-    // Check if wallet is installed (except for Initia which loads dynamically)
-    if (walletId !== 'initia-widget' && !this.isWalletInstalled(walletId)) {
+    // Check if wallet is installed
+    if (!this.isWalletInstalled(walletId)) {
       throw new Error(
         `${walletConfig.name} is not installed. Please install the extension first.`
       );
     }
 
     if (chainConfig.chainId === 'stargaze-1') {
-      // Route to appropriate connection method based on wallet type
+      // Route to appropriate connection method for Stargaze
       switch (walletId) {
         case 'keplr-extension':
         case 'keplr':
@@ -103,197 +120,324 @@ export default class WalletService {
           return await this.connectLeapSnap(chainConfig);
 
         default:
-          // Try generic cosmos wallet connection for unlisted wallets
           return await this.connectGenericCosmosWallet(walletId, chainConfig);
       }
     } else if (
       chainConfig.chainId === 'initia-1' ||
       chainConfig.chainId.startsWith('intergaze')
     ) {
-      // Use Initia widget for Initia-based chains
-      return await this.connectInitia(chainConfig);
+      // Route to appropriate connection method for Initia using Wagmi
+      switch (walletId) {
+        case 'metamask':
+          return await this.connectMetaMaskForInitia(chainConfig);
+
+        case 'leap-extension':
+        case 'leap':
+          return await this.connectLeapForInitia(chainConfig);
+
+        case 'phantom':
+          return await this.connectPhantomForInitia(chainConfig);
+
+        default:
+          throw new Error(
+            `Wallet ${walletId} is not supported for Initia chains`
+          );
+      }
     } else {
       throw new Error(`Unsupported chain: ${chainConfig.chainId}`);
     }
   }
 
   /**
-   * Connect to Initia-based networks using the Initia wallet widget
+   * Connect to MetaMask for Initia chains using Wagmi
    */
-  static async connectInitia(
+  static async connectMetaMaskForInitia(
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
+    if (!window.ethereum?.isMetaMask) {
+      throw new Error('MetaMask extension not found');
+    }
+
     try {
-      // Load Initia wallet widget if not already loaded
-      if (!window.createWalletWidget) {
-        await this.loadInitiaWidget();
+      // Request account access
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts found in MetaMask');
       }
 
-      // Check if widget is available
-      if (!window.createWalletWidget) {
-        throw new Error('Initia wallet widget failed to load');
-      }
+      // Try to add/switch to Initia network if it's a custom network
+      await this.addInitiaNetworkToMetaMask(chainConfig);
 
-      // Create widget configuration
-      let widgetConfig: any;
+      // Get the hex address from wagmi
+      const hexAddress = accounts[0];
 
-      if (chainConfig.chainId === 'initia-1') {
-        // For mainnet Initia, use chainId directly
-        widgetConfig = { chainId: chainConfig.chainId };
-      } else {
-        // For custom layers like Intergaze, use customLayer configuration
-        widgetConfig = {
-          customLayer: {
-            chain_id: chainConfig.chainId,
-            chain_name: chainConfig.chainName,
-            apis: {
-              rpc: [{ address: chainConfig.rpc }],
-              rest: [{ address: chainConfig.rest }]
-            },
-            fees: {
-              fee_tokens: [
-                {
-                  denom: chainConfig.currency?.coinMinimalDenom || 'uinit',
-                  fixed_min_gas_price: chainConfig.gasPriceStep?.low || 0.15
-                }
-              ]
-            },
-            bech32_prefix: chainConfig.bech32Prefix || 'init'
-          }
-        };
-      }
-
-      // Create the wallet widget
-      const widget = await window.createWalletWidget(widgetConfig);
-      this.initiaWidget = widget;
-
-      // Get the current address
-      const address = widget.address$.value;
-
-      if (!address) {
-        // If no address, trigger onboard
-        await widget.onboard();
-
-        // Wait for address to be available
-        return new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            reject(new Error('Connection timeout - no address received'));
-          }, 30000); // 30 second timeout
-
-          const subscription = widget.address$.subscribe(
-            (newAddress: string) => {
-              if (newAddress) {
-                clearTimeout(timeout);
-                subscription.unsubscribe();
-                resolve({
-                  address: newAddress,
-                  name: 'Initia Wallet',
-                  widget: widget
-                });
-              }
-            }
-          );
-        });
-      }
+      // Convert to bech32 address for Initia networks
+      const prefix = this.getBech32Prefix(chainConfig.chainId);
+      const bech32Address = AddressUtils.toBech32(hexAddress, prefix);
 
       return {
-        address: address,
-        name: 'Initia Wallet',
-        widget: widget
+        address: bech32Address, // Return bech32 address for Initia
+        name: 'MetaMask Account',
+        provider: window.ethereum,
+        publicKey: hexAddress // Store hex address as publicKey for reference
       };
     } catch (error: any) {
-      console.error('Initia connection error:', error);
-      throw new Error(`Failed to connect to Initia wallet: ${error.message}`);
+      if (error.code === 4001) {
+        throw new Error('User rejected the connection request');
+      }
+      throw new Error(`MetaMask connection failed: ${error.message}`);
     }
   }
 
   /**
-   * Load Initia wallet widget script dynamically
+   * Connect to Leap wallet for Initia chains
    */
-  private static async loadInitiaWidget(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // Check if script is already loaded
-      if (window.createWalletWidget) {
-        resolve();
-        return;
-      }
-
-      // Check if script tag already exists
-      const existingScript = document.querySelector(
-        'script[src*="initia/wallet-widget"]'
-      );
-      if (existingScript) {
-        // Script exists, wait for it to load
-        existingScript.addEventListener('load', () => resolve());
-        existingScript.addEventListener('error', () =>
-          reject(new Error('Failed to load Initia widget'))
-        );
-        return;
-      }
-
-      // Create and load script
-      const script = document.createElement('script');
-      script.src =
-        'https://cdn.jsdelivr.net/npm/@initia/wallet-widget/dist/index.js';
-      script.type = 'module';
-      script.async = true;
-      script.defer = true;
-
-      script.onload = () => {
-        // Wait a bit for the module to initialize
-        setTimeout(() => {
-          if (window.createWalletWidget) {
-            resolve();
-          } else {
-            reject(
-              new Error('Initia wallet widget not available after loading')
-            );
-          }
-        }, 500);
-      };
-
-      script.onerror = () => {
-        reject(new Error('Failed to load Initia wallet widget script'));
-      };
-
-      document.head.appendChild(script);
-    });
-  }
-
-  /**
-   * Disconnect Initia wallet
-   */
-  static async disconnectInitia(): Promise<void> {
-    if (this.initiaWidget && this.initiaWidget.disconnect) {
-      await this.initiaWidget.disconnect();
-      this.initiaWidget = null;
-    }
-  }
-
-  /**
-   * Send transaction using Initia widget
-   */
-  static async sendInitiaTransaction(messages: any[]): Promise<string> {
-    if (!this.initiaWidget || !this.initiaWidget.requestTx) {
-      throw new Error('Initia wallet not connected');
+  static async connectLeapForInitia(
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    if (!window.leap) {
+      throw new Error('Leap extension not found');
     }
 
     try {
-      const transactionHash = await this.initiaWidget.requestTx({ messages });
-      return transactionHash;
+      // Check if Leap supports EVM mode for Initia
+      if (window.leap.ethereum) {
+        // Use EVM mode for Initia chains
+        const accounts = await window.leap.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+
+        if (!accounts || accounts.length === 0) {
+          throw new Error('No accounts found in Leap');
+        }
+
+        // Add network to Leap if needed
+        await this.addInitiaNetworkToLeap(chainConfig);
+
+        // Get addresses
+        const hexAddress = accounts[0];
+        const prefix = this.getBech32Prefix(chainConfig.chainId);
+        const bech32Address = AddressUtils.toBech32(hexAddress, prefix);
+
+        return {
+          address: bech32Address,
+          name: 'Leap Account',
+          provider: window.leap.ethereum,
+          publicKey: hexAddress
+        };
+      } else {
+        // Fallback to Cosmos mode
+        await this.suggestChain(window.leap, chainConfig);
+        await window.leap.enable(chainConfig.chainId);
+
+        const key = await window.leap.getKey(chainConfig.chainId);
+        const offlineSigner = window.leap.getOfflineSigner(chainConfig.chainId);
+
+        return {
+          address: key.bech32Address,
+          publicKey: key.pubKey,
+          name: key.name,
+          algo: key.algo,
+          offlineSigner
+        };
+      }
     } catch (error: any) {
-      throw new Error(`Transaction failed: ${error.message}`);
+      throw new Error(`Leap connection failed: ${error.message}`);
     }
   }
 
   /**
-   * Get Initia wallet address observable
+   * Connect to Phantom wallet for Initia chains
    */
-  static getInitiaAddressObservable() {
-    return this.initiaWidget?.address$ || null;
+  static async connectPhantomForInitia(
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    if (!window.phantom?.ethereum) {
+      throw new Error(
+        'Phantom extension not found or Ethereum support not available'
+      );
+    }
+
+    try {
+      // Request account access through Phantom's Ethereum provider
+      const accounts = await window.phantom.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts found in Phantom');
+      }
+
+      // Try to add/switch to Initia network
+      await this.addInitiaNetworkToPhantom(chainConfig);
+
+      // Get addresses
+      const hexAddress = accounts[0];
+      const prefix = this.getBech32Prefix(chainConfig.chainId);
+      const bech32Address = AddressUtils.toBech32(hexAddress, prefix);
+
+      return {
+        address: bech32Address,
+        name: 'Phantom Account',
+        provider: window.phantom.ethereum,
+        publicKey: hexAddress
+      };
+    } catch (error: any) {
+      if (error.code === 4001) {
+        throw new Error('User rejected the connection request');
+      }
+      throw new Error(`Phantom connection failed: ${error.message}`);
+    }
   }
 
-  // ... (keep all existing methods like connectKeplr, connectLeap, etc. unchanged)
+  /**
+   * Get current address for Initia chains using Wagmi hooks
+   */
+  static getCurrentInitiaAddress(chainId: string): string {
+    const prefix = this.getBech32Prefix(chainId);
+
+    // This would be called from a React component context
+    // Return empty string if not in component context
+    try {
+      return useInitiaAddress(prefix);
+    } catch {
+      return '';
+    }
+  }
+
+  /**
+   * Get current hex address using Wagmi hooks
+   */
+  static getCurrentHexAddress(): string {
+    try {
+      return useHexAddress();
+    } catch {
+      return '';
+    }
+  }
+
+  /**
+   * Get bech32 prefix based on chain ID
+   */
+  private static getBech32Prefix(chainId: string): string {
+    // if (chainId === 'initia-1') {
+    //   return 'init';
+    // } else if (chainId.startsWith('intergaze')) {
+    //   return 'intergaze';
+    // }
+    return 'init'; // default
+  }
+
+  /**
+   * Add Initia network to MetaMask
+   */
+  private static async addInitiaNetworkToMetaMask(
+    chainConfig: ChainConfig
+  ): Promise<void> {
+    if (!window.ethereum?.isMetaMask) return;
+
+    try {
+      // For mainnet Initia, we might not need to add network
+      if (chainConfig.chainId === 'initia-1') {
+        return;
+      }
+
+      // For custom networks like Intergaze, add the network
+      const chainIdNumber = this.extractChainIdNumber(chainConfig.chainId);
+      const networkParams = {
+        chainId: `0x${chainIdNumber.toString(16)}`,
+        chainName: chainConfig.chainName,
+        rpcUrls: [chainConfig.rpc],
+        nativeCurrency: {
+          name: chainConfig.currency?.coinDenom || 'INIT',
+          symbol: chainConfig.currency?.coinDenom || 'INIT',
+          decimals: chainConfig.currency?.coinDecimals || 18
+        }
+        // blockExplorerUrls: chainConfig.explorers ? [chainConfig.explorers[0]] : []
+      };
+
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [networkParams]
+      });
+    } catch (error) {
+      console.warn('Failed to add network to MetaMask:', error);
+    }
+  }
+
+  /**
+   * Add Initia network to Leap
+   */
+  private static async addInitiaNetworkToLeap(
+    chainConfig: ChainConfig
+  ): Promise<void> {
+    if (!window.leap?.ethereum) return;
+
+    try {
+      const chainIdNumber = this.extractChainIdNumber(chainConfig.chainId);
+      const networkParams = {
+        chainId: `0x${chainIdNumber.toString(16)}`,
+        chainName: chainConfig.chainName,
+        rpcUrls: [chainConfig.rpc],
+        nativeCurrency: {
+          name: chainConfig.currency?.coinDenom || 'INIT',
+          symbol: chainConfig.currency?.coinDenom || 'INIT',
+          decimals: chainConfig.currency?.coinDecimals || 18
+        }
+        // blockExplorerUrls: chainConfig.explorers ? [chainConfig.explorers[0]] : []
+      };
+
+      await window.leap.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [networkParams]
+      });
+    } catch (error) {
+      console.warn('Failed to add network to Leap:', error);
+    }
+  }
+
+  /**
+   * Add Initia network to Phantom
+   */
+  private static async addInitiaNetworkToPhantom(
+    chainConfig: ChainConfig
+  ): Promise<void> {
+    if (!window.phantom?.ethereum) return;
+
+    try {
+      const chainIdNumber = this.extractChainIdNumber(chainConfig.chainId);
+      const networkParams = {
+        chainId: `0x${chainIdNumber.toString(16)}`,
+        chainName: chainConfig.chainName,
+        rpcUrls: [chainConfig.rpc],
+        nativeCurrency: {
+          name: chainConfig.currency?.coinDenom || 'INIT',
+          symbol: chainConfig.currency?.coinDenom || 'INIT',
+          decimals: chainConfig.currency?.coinDecimals || 18
+        }
+        // blockExplorerUrls: chainConfig.explorers ? [chainConfig.explorers[0]] : []
+      };
+
+      await window.phantom.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [networkParams]
+      });
+    } catch (error) {
+      console.warn('Failed to add network to Phantom:', error);
+    }
+  }
+
+  /**
+   * Extract numeric chain ID from chain ID string
+   */
+  private static extractChainIdNumber(chainId: string): number {
+    // Extract numbers from chain ID
+    const match = chainId.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 1;
+  }
 
   /**
    * Connect to Keplr wallet
@@ -321,7 +465,7 @@ export default class WalletService {
   }
 
   /**
-   * Connect to Leap wallet
+   * Connect to Leap wallet (for Stargaze)
    */
   static async connectLeap(
     chainConfig: ChainConfig
@@ -356,7 +500,6 @@ export default class WalletService {
     }
 
     try {
-      // Try to suggest chain first if available
       if (window.cosmostation.providers?.keplr) {
         await this.suggestChain(
           window.cosmostation.providers.keplr,
@@ -545,7 +688,6 @@ export default class WalletService {
       throw new Error('Ledger extension not found');
     }
 
-    // Ledger might not support experimentalSuggestChain, so we try to enable directly
     try {
       await this.suggestChain(window.ledger, chainConfig);
     } catch (error) {
@@ -588,7 +730,8 @@ export default class WalletService {
 
       return {
         address: accounts[0],
-        name: 'MetaMask Account'
+        name: 'MetaMask Account',
+        provider: window.ethereum
       };
     } catch (error: any) {
       if (error.code === 4001) {
@@ -598,7 +741,7 @@ export default class WalletService {
     }
   }
 
-  // ... (keep all other existing methods like connectLeapSnap, suggestChain, etc.)
+  // ... (include all the remaining methods from the previous version: Leap Snap, WalletConnect, etc.)
 
   /**
    * Check if Leap Cosmos Snap is installed and initialized
@@ -643,60 +786,12 @@ export default class WalletService {
   }
 
   /**
-   * Check if snap is initialized
-   */
-  private static async isSnapInitialized(): Promise<boolean> {
-    try {
-      const response = await window.ethereum.request({
-        method: 'wallet_invokeSnap',
-        params: {
-          snapId: this.LEAP_SNAP_ID,
-          request: {
-            method: 'initialized'
-          }
-        }
-      });
-      return response?.data?.initialized === true;
-    } catch (error) {
-      console.warn('Error checking snap initialization:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Initialize Leap Cosmos Snap
-   */
-  private static async initializeSnap(): Promise<void> {
-    try {
-      await window.ethereum.request({
-        method: 'wallet_invokeSnap',
-        params: {
-          snapId: this.LEAP_SNAP_ID,
-          request: {
-            method: 'initialize'
-          }
-        }
-      });
-    } catch (error: any) {
-      throw new Error(
-        `Failed to initialize Leap Cosmos Snap: ${error.message}`
-      );
-    }
-  }
-
-  /**
    * Setup Leap Cosmos Snap (install and initialize if needed)
    */
   private static async setupLeapSnap(): Promise<void> {
-    // Check if snap is installed
     if (!(await this.isSnapInstalled())) {
       await this.installSnap();
     }
-
-    // Check if snap is initialized
-    // if (!(await this.isSnapInitialized())) {
-    //   await this.initializeSnap();
-    // }
   }
 
   /**
@@ -764,7 +859,6 @@ export default class WalletService {
       });
     } catch (error) {
       console.warn('Chain suggestion to snap failed:', error);
-      // Continue without throwing, as the chain might already be added
     }
   }
 
@@ -816,13 +910,9 @@ export default class WalletService {
     }
 
     try {
-      // Setup snap (install and initialize if needed)
       await this.setupLeapSnap();
-
-      // Suggest chain to snap
       await this.suggestChainToSnap(chainConfig);
 
-      // Get account info
       const account = await this.getSnapAccount(chainConfig.chainId);
 
       if (!account?.address) {
@@ -840,7 +930,6 @@ export default class WalletService {
         throw new Error('User rejected the connection request');
       }
 
-      // Re-throw our custom errors
       if (
         error.message.includes('Snap method') ||
         error.message.includes('No account found')
@@ -858,7 +947,6 @@ export default class WalletService {
   static async connectWalletConnect(
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
-    // WalletConnect implementation would require WalletConnect SDK
     throw new Error('WalletConnect integration requires additional setup');
   }
 
@@ -877,15 +965,12 @@ export default class WalletService {
     }
 
     try {
-      // Try to suggest chain if the method exists
       await this.suggestChain(wallet, chainConfig);
 
-      // Enable the chain
       if (wallet.enable) {
         await wallet.enable(chainConfig.chainId);
       }
 
-      // Get key information
       const key = await wallet.getKey(chainConfig.chainId);
       const offlineSigner = wallet.getOfflineSigner?.(chainConfig.chainId);
 
@@ -930,17 +1015,15 @@ export default class WalletService {
         },
         currencies: chainConfig.currencies || [
           {
-            coinDenom: chainConfig.currency?.coinDenom || 'STARS',
-            coinMinimalDenom:
-              chainConfig.currency?.coinMinimalDenom || 'ustars',
+            coinDenom: chainConfig.currency?.coinDenom || 'INIT',
+            coinMinimalDenom: chainConfig.currency?.coinMinimalDenom || 'uinit',
             coinDecimals: chainConfig.currency?.coinDecimals || 6
           }
         ],
         feeCurrencies: chainConfig.feeCurrencies || [
           {
-            coinDenom: chainConfig.currency?.coinDenom || 'STARS',
-            coinMinimalDenom:
-              chainConfig.currency?.coinMinimalDenom || 'ustars',
+            coinDenom: chainConfig.currency?.coinDenom || 'INIT',
+            coinMinimalDenom: chainConfig.currency?.coinMinimalDenom || 'uinit',
             coinDecimals: chainConfig.currency?.coinDecimals || 6,
             gasPriceStep: chainConfig.gasPriceStep || {
               low: 0.01,
@@ -950,8 +1033,8 @@ export default class WalletService {
           }
         ],
         stakeCurrency: chainConfig.stakeCurrency || {
-          coinDenom: chainConfig.currency?.coinDenom || 'STARS',
-          coinMinimalDenom: chainConfig.currency?.coinMinimalDenom || 'ustars',
+          coinDenom: chainConfig.currency?.coinDenom || 'INIT',
+          coinMinimalDenom: chainConfig.currency?.coinMinimalDenom || 'uinit',
           coinDecimals: chainConfig.currency?.coinDecimals || 6
         }
       };
@@ -959,7 +1042,6 @@ export default class WalletService {
       await wallet.experimentalSuggestChain(chainInfo);
     } catch (error) {
       console.warn('Failed to suggest chain:', error);
-      // Don't throw error here, as the chain might already be added
     }
   }
 
@@ -990,8 +1072,8 @@ export default class WalletService {
       ledger: () => !!window.ledger,
       metamask: () => !!window.ethereum?.isMetaMask,
       'leap-metamask-cosmos-snap': () => !!window.ethereum?.isMetaMask,
-      walletconnect: () => true, // WalletConnect doesn't require installation
-      'initia-widget': () => true // Initia widget loads dynamically
+      phantom: () => !!window.phantom?.ethereum,
+      walletconnect: () => true
     };
 
     const checker = walletMap[walletId];
@@ -999,7 +1081,6 @@ export default class WalletService {
       return checker();
     }
 
-    // Try generic check for unlisted wallets
     const walletKey = walletId.replace('-extension', '');
     return !!window[walletKey];
   }
@@ -1017,22 +1098,45 @@ export default class WalletService {
         return false;
       }
 
-      // Special handling for Initia widget
-      if (walletId === 'initia-widget') {
-        return this.initiaWidget?.address$?.value ? true : false;
+      // For Initia chains, check EVM wallet status
+      if (
+        (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
+        (walletId === 'metamask' || walletId === 'phantom')
+      ) {
+        const provider =
+          walletId === 'metamask' ? window.ethereum : window.phantom?.ethereum;
+        if (!provider) return false;
+
+        try {
+          const accounts = await provider.request({ method: 'eth_accounts' });
+          return accounts.length > 0;
+        } catch {
+          return false;
+        }
       }
 
-      if (walletConfig.supportedTypes.includes('evm')) {
-        // EVM wallet check
-        if (walletId === 'metamask' && window.ethereum?.isMetaMask) {
-          const accounts = await window.ethereum.request({
-            method: 'eth_accounts'
-          });
-          return accounts.length > 0;
+      // For Leap on Initia chains, check EVM mode first
+      if (
+        (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
+        walletId === 'leap-extension'
+      ) {
+        if (window.leap?.ethereum) {
+          try {
+            const accounts = await window.leap.ethereum.request({
+              method: 'eth_accounts'
+            });
+            return accounts.length > 0;
+          } catch {
+            // Fallback to Cosmos mode
+          }
         }
-        return false;
-      } else {
-        // Cosmos wallet check
+      }
+
+      // Check Cosmos wallets
+      if (
+        walletConfig.supportedTypes.includes('stargaze') ||
+        walletConfig.supportedTypes.includes('intergaze')
+      ) {
         const walletKey = walletId.replace('-extension', '');
         const wallet = window[walletKey];
 
@@ -1045,6 +1149,8 @@ export default class WalletService {
           return false;
         }
       }
+
+      return false;
     } catch (error) {
       console.error(
         `Error checking wallet connection status for ${walletId}:`,
@@ -1074,19 +1180,11 @@ export default class WalletService {
    * Disconnect wallet (limited support as most wallets handle this internally)
    */
   static async disconnectWallet(walletId: string): Promise<void> {
-    // Special handling for Initia widget
-    if (walletId === 'initia-widget') {
-      await this.disconnectInitia();
-      return;
-    }
-
     console.log(`${walletId} disconnection is handled by the wallet extension`);
-    // Most wallets don't support programmatic disconnect
-    // The user needs to disconnect from the extension directly
   }
 
   /**
-   * Get wallet accounts
+   * Get wallet accounts with Wagmi integration for Initia chains
    */
   static async getWalletAccounts(
     walletId: string,
@@ -1102,17 +1200,53 @@ export default class WalletService {
       const walletConfig = getWalletConfig(walletId);
       if (!walletConfig) return [];
 
-      // Special handling for Initia widget
-      if (walletId === 'initia-widget') {
-        const address = this.initiaWidget?.address$?.value;
-        return address ? [{ address }] : [];
+      // For Initia chains, return both hex and bech32 addresses
+      if (
+        (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
+        (walletId === 'metamask' || walletId === 'phantom')
+      ) {
+        const provider =
+          walletId === 'metamask' ? window.ethereum : window.phantom?.ethereum;
+        if (provider) {
+          const accounts = await provider.request({ method: 'eth_accounts' });
+          const prefix = this.getBech32Prefix(chainId);
+
+          return accounts.map((hexAddress: string) => ({
+            address: AddressUtils.toBech32(hexAddress, prefix),
+            hexAddress: hexAddress,
+            name: `${walletConfig.name} Account`
+          }));
+        }
       }
 
-      if (walletConfig.supportedTypes.includes('evm')) {
-        if (walletId === 'metamask' && window.ethereum?.isMetaMask) {
-          return await window.ethereum.request({ method: 'eth_accounts' });
+      // For Leap on Initia chains
+      if (
+        (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
+        walletId === 'leap-extension'
+      ) {
+        if (window.leap?.ethereum) {
+          try {
+            const accounts = await window.leap.ethereum.request({
+              method: 'eth_accounts'
+            });
+            const prefix = this.getBech32Prefix(chainId);
+
+            return accounts.map((hexAddress: string) => ({
+              address: AddressUtils.toBech32(hexAddress, prefix),
+              hexAddress: hexAddress,
+              name: 'Leap Account'
+            }));
+          } catch {
+            // Fallback to Cosmos mode
+          }
         }
-      } else {
+      }
+
+      // For Cosmos wallets
+      if (
+        walletConfig.supportedTypes.includes('stargaze') ||
+        walletConfig.supportedTypes.includes('intergaze')
+      ) {
         const walletKey = walletId.replace('-extension', '');
         const wallet = window[walletKey];
 
@@ -1153,6 +1287,234 @@ export default class WalletService {
   }
 
   /**
+   * Send transaction using specific wallet with Wagmi integration for Initia
+   */
+  static async sendTransaction(
+    walletId: string,
+    chainId: string,
+    transaction: any
+  ): Promise<string> {
+    const walletConfig = getWalletConfig(walletId);
+    if (!walletConfig) {
+      throw new Error(`Unsupported wallet: ${walletId}`);
+    }
+
+    // Handle EVM transactions for Initia chains
+    if (
+      (chainId === 'initia-1' || chainId.startsWith('intergaze')) &&
+      (walletId === 'metamask' ||
+        walletId === 'phantom' ||
+        walletId === 'leap-extension')
+    ) {
+      let provider;
+
+      if (walletId === 'metamask') {
+        provider = window.ethereum;
+      } else if (walletId === 'phantom') {
+        provider = window.phantom?.ethereum;
+      } else if (walletId === 'leap-extension' && window.leap?.ethereum) {
+        provider = window.leap.ethereum;
+      }
+
+      if (!provider) {
+        throw new Error(`${walletConfig.name} provider not found`);
+      }
+
+      try {
+        const txHash = await provider.request({
+          method: 'eth_sendTransaction',
+          params: [transaction]
+        });
+        return txHash;
+      } catch (error: any) {
+        throw new Error(`Transaction failed: ${error.message}`);
+      }
+    }
+
+    // Handle Cosmos transactions
+    const walletKey = walletId.replace('-extension', '');
+    const wallet = window[walletKey];
+
+    if (!wallet) {
+      throw new Error(`${walletConfig.name} not found`);
+    }
+
+    if (!wallet.sendTx) {
+      throw new Error(
+        `${walletConfig.name} does not support transaction sending`
+      );
+    }
+
+    try {
+      const result = await wallet.sendTx(chainId, transaction);
+      return result.transactionHash || result.txhash || result;
+    } catch (error: any) {
+      throw new Error(`Transaction failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Sign message using specific wallet with Wagmi integration for Initia
+   */
+  static async signMessage(
+    walletId: string,
+    chainId: string,
+    message: string,
+    address: string
+  ): Promise<any> {
+    const walletConfig = getWalletConfig(walletId);
+    if (!walletConfig) {
+      throw new Error(`Unsupported wallet: ${walletId}`);
+    }
+
+    // Handle EVM message signing for Initia chains
+    if (
+      (chainId === 'initia-1' || chainId.startsWith('intergaze')) &&
+      (walletId === 'metamask' ||
+        walletId === 'phantom' ||
+        walletId === 'leap-extension')
+    ) {
+      let provider;
+
+      if (walletId === 'metamask') {
+        provider = window.ethereum;
+      } else if (walletId === 'phantom') {
+        provider = window.phantom?.ethereum;
+      } else if (walletId === 'leap-extension' && window.leap?.ethereum) {
+        provider = window.leap.ethereum;
+      }
+
+      if (!provider) {
+        throw new Error(`${walletConfig.name} provider not found`);
+      }
+
+      try {
+        // For Initia chains, use the hex address for signing
+        const hexAddress = AddressUtils.toPrefixedHex(address);
+        const signature = await provider.request({
+          method: 'personal_sign',
+          params: [message, hexAddress]
+        });
+        return signature;
+      } catch (error: any) {
+        throw new Error(`Message signing failed: ${error.message}`);
+      }
+    }
+
+    // Handle Cosmos message signing
+    const walletKey = walletId.replace('-extension', '');
+    const wallet = window[walletKey];
+
+    if (!wallet) {
+      throw new Error(`${walletConfig.name} not found`);
+    }
+
+    if (!wallet.signArbitrary) {
+      throw new Error(`${walletConfig.name} does not support message signing`);
+    }
+
+    try {
+      const result = await wallet.signArbitrary(chainId, address, message);
+      return result;
+    } catch (error: any) {
+      throw new Error(`Message signing failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get wallet balance for specific token
+   */
+  static async getWalletBalance(
+    walletId: string,
+    chainId: string,
+    address: string,
+    tokenAddress?: string
+  ): Promise<string> {
+    const walletConfig = getWalletConfig(walletId);
+    if (!walletConfig) {
+      throw new Error(`Unsupported wallet: ${walletId}`);
+    }
+
+    throw new Error('Balance checking requires RPC integration');
+  }
+
+  /**
+   * Add token to wallet (for EVM wallets)
+   */
+  static async addTokenToWallet(
+    walletId: string,
+    tokenAddress: string,
+    tokenSymbol: string,
+    tokenDecimals: number,
+    tokenImage?: string
+  ): Promise<boolean> {
+    if (walletId === 'metamask' && window.ethereum?.isMetaMask) {
+      try {
+        const wasAdded = await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: tokenAddress,
+              symbol: tokenSymbol,
+              decimals: tokenDecimals,
+              image: tokenImage
+            }
+          }
+        });
+        return wasAdded;
+      } catch (error) {
+        console.error('Error adding token to MetaMask:', error);
+        return false;
+      }
+    }
+
+    if (walletId === 'phantom' && window.phantom?.ethereum) {
+      try {
+        const wasAdded = await window.phantom.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: tokenAddress,
+              symbol: tokenSymbol,
+              decimals: tokenDecimals,
+              image: tokenImage
+            }
+          }
+        });
+        return wasAdded;
+      } catch (error) {
+        console.error('Error adding token to Phantom:', error);
+        return false;
+      }
+    }
+
+    if (walletId === 'leap-extension' && window.leap?.ethereum) {
+      try {
+        const wasAdded = await window.leap.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: tokenAddress,
+              symbol: tokenSymbol,
+              decimals: tokenDecimals,
+              image: tokenImage
+            }
+          }
+        });
+        return wasAdded;
+      } catch (error) {
+        console.error('Error adding token to Leap:', error);
+        return false;
+      }
+    }
+
+    throw new Error(`Token addition not supported for ${walletId}`);
+  }
+
+  /**
    * Check if Leap Cosmos Snap is installed
    */
   static async isLeapSnapInstalled(): Promise<boolean> {
@@ -1168,7 +1530,6 @@ export default class WalletService {
     }
 
     try {
-      // Check installed snaps
       const snaps = await window.ethereum.request({
         method: 'wallet_getSnaps'
       });
@@ -1182,7 +1543,6 @@ export default class WalletService {
         };
       }
 
-      // Get snap info
       const snapInfo = snaps[this.LEAP_SNAP_ID];
 
       return {

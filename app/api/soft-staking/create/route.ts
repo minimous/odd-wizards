@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
-import { getTotalPoints, updateNftOwner } from '@/lib/soft-staking-service';
+import {
+  getSampleNfts,
+  getTotalPoints,
+  updateNftOwner
+} from '@/lib/soft-staking-service';
 import { fetchStargazeTokens } from '@/lib/utils';
 import { OwnedTokensResponse } from '@/types';
 
@@ -40,16 +44,14 @@ export async function POST(request: NextRequest) {
     }
 
     let countToken = 0;
-    console.log('collections', project.collections);
     for (let collection of project.collections) {
       if (!collection.collection_address) continue;
 
-      let resp: OwnedTokensResponse = await fetchStargazeTokens({
-        owner: staker_address,
-        collectionAddresses: [collection.collection_address],
-        limit: 1,
-        offset: 0
-      });
+      let resp = await getSampleNfts(
+        staker_address,
+        collection.collection_address,
+        collection?.collection_chain?.toLocaleLowerCase() ?? ''
+      );
 
       // Check if staker already exists
       let staker = await prisma.mst_staker.findFirst({
@@ -72,7 +74,7 @@ export async function POST(request: NextRequest) {
 
       updateNftOwner(staker_address, collection.collection_address);
 
-      countToken += resp.tokens.length;
+      countToken += resp?.tokens?.length ?? 0;
     }
 
     if (countToken == 0) {
