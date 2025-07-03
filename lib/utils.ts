@@ -862,6 +862,9 @@ export function formatDecimal(
   // Check if the number is a whole number (no decimal part)
   const isWholeNumber = Number.isInteger(number);
 
+  // Check if the number is less than 1 (starts with 0)
+  const startsWithZero = number < 1 && number > 0;
+
   // Format based on size
   if (number >= 1_000_000) {
     // For millions, conditionally show decimals
@@ -877,8 +880,16 @@ export function formatDecimal(
       : `${divided.toFixed(decimal)}K`;
   }
 
-  // For numbers less than 1000, conditionally show decimals
-  return isWholeNumber ? `${Math.floor(number)}` : `${number.toFixed(decimal)}`;
+  // For numbers less than 1000
+  if (isWholeNumber) {
+    return `${Math.floor(number)}`;
+  } else if (startsWithZero) {
+    // If number starts with 0 (like 0.5, 0.25), return as is without toFixed
+    return `${number}`;
+  } else {
+    // For other decimal numbers (like 2.5, 3.55), use toFixed
+    return `${number.toFixed(decimal)}`;
+  }
 }
 
 export function formatAddress(address: string | undefined) {
