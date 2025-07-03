@@ -152,6 +152,10 @@ export default class WalletService {
         case 'metamask':
           return await this.connectMetaMaskForInitia(chainConfig);
 
+        case 'keplr-extension':
+        case 'keplr':
+          return await this.connectKeplrForInitia(chainConfig);
+
         case 'leap-extension':
         case 'leap':
           return await this.connectLeapForInitia(chainConfig);
@@ -210,6 +214,61 @@ export default class WalletService {
         throw new Error('User rejected the connection request');
       }
       throw new Error(`MetaMask connection failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Connect to Keplr wallet for Initia chains
+   */
+  static async connectKeplrForInitia(
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    if (!window.keplr) {
+      throw new Error('Keplr extension not found');
+    }
+
+    try {
+      // First, try to suggest the chain to Keplr
+      await this.suggestChain(window.keplr, chainConfig);
+
+      // Enable the chain
+      await window.keplr.enable(chainConfig.chainId);
+
+      // Get the key for this chain
+      const key = await window.keplr.getKey(chainConfig.chainId);
+
+      // Get offline signer
+      const offlineSigner = window.keplr.getOfflineSigner(chainConfig.chainId);
+
+      // For Initia chains, we need to handle both Cosmos and EVM addresses
+      const cosmosAddress = key.bech32Address;
+
+      // Convert to hex address if needed for EVM compatibility
+      let hexAddress: string | undefined;
+      try {
+        // If Keplr supports EVM for this chain, get the hex address
+        if (window.keplr.getKey && key.pubKey) {
+          // Convert the bech32 address to hex format for EVM compatibility
+          hexAddress = AddressUtils.toPrefixedHex(cosmosAddress);
+        }
+      } catch (error) {
+        console.warn('Failed to get hex address from Keplr:', error);
+      }
+
+      return {
+        address: cosmosAddress, // Primary address (bech32)
+        publicKey: key.pubKey,
+        name: key.name,
+        algo: key.algo,
+        offlineSigner,
+        // Store hex address for EVM operations if available
+        ...(hexAddress && { hexAddress })
+      };
+    } catch (error: any) {
+      if (error.code === 4001) {
+        throw new Error('User rejected the connection request');
+      }
+      throw new Error(`Keplr connection failed: ${error.message}`);
     }
   }
 
@@ -1114,6 +1173,21 @@ export default class WalletService {
       const walletConfig = getWalletConfig(walletId);
       if (!walletConfig || !this.isWalletInstalled(walletId)) {
         return false;
+      }
+
+      // For Keplr on Initia chains
+      if (
+        (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
+        (walletId === 'keplr-extension' || walletId === 'keplr')
+      ) {
+        if (window.keplr) {
+          try {
+            const key = await window.keplr.getKey(chainId);
+            return !!key?.bech32Address;
+          } catch {
+            return false;
+          }
+        }
       }
 
       // For Initia chains, check EVM wallet status
