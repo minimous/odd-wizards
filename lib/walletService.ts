@@ -228,42 +228,72 @@ export default class WalletService {
     }
 
     try {
-      // First, try to suggest the chain to Keplr
-      await this.suggestChain(window.keplr, chainConfig);
+      // Check if Keplr supports EVM mode for Initia
+      if (window.keplr.ethereum) {
+        // Use EVM mode for Initia chains
+        const accounts = await window.keplr.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
 
-      // Enable the chain
-      await window.keplr.enable(chainConfig.chainId);
-
-      // Get the key for this chain
-      const key = await window.keplr.getKey(chainConfig.chainId);
-
-      // Get offline signer
-      const offlineSigner = window.keplr.getOfflineSigner(chainConfig.chainId);
-
-      // For Initia chains, we need to handle both Cosmos and EVM addresses
-      const cosmosAddress = key.bech32Address;
-
-      // Convert to hex address if needed for EVM compatibility
-      let hexAddress: string | undefined;
-      try {
-        // If Keplr supports EVM for this chain, get the hex address
-        if (window.keplr.getKey && key.pubKey) {
-          // Convert the bech32 address to hex format for EVM compatibility
-          hexAddress = AddressUtils.toPrefixedHex(cosmosAddress);
+        if (!accounts || accounts.length === 0) {
+          throw new Error('No accounts found in Keplr');
         }
-      } catch (error) {
-        console.warn('Failed to get hex address from Keplr:', error);
-      }
 
-      return {
-        address: cosmosAddress, // Primary address (bech32)
-        publicKey: key.pubKey,
-        name: key.name,
-        algo: key.algo,
-        offlineSigner,
-        // Store hex address for EVM operations if available
-        ...(hexAddress && { hexAddress })
-      };
+        // Add network to Keplr if needed
+        await this.addInitiaNetworkToKeplr(chainConfig);
+
+        // Get addresses
+        const hexAddress = accounts[0];
+        const prefix = this.getBech32Prefix(chainConfig.chainId);
+        const bech32Address = AddressUtils.toBech32(hexAddress, prefix);
+
+        return {
+          address: bech32Address,
+          name: 'Keplr Account',
+          provider: window.keplr.ethereum,
+          publicKey: hexAddress
+        };
+      } else {
+        // Fallback to Cosmos mode
+        // First, try to suggest the chain to Keplr
+        await this.suggestChain(window.keplr, chainConfig);
+
+        // Enable the chain
+        await window.keplr.enable(chainConfig.chainId);
+
+        // Get the key for this chain
+        const key = await window.keplr.getKey(chainConfig.chainId);
+
+        // Get offline signer
+        const offlineSigner = window.keplr.getOfflineSigner(
+          chainConfig.chainId
+        );
+
+        // For Initia chains, we need to handle both Cosmos and EVM addresses
+        const cosmosAddress = key.bech32Address;
+
+        // Convert to hex address if needed for EVM compatibility
+        let hexAddress: string | undefined;
+        try {
+          // If Keplr supports EVM for this chain, get the hex address
+          if (window.keplr.getKey && key.pubKey) {
+            // Convert the bech32 address to hex format for EVM compatibility
+            hexAddress = AddressUtils.toPrefixedHex(cosmosAddress);
+          }
+        } catch (error) {
+          console.warn('Failed to get hex address from Keplr:', error);
+        }
+
+        return {
+          address: cosmosAddress, // Primary address (bech32)
+          publicKey: key.pubKey,
+          name: key.name,
+          algo: key.algo,
+          offlineSigner,
+          // Store hex address for EVM operations if available
+          ...(hexAddress && { hexAddress })
+        };
+      }
     } catch (error: any) {
       if (error.code === 4001) {
         throw new Error('User rejected the connection request');
@@ -442,6 +472,40 @@ export default class WalletService {
       });
     } catch (error) {
       console.warn('Failed to add network to MetaMask:', error);
+    }
+  }
+
+  /**
+   * Add Initia network to Keplr EVM mode
+   */
+  static async addInitiaNetworkToKeplr(
+    chainConfig: ChainConfig
+  ): Promise<void> {
+    if (!window.keplr?.ethereum) {
+      throw new Error('Keplr EVM mode not available');
+    }
+
+    try {
+      await window.keplr.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: `0x${chainConfig.chainId}`, // Convert to hex if needed
+            chainName: chainConfig.chainName,
+            nativeCurrency: {
+              name: chainConfig.currency?.coinDenom || 'INIT',
+              symbol: chainConfig.currency?.coinMinimalDenom || 'INIT',
+              decimals: chainConfig.currency?.coinDecimals || 18
+            },
+            rpcUrls: [chainConfig.rpc]
+          }
+        ]
+      });
+    } catch (error: any) {
+      // If the network already exists, this will throw an error which we can ignore
+      if (error.code !== 4902) {
+        console.warn('Failed to add network to Keplr:', error);
+      }
     }
   }
 
