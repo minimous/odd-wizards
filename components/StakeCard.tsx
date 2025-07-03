@@ -15,6 +15,7 @@ import { BorderBeam } from './ui/border-beam';
 import InfoModal from './modal/info-modal';
 import ConnectButtonV2 from './ConnectButtonV2';
 import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
+import { createLinkCollection, getLogoNetwork } from '@/lib/utils';
 
 export interface StakeCardProps {
   collection: mst_collection;
@@ -134,7 +135,10 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
       <div className="w-full p-2 md:p-4">
         <div className="mb-2 justify-between text-center md:flex md:text-start">
           <Link
-            href={`https://www.stargaze.zone/m/${collection.collection_address}/tokens`}
+            href={createLinkCollection(
+              collection?.collection_chain ?? '',
+              collection?.collection_address ?? ''
+            )}
             target="_blank"
             className="flex w-full items-center justify-between gap-x-4"
           >
@@ -143,7 +147,7 @@ const StakeCard = ({ collection, projectid }: StakeCardProps) => {
             </h1>
             {/* <span className="text-white text-sm md:!text-lg font-semibold">Trade collection</span> */}
             <img
-              src="/images/Icon/stargaze.png"
+              src={getLogoNetwork(collection?.collection_chain ?? '')}
               className="w-[25px] md:!w-[40px]"
             />
           </Link>

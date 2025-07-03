@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/components/kanban/board-column';
 import { TaskDragData } from '@/components/kanban/task-card';
-import { REWARD_PERIODE } from '@/constants';
+import { NETWORK_CONSTANT, REWARD_PERIODE } from '@/constants';
 import axios, { AxiosError } from 'axios';
 import {
   FetchAllStargazeTokensOptions,
@@ -21,6 +21,8 @@ import {
 import { GasPrice } from '@cosmjs/stargate';
 import { OPERATOR_CONSTANTS } from '@/constants/filterConstant';
 import { UTApi } from 'uploadthing/server';
+import { getAddress, isAddress } from 'ethers';
+import { fromBech32, fromHex, toBech32, toHex } from '@cosmjs/encoding';
 
 const config = getConfig();
 
@@ -860,6 +862,9 @@ export function formatDecimal(
   // Check if the number is a whole number (no decimal part)
   const isWholeNumber = Number.isInteger(number);
 
+  // Check if the number is less than 1 (starts with 0)
+  const startsWithZero = number < 1 && number > 0;
+
   // Format based on size
   if (number >= 1_000_000) {
     // For millions, conditionally show decimals
@@ -875,8 +880,16 @@ export function formatDecimal(
       : `${divided.toFixed(decimal)}K`;
   }
 
-  // For numbers less than 1000, conditionally show decimals
-  return isWholeNumber ? `${Math.floor(number)}` : `${number.toFixed(decimal)}`;
+  // For numbers less than 1000
+  if (isWholeNumber) {
+    return `${Math.floor(number)}`;
+  } else if (startsWithZero) {
+    // If number starts with 0 (like 0.5, 0.25), return as is without toFixed
+    return `${number}`;
+  } else {
+    // For other decimal numbers (like 2.5, 3.55), use toFixed
+    return `${number.toFixed(decimal)}`;
+  }
 }
 
 export function formatAddress(address: string | undefined) {
@@ -1125,4 +1138,89 @@ export const signAmino = async (
     }
   });
   return result.data;
+};
+
+export const AddressUtils = {
+  toBytes(address: string, byteLength: number = 20) {
+    if (!address) throw new Error('address is required');
+
+    if (address.match(/^(0x)?[0-9a-fA-F]+$/)) {
+      const hex = address.replace(/^0x/, '').padStart(byteLength * 2, '0');
+      return fromHex(hex);
+    }
+
+    const { data } = fromBech32(address);
+    if (data.length >= byteLength) return data;
+    return new Uint8Array([
+      ...Array(byteLength - data.length).fill(0),
+      ...Array.from(data)
+    ]);
+  },
+
+  toBech32(address: string, prefix: string = 'init') {
+    if (!address) return '';
+    return toBech32(prefix, AddressUtils.toBytes(address));
+  },
+
+  toHex(address: string) {
+    if (!address) return '';
+    return toHex(AddressUtils.toBytes(address));
+  },
+
+  toPrefixedHex(address: string) {
+    if (!address) return '';
+    const checksummed = getAddress(AddressUtils.toHex(address));
+    const bytes = AddressUtils.toBytes(address);
+    const last = bytes[bytes.length - 1];
+    const isSpecial =
+      bytes.subarray(0, bytes.length - 1).every((byte) => byte === 0) &&
+      last < 0x10;
+    if (isSpecial) return checksummed.replace(/^0x0+/, '0x');
+    return checksummed;
+  },
+
+  validate(address: string, prefix: string = 'init') {
+    if (isAddress(address)) {
+      return true;
+    }
+
+    try {
+      return fromBech32(address).prefix === prefix;
+    } catch {
+      return false;
+    }
+  },
+
+  equals(address1: string, address2: string) {
+    return AddressUtils.toBech32(address1) === AddressUtils.toBech32(address2);
+  }
+};
+
+export const createLinkCollection = (
+  network: string,
+  collectionAddress: string
+) => {
+  if (!network || !collectionAddress) return '#';
+
+  switch (network?.toLocaleLowerCase()) {
+    case NETWORK_CONSTANT.STARGAZE:
+      return `https://www.stargaze.zone/m/${collectionAddress}/tokens`;
+    case NETWORK_CONSTANT.INTERGAZE:
+      return `https://intergaze.xyz/m/${collectionAddress}`;
+  }
+
+  return '#';
+};
+
+export const getLogoNetwork = (network: string) => {
+  if (!network) return '#';
+
+  switch (network?.toLocaleLowerCase()) {
+    case NETWORK_CONSTANT.STARGAZE:
+      return `https://raw.githubusercontent.com/cosmos/chain-registry/master/stargaze/images/stars.png`;
+    case NETWORK_CONSTANT.INTERGAZE:
+      return `https://registry.initia.xyz/images/intergaze.png`;
+  }
+
+  return '#';
 };

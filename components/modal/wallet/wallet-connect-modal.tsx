@@ -7,7 +7,10 @@ declare global {
     ethereum?: any;
     leap?: any;
     cosmostation?: any;
-    createWalletWidget?: any;
+    phantom?: {
+      solana?: any;
+      ethereum?: any;
+    };
   }
 }
 
@@ -16,13 +19,13 @@ import { useToast } from '../../ui/use-toast';
 import { ScrollArea } from '../../ui/scroll-area';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wallet, Download, Network } from 'lucide-react';
+import { ArrowLeft, Wallet, Download, Network, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import useChainRegistry from '@/hooks/useChainRegistry';
 import { WalletConfig } from '@/types/wallet';
 import WalletService from '@/lib/walletService';
 import { getWalletsForChain, getWalletsByChainType } from '@/config/wallets';
-import { useInitiaWidget } from '@initia/widget-react';
+// import { useInitiaWidget } from '@initia/widget-react';
 
 // Chain configurations
 const SUPPORTED_CHAINS = [
@@ -65,15 +68,13 @@ export default function WalletConnectModal({
   const [selectedChain, setSelectedChain] = useState<string>('stargaze-1');
   const [selectedType, setSelectedType] = useState<
     'stargaze' | 'initia' | 'ethereum' | null
-  >('stargaze');
+  >(null);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
 
   // Use chain registry data
   const chainInfo = useChainRegistry(chainName);
-
-  // const { address, username, openConnect, openWallet } = useInitiaWidget();
 
   // Detect if running on mobile device
   useEffect(() => {
@@ -195,7 +196,7 @@ export default function WalletConnectModal({
 
   const resetModal = () => {
     setSelectedChain('stargaze-1');
-    setSelectedType('stargaze');
+    setSelectedType(null);
     setConnecting(null);
     onClose();
   };
@@ -225,8 +226,7 @@ export default function WalletConnectModal({
         <div className="w-full text-white">
           {/* Header */}
           <div className="flex items-center gap-4 px-6 pb-4">
-            {/* <button onClick={openConnect}>Connect</button> */}
-            {/* {selectedType && (
+            {selectedType && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -236,7 +236,7 @@ export default function WalletConnectModal({
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-            )} */}
+            )}
             <div className="flex items-center gap-3">
               <div className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-2">
                 <Wallet className="h-6 w-6 text-white" />
@@ -264,49 +264,28 @@ export default function WalletConnectModal({
                       key={chain.id}
                       onClick={() => !connecting && handleChainSelect(chain.id)}
                       className={cn(
-                        'group cursor-pointer rounded-2xl border border-purple-500/20 bg-gradient-to-r from-purple-900/20 to-pink-900/20 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-purple-500/40',
-                        connecting && 'cursor-not-allowed opacity-50',
-                        selectedChain === chain.id &&
-                          'border-purple-500/60 bg-gradient-to-r from-purple-900/40 to-pink-900/40'
+                        'group cursor-pointer rounded-2xl p-2 transition-all duration-300',
+                        connecting && 'cursor-not-allowed opacity-50'
                       )}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 p-3 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/25">
+                        <div className="rounded-xl p-3 transition-all duration-300">
                           <img
                             src={chain.logo}
                             alt={chain.name}
                             className="h-8 w-8"
-                            onError={(e: any) => {
-                              e.target.src =
-                                'https://via.placeholder.com/32x32?text=?';
-                            }}
                           />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-xl font-bold text-white transition-colors group-hover:text-purple-300">
                             {chain.name}
                           </h3>
-                          <p className="mt-1 text-sm text-gray-400">
+                          <p className="mt-1 text-xs text-gray-400">
                             {chain.description}
                           </p>
-                          <p className="mt-1 text-xs text-purple-300">
-                            Chain ID: {chain.id}
-                          </p>
                         </div>
-                        <div className="text-gray-400 transition-colors group-hover:text-white">
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
+                        <div className="text-gray-400 transition-all transition-colors duration-300 group-hover:text-white">
+                          <ArrowRight />
                         </div>
                       </div>
                     </div>
@@ -315,28 +294,6 @@ export default function WalletConnectModal({
               ) : (
                 // Wallet Selection for Selected Chain
                 <div className="space-y-3">
-                  {/* Chain Info */}
-                  {/* <div className="mb-6 rounded-xl bg-gray-800/50 p-4">
-                    <div className="flex items-center gap-3">
-                      <img 
-                        src={getCurrentChain()?.logo || ''} 
-                        alt={getCurrentChain()?.name}
-                        className="h-8 w-8 rounded-full"
-                        onError={(e: any) => {
-                          e.target.src = 'https://via.placeholder.com/32x32?text=?';
-                        }}
-                      />
-                      <div>
-                        <h3 className="font-semibold text-white">
-                          {getCurrentChain()?.name}
-                        </h3>
-                        <p className="text-sm text-gray-400">
-                          {getCurrentChain()?.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div> */}
-
                   {/* Wallet List */}
                   {getSortedWallets().map((wallet) => {
                     const installed = isWalletInstalled(wallet.id);
