@@ -10,8 +10,7 @@ import { formatDecimal } from './utils';
  */
 export const formatNumber = (value: number, locale = 'en-US') => {
   if (value === null || value === undefined) return '0';
-  // return new Intl.NumberFormat(locale).format(value);
-  return formatDecimal(value);
+  return new Intl.NumberFormat(locale).format(value);
 };
 
 /**
