@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/components/kanban/board-column';
 import { TaskDragData } from '@/components/kanban/task-card';
-import { REWARD_PERIODE } from '@/constants';
+import { NETWORK_CONSTANT, REWARD_PERIODE } from '@/constants';
 import axios, { AxiosError } from 'axios';
 import {
   FetchAllStargazeTokensOptions,
@@ -1194,4 +1194,33 @@ export const AddressUtils = {
   equals(address1: string, address2: string) {
     return AddressUtils.toBech32(address1) === AddressUtils.toBech32(address2);
   }
+};
+
+export const createLinkCollection = (
+  network: string,
+  collectionAddress: string
+) => {
+  if (!network || !collectionAddress) return '#';
+
+  switch (network?.toLocaleLowerCase()) {
+    case NETWORK_CONSTANT.STARGAZE:
+      return `https://www.stargaze.zone/m/${collectionAddress}/tokens`;
+    case NETWORK_CONSTANT.INTERGAZE:
+      return `https://intergaze.xyz/m/${collectionAddress}`;
+  }
+
+  return '#';
+};
+
+export const getLogoNetwork = (network: string) => {
+  if (!network) return '#';
+
+  switch (network?.toLocaleLowerCase()) {
+    case NETWORK_CONSTANT.STARGAZE:
+      return `https://raw.githubusercontent.com/cosmos/chain-registry/master/stargaze/images/stars.png`;
+    case NETWORK_CONSTANT.INTERGAZE:
+      return `https://registry.initia.xyz/images/intergaze.png`;
+  }
+
+  return '#';
 };

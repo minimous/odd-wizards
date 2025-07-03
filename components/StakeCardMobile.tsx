@@ -15,6 +15,7 @@ import confetti from 'canvas-confetti';
 import { BorderBeam } from './ui/border-beam';
 import InfoModal from './modal/info-modal';
 import ConnectButtonV2 from './ConnectButtonV2';
+import { createLinkCollection, getLogoNetwork } from '@/lib/utils';
 
 export interface StakeCardMobileProps {
   collection: mst_collection;
@@ -136,7 +137,10 @@ const StakeCardMobile = ({ collection, projectid }: StakeCardMobileProps) => {
         <div className="w-full p-2 md:p-4">
           <div className="mb-2 justify-between md:flex md:text-start">
             <Link
-              href={`https://www.stargaze.zone/m/${collection.collection_address}/tokens`}
+              href={createLinkCollection(
+                collection?.collection_chain ?? '',
+                collection?.collection_address ?? ''
+              )}
               target="_blank"
               className="flex w-full items-center justify-between gap-x-4"
             >
@@ -144,7 +148,7 @@ const StakeCardMobile = ({ collection, projectid }: StakeCardMobileProps) => {
                 {collection.collection_name}
               </h1>
               <img
-                src="/images/Icon/stargaze.png"
+                src={getLogoNetwork(collection?.collection_chain ?? '')}
                 className="w-[25px] md:!w-[40px]"
               />
             </Link>
