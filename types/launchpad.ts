@@ -1,66 +1,132 @@
-// General launchpad types that work for both Stargaze and Intergaze
-export interface GeneralPriceInfo {
+// File: @/types/launchpad.ts
+
+export interface Creator {
+  address: string;
+  name?: string;
+}
+
+export interface SalePrice {
   amount: string;
   denom: string;
   symbol: string;
   exponent: number;
-  amountUsd?: number;
 }
 
-export interface GeneralMintStage {
-  id: string | number;
+export interface AddressTokenCounts {
+  limit: number;
+  mintable: number;
+  minted: number;
+}
+
+export interface StageCounts {
+  limit: number;
+  mintable: number;
+  minted: number;
+}
+
+export interface BurnConditions {
+  // Define specific burn condition fields if needed
+}
+
+export interface MintStage {
+  id: number;
   name: string;
-  type: string;
-  presaleType?: string;
-  status: string;
-  startTime: number;
-  endTime?: number;
-  salePrice?: GeneralPriceInfo;
-  discountPrice?: GeneralPriceInfo;
-  addressTokenCounts?: {
-    limit: number;
-    mintable: number;
-    minted: number;
-  };
-  stageCounts?: {
-    limit: number;
-    mintable: number;
-    minted: number;
-  };
+  type: 'PRESALE' | 'PUBLIC';
+  presaleType: 'REGULAR' | 'NONE';
+  status: 'ACTIVE' | 'UPCOMING' | 'ENDED';
+  startTime: string | number;
+  endTime?: string | number;
+  salePrice: SalePrice;
+  discountPrice?: SalePrice;
+  addressTokenCounts: AddressTokenCounts;
+  stageCounts?: StageCounts;
   numMembers?: number;
-  isMember?: boolean;
-  proofs?: any[];
-  burnConditions?: any;
+  isMember: boolean;
+  proofs: any[] | null;
+  burnConditions?: BurnConditions | null;
 }
 
-export interface GeneralMinter {
-  minterType?: string;
+export interface MinterV2 {
+  minterType: string;
   minterAddress: string;
   mintableTokens: number;
   mintedTokens: number;
-  airdroppedTokens?: number;
-  numTokens?: number;
-  existingTokens?: number;
-  currentStage?: GeneralMintStage;
-  mintStages?: GeneralMintStage[];
+  airdroppedTokens: number;
+  numTokens: number;
+  currentStage?: MintStage;
+  mintStages: MintStage[];
 }
 
-export interface GeneralCreator {
-  address: string;
-  name?: {
-    name: string;
-    records?: any[];
-  };
+export interface Minter {
+  minterType: string;
+  minterAddress: string;
+  mintableTokens: number;
+  mintedTokens: number;
+  airdroppedTokens: number;
+  numTokens: number;
+  existingTokens: number;
+  currentStage?: MintStage;
+  mintStages: MintStage[];
 }
 
-export interface GeneralMedia {
-  type: string;
-  url: string;
-  originalUrl?: string;
+export interface VisualAsset {
+  type: 'image';
   height: number;
   width: number;
-  visualAssets?: any;
-  fallbackUrl?: string;
+  url: string;
+  staticUrl: string;
+}
+
+export interface VisualAssets {
+  lg: VisualAsset;
+  md: VisualAsset;
+  sm: VisualAsset;
+  xl: VisualAsset;
+  xs: VisualAsset;
+}
+
+export interface Media {
+  type: 'image' | 'video';
+  url: string;
+  height: number;
+  width: number;
+  fallbackUrl: string;
+  visualAssets: VisualAssets;
+}
+
+export interface RoyaltyInfo {
+  // Define royalty info fields if needed
+}
+
+// Rarible-specific types
+export interface RaribleCurrency {
+  id: string;
+  abbreviation: string;
+  usdExchangeRate: string;
+  icon?: string;
+}
+
+export interface RariblePrice {
+  amount: string;
+  currency: RaribleCurrency;
+}
+
+export interface RariblePhase {
+  price: RariblePrice;
+  startDate: string;
+  endDate: string;
+  maxMintPerWallet: number;
+  type: 'allowlist' | 'public';
+}
+
+export interface RaribleFee {
+  type: 'PERCENTAGE' | 'FIXED';
+  amount: number;
+}
+
+export interface RaribleMedia {
+  type: 'image' | 'video';
+  url: string;
 }
 
 export interface GeneralLaunchpad {
@@ -73,16 +139,24 @@ export interface GeneralLaunchpad {
   isExplicit?: boolean;
   minterAddress?: string;
   featured?: boolean;
-  floor?: GeneralPriceInfo;
-  creator: GeneralCreator;
-  royaltyInfo?: {
-    sharePercent: number;
-  };
-  // Use union type to support both Stargaze (minterV2) and Intergaze (minter)
-  minterV2?: GeneralMinter;
-  minter?: GeneralMinter;
-  startTradingTime: number;
-  media: GeneralMedia;
+  floor?: any;
+  creator: Creator;
+  royaltyInfo?: RoyaltyInfo;
+
+  // Different minter types for different networks
+  minterV2?: MinterV2; // For Stargaze
+  minter?: Minter; // For Intergaze and Rarible
+
+  startTradingTime: string | number;
+  media?: Media | RaribleMedia;
+
+  // Rarible-specific fields
+  tokenStandard?: string;
+  totalSupply?: number;
+  isVerified?: boolean;
+  phases?: RariblePhase[];
+  fees?: RaribleFee[];
+  blockchain?: string;
 }
 
 export interface BannerWithLaunchpad {

@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { cn, formatAmount } from '@/lib/utils';
 import { BannerWithLaunchpad } from '@/types/launchpad';
 import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
+import { NETWORK_CONSTANT } from '@/constants';
 
 type BannerProps = {
   items: BannerWithLaunchpad[];
@@ -59,9 +60,16 @@ const Banner = ({ items }: BannerProps) => {
     if (!banner.launchpad) return null;
 
     // For Stargaze, use minterV2; for Intergaze, use minter
-    if (banner.banner_network?.toLowerCase() === 'stargaze') {
+    if (banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.STARGAZE) {
       return banner.launchpad.minterV2;
-    } else if (banner.banner_network?.toLowerCase() === 'intergaze') {
+    } else if (
+      banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.INTERGAZE
+    ) {
+      return banner.launchpad.minter;
+    } else if (
+      banner.banner_network?.toLowerCase() ===
+      NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase()
+    ) {
       return banner.launchpad.minter;
     }
 
@@ -72,12 +80,19 @@ const Banner = ({ items }: BannerProps) => {
   const getLaunchpadUrl = (banner: BannerWithLaunchpad) => {
     if (!banner.launchpad) return '#';
 
-    if (banner.banner_network?.toLowerCase() === 'stargaze') {
+    if (banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.STARGAZE) {
       return `https://www.stargaze.zone/l/${
         banner.launchpad.contractUri ?? banner.launchpad.contractAddress
       }`;
-    } else if (banner.banner_network?.toLowerCase() === 'intergaze') {
+    } else if (
+      banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.INTERGAZE
+    ) {
       return `https://intergaze.xyz/l/${banner.launchpad.contractAddress}`;
+    } else if (
+      banner.banner_network?.toLowerCase() ===
+      NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase()
+    ) {
+      return `https://rarible.fun/collections/megaethtestnet/${banner.launchpad.contractAddress}/drops`;
     }
 
     return '#';
@@ -87,12 +102,19 @@ const Banner = ({ items }: BannerProps) => {
   const getTradingUrl = (banner: BannerWithLaunchpad) => {
     if (!banner.launchpad) return '#';
 
-    if (banner.banner_network?.toLowerCase() === 'stargaze') {
+    if (banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.STARGAZE) {
       return `https://www.stargaze.zone/m/${
         banner.launchpad.contractUri ?? banner.launchpad.contractAddress
       }/tokens`;
-    } else if (banner.banner_network?.toLowerCase() === 'intergaze') {
+    } else if (
+      banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.INTERGAZE
+    ) {
       return `https://intergaze.xyz/m/${banner.launchpad.contractAddress}`;
+    } else if (
+      banner.banner_network?.toLowerCase() ===
+      NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase()
+    ) {
+      return `https://rarible.fun/collections/megaethtestnet/${banner.launchpad.contractAddress}`;
     }
 
     return '#';
