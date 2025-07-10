@@ -429,8 +429,8 @@ const Banner = ({ items }: BannerProps) => {
                     <div className="h-full w-full md:rounded-[30px]">
                       <div className="relative h-full w-full overflow-hidden md:rounded-[30px] md:border md:border-[#2D253E]">
                         {renderMedia(banner)}
-                        <div className="z-5 via-black-75 pb-18 absolute bottom-0 left-0 top-0 w-full bg-black/30 p-10 pl-8 md:bg-gradient-to-b md:from-transparent md:to-black md:pl-16">
-                          <div className="flex gap-2">
+                        <div className="z-5 via-black-75 md:pb-18 absolute bottom-0 left-0 top-0 flex w-full flex-col justify-end bg-black/30 p-6 pb-4 pl-8 md:bg-gradient-to-b md:from-transparent md:to-black md:p-10 md:pl-16">
+                          <div className="flex items-end gap-2">
                             <Link
                               hidden={!banner.banner_twiter}
                               href={banner.banner_twiter ?? '#'}
@@ -566,6 +566,31 @@ const Banner = ({ items }: BannerProps) => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+          <div className="relative flex items-center justify-center pb-6 md:!hidden">
+            <div className="flex items-end gap-4">
+              {items?.map((bannerItem, bannerIndex) => (
+                <div key={bannerIndex}>
+                  {bannerItem.banner_id == selectedBanner ? (
+                    <button
+                      type="button"
+                      className="relative h-1 w-12 overflow-hidden rounded-full bg-white/20 transition-all duration-300"
+                    >
+                      {/* Garis horizontal sebagai indikator animasi */}
+                      <div
+                        className="animate-horizontal-fill absolute left-0 top-0 h-full bg-white"
+                        style={{ animationDuration: '5s' }}
+                      ></div>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleBannerClick(bannerItem, bannerIndex)}
+                      className="h-1 w-12 rounded-full bg-white/40 opacity-60 transition-all duration-300 hover:opacity-100"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>

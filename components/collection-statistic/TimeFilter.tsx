@@ -8,16 +8,27 @@ const TimeFilter = ({
   loading,
   activeFilter,
   onFilterChange,
-  className = ""
-}: { loading: boolean, activeFilter: string, onFilterChange: Function, className?: string }) => {
+  className = ''
+}: {
+  loading: boolean;
+  activeFilter: string;
+  onFilterChange: Function;
+  className?: string;
+}) => {
   return (
     <div className={`flex gap-4 ${className}`}>
       {TIME_FILTER.map((filter) => (
-        <a key={filter.key} onClick={() => {
-          if(loading) return;
-          onFilterChange(filter.key)
-        }}
-          className={cn('cursor-pointer text-lg', activeFilter === filter.key ? 'text-white' : 'text-[#857F94]')}>
+        <a
+          key={filter.key}
+          onClick={() => {
+            if (loading) return;
+            onFilterChange(filter.key);
+          }}
+          className={cn(
+            'cursor-pointer md:text-lg',
+            activeFilter === filter.key ? 'text-white' : 'text-[#857F94]'
+          )}
+        >
           {filter.label}
         </a>
       ))}

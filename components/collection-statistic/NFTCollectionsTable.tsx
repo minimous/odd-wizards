@@ -72,7 +72,7 @@ const NFTCollectionsTable = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black p-6 text-white">
+    <div className="min-h-screen bg-black px-4 py-6 text-white md:p-6">
       {/* Header */}
       <Header
         loading={loadingMore}
@@ -85,11 +85,13 @@ const NFTCollectionsTable = () => {
       />
 
       {/* Table */}
-      <div className="overflow-hidden rounded-lg bg-black">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-lg bg-black">
+        <table className="w-full min-w-[800px] table-fixed">
           <thead className="border-b-2 border-[#15111D]">
             <tr>
-              <TableHeader>Collection</TableHeader>
+              <TableHeader className="sticky left-0 z-10 w-[150px] bg-black md:max-w-max">
+                Collection
+              </TableHeader>
               <TableHeader
                 align="right"
                 sortable
@@ -197,7 +199,7 @@ const NFTCollectionsTable = () => {
             )}
           </tbody>
           {hasNextPage && (
-            <tfoot>
+            <tfoot className="hidden md:!block">
               <tr>
                 <td colSpan={7} className="py-4 text-center">
                   <button
@@ -212,6 +214,15 @@ const NFTCollectionsTable = () => {
             </tfoot>
           )}
         </table>
+      </div>
+      <div className="flex items-center justify-center py-4 md:hidden">
+        <button
+          onClick={loadMore}
+          disabled={loadingMore}
+          className="cursor-pointer text-sm text-[#857F94] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loadingMore ? 'Loading...' : 'See More...'}
+        </button>
       </div>
     </div>
   );
