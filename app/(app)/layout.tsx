@@ -44,7 +44,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <ChainProviderWrapper>
           <WalletProviderWrapper>
             <HeaderMobile />
-            <MobileComingSoon />
+            {/* <MobileComingSoon /> */}
             <HeaderV2 />
             {/* <NavPrice /> */}
             <ScrollArea className="h-[calc(100vh-70px)] w-full">

@@ -300,7 +300,7 @@ const Banner = ({ items }: BannerProps) => {
     if (banner.banner_type == 'V') {
       return (
         <video
-          className="h-full w-full rounded-[30px] object-cover transition-all duration-300 ease-in-out hover:scale-[102%]"
+          className="h-full w-full object-cover transition-all duration-300 ease-in-out hover:scale-[102%] md:rounded-[30px]"
           autoPlay
           loop
           muted
@@ -318,7 +318,7 @@ const Banner = ({ items }: BannerProps) => {
         objectFit="cover"
         src={mediaUrl}
         alt=""
-        className="rounded-[30px] transition-all duration-300 ease-in-out hover:scale-[102%]"
+        className="transition-all duration-300 ease-in-out hover:scale-[102%] md:rounded-[30px]"
       />
     );
   };
@@ -411,22 +411,25 @@ const Banner = ({ items }: BannerProps) => {
       <div className="relative h-[calc(50vh)]">
         <div className="h-1/2 w-full bg-[url('/images/blur.gif')] bg-cover bg-center opacity-50"></div>
         <div className="pointer-events-none absolute inset-0 bg-black/70 backdrop-blur-xl"></div>
-        <div className="z-1 absolute bottom-0 left-0 h-[100px] w-full bg-gradient-to-b from-transparent to-black" />
-        <div className="absolute left-0 right-0 top-0 px-8 py-4">
+        <div className="z-1 absolute bottom-0 left-0 hidden h-[100px] w-full bg-gradient-to-b from-transparent to-black md:!block" />
+        <div className="absolute left-0 right-0 top-0 md:px-8 md:py-4">
           <Carousel
             setApi={setApi}
             opts={OPTIONS}
             plugins={[plugin.current]}
-            className="h-full w-full rounded-[30px]"
+            className="h-full w-full md:rounded-[30px]"
           >
-            <CarouselContent className="-ml-2 h-full w-full rounded-[30px]">
+            <CarouselContent className="-ml-2 h-full w-full md:rounded-[30px]">
               {items?.map((banner, index) => (
-                <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
+                <CarouselItem
+                  key={banner.id}
+                  className="pl-2 md:rounded-[30px]"
+                >
                   <div className="relative h-[calc(50vh)] md:h-[calc(50vh)]">
-                    <div className="h-full w-full rounded-[30px]">
-                      <div className="relative h-full w-full overflow-hidden rounded-[30px] border border-[#2D253E]">
+                    <div className="h-full w-full md:rounded-[30px]">
+                      <div className="relative h-full w-full overflow-hidden md:rounded-[30px] md:border md:border-[#2D253E]">
                         {renderMedia(banner)}
-                        <div className="z-5 via-black-75 pb-18 absolute bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-black p-10 pl-8 md:pl-16">
+                        <div className="z-5 via-black-75 pb-18 absolute bottom-0 left-0 top-0 w-full bg-black/30 p-10 pl-8 md:bg-gradient-to-b md:from-transparent md:to-black md:pl-16">
                           <div className="flex gap-2">
                             <Link
                               hidden={!banner.banner_twiter}
