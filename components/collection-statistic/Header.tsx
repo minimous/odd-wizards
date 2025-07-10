@@ -28,7 +28,7 @@ const Header = ({
     <div className="mb-2 flex items-center justify-between rounded-[10px] px-4 py-2">
       {/* Left Section */}
       <div className="flex items-center gap-4">
-        <a className="cursor-pointer text-xl text-white">Trending</a>
+        <a className="cursor-pointer text-white md:text-xl">Trending</a>
         {/* <a className='text-sm text-[#857F94] cursor-pointer'>Holding</a> */}
       </div>
 

@@ -8,18 +8,13 @@ import ForSaleDisplay from './ForSaleDisplay';
 import { FormattedCollection } from '@/types/marketplace';
 
 interface TableRow {
-  collection: FormattedCollection
-  index: number
-  onClick: Function
-  className?: string
+  collection: FormattedCollection;
+  index: number;
+  onClick: Function;
+  className?: string;
 }
 
-const TableRow = ({
-  collection,
-  index,
-  onClick,
-  className = ""
-}: TableRow) => {
+const TableRow = ({ collection, index, onClick, className = '' }: TableRow) => {
   const handleRowClick = () => {
     if (onClick) {
       onClick(collection);
@@ -28,20 +23,19 @@ const TableRow = ({
 
   return (
     <tr
-      className={`hover:bg-gray-800/30 transition-colors ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`transition-colors hover:bg-gray-800/30 ${
+        onClick ? 'cursor-pointer' : ''
+      } ${className}`}
       onClick={handleRowClick}
     >
       {/* Collection Info */}
-      <td className="px-4 py-2">
-        <div className="flex items-center gap-2">
+      <td className="sticky left-0 z-0 w-[150px] bg-black px-4 py-2 md:max-w-max">
+        <div className="flex w-[135px] items-center gap-2 md:max-w-max">
           {/* <span className="text-gray-400 font-medium w-4 text-sm">
             {index + 1}
           </span> */}
-          <CollectionImage
-            src={collection.imageUrl}
-            alt={collection.name}
-          />
-          <span className="text-white font-medium">
+          <CollectionImage src={collection.imageUrl} alt={collection.name} />
+          <span className="truncate font-medium text-white">
             {collection.name}
           </span>
         </div>
@@ -52,8 +46,8 @@ const TableRow = ({
         <PriceDisplay
           value={collection.floorPrice.value}
           currency={collection.floorPrice.currency}
-          align='right'
-        // usdValue={collection.floorPrice.usdValue}
+          align="right"
+          // usdValue={collection.floorPrice.usdValue}
         />
       </td>
 
@@ -62,8 +56,8 @@ const TableRow = ({
         <PriceDisplay
           value={collection.bestOffer.value}
           currency={collection.bestOffer.currency}
-          align='right'
-        // usdValue={collection.bestOffer.usdValue}
+          align="right"
+          // usdValue={collection.bestOffer.usdValue}
         />
       </td>
 
@@ -88,14 +82,14 @@ const TableRow = ({
         <VolumeDisplay
           value={collection.volume.value}
           // change={collection.volume.change}
-          align='right'
+          align="right"
         />
       </td>
       <td className="px-4 py-2">
         <VolumeDisplay
           // value={collection.volume.value}
           change={collection.volume.change}
-          align='right'
+          align="right"
         />
       </td>
     </tr>

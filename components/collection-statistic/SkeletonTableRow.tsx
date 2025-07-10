@@ -4,8 +4,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 const SkeletonTableRow = () => (
   <tr className="transition-colors hover:bg-gray-800/30">
     {/* Collection Info */}
-    <td className="px-4 py-4">
-      <div className="flex items-center gap-3">
+    <td className="sticky left-0 z-0 w-[150px] bg-black px-4 py-2 md:max-w-max">
+      <div className="flex w-[135px] items-center gap-3 md:max-w-max">
         <Skeleton className="h-12 w-12 rounded-lg bg-gray-800" />
         <Skeleton className="h-5 w-32 bg-gray-800" />
       </div>
