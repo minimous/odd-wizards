@@ -21,9 +21,11 @@ import { useLoading } from '@/hooks/useLoading';
 import axios from 'axios';
 import RewardModalModal from '../modal/reward-modal';
 import { useSyncedWallet } from '@/providers/wallet-provider-wrapper';
+import { useNavbarMobile } from '@/hooks/useNavbarMobile';
 
 export default function HeaderV2() {
   const path = usePathname();
+  const { isOpened, setOpen } = useNavbarMobile();
   const [projects, setProjects] = useState<mst_project[] | []>([]);
   const [rewardModal, setRewardModal] = useState<boolean>(false);
   const { showLoading, hideLoading } = useLoading();
@@ -172,8 +174,41 @@ export default function HeaderV2() {
               Raffle
             </Link>
           </div>
-          <div>
+          <div className="hidden md:!flex">
             <ConnectButtonV2 />
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-x-3 md:!hidden">
+            <button
+              onClick={() => setOpen(true)}
+              aria-label="Open Menu"
+              className="rounded-[5px] bg-white p-2 text-black focus:outline-none"
+            >
+              <svg
+                className="h-5 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {isOpened ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M2 22L22 2M2 2l20 20"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M-6 6h36M-6 12h36M-6 18h36"
+                  />
+                )}
+              </svg>
+            </button>
           </div>
         </nav>
         {/* <ChainSelection /> */}
