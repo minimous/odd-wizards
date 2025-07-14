@@ -25,6 +25,7 @@ import useChainRegistry from '@/hooks/useChainRegistry';
 import { WalletConfig } from '@/types/wallet';
 import WalletService from '@/lib/walletService';
 import { getWalletsForChain, getWalletsByChainType } from '@/config/wallets';
+import { ScrollBar } from '@/components/scroll-area';
 // import { useInitiaWidget } from '@initia/widget-react';
 
 // Chain configurations
@@ -222,7 +223,10 @@ export default function WalletConnectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={resetModal}>
-      <DialogContent className="max-w-[95%] rounded-2xl border-gray-800 bg-gradient-to-br from-gray-900 to-black px-0 md:!max-w-lg">
+      <DialogContent
+        classNameOverlay="z-[998]"
+        className="z-[999] max-w-[95%] rounded-2xl border-gray-800 bg-gradient-to-br from-gray-900 to-black px-0 md:!max-w-lg"
+      >
         <div className="w-full text-white">
           {/* Header */}
           <div className="flex items-center gap-4 px-6 pb-4">
@@ -238,12 +242,17 @@ export default function WalletConnectModal({
               </Button>
             )}
             <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-2">
+              <div
+                hidden={selectedType != undefined || selectedType != null}
+                className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-2"
+              >
                 <Wallet className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">Connect Wallet</h2>
-                <p className="text-sm text-gray-400">
+                <h2 className="text-xl font-bold md:text-2xl">
+                  Connect Wallet
+                </h2>
+                <p className="text-xs text-gray-400 md:text-sm">
                   {selectedType
                     ? `Choose your wallet for ${
                         getCurrentChain()?.name || 'selected chain'
@@ -254,7 +263,9 @@ export default function WalletConnectModal({
             </div>
           </div>
 
-          <ScrollArea className={cn(selectedType && 'max-h-[60vh]')}>
+          <ScrollArea
+            className={cn(selectedType && 'max-h-[60vh] overflow-y-auto')}
+          >
             <div className="px-6 py-6">
               {!selectedType ? (
                 // Chain Selection
@@ -378,6 +389,7 @@ export default function WalletConnectModal({
                 </div>
               )}
             </div>
+            <ScrollBar />
           </ScrollArea>
         </div>
       </DialogContent>
