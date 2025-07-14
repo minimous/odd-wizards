@@ -254,7 +254,7 @@ const Banner = ({ items }: BannerProps) => {
 
     if (isTradingStarted) {
       return (
-        <span className="text-lg font-bold opacity-70">
+        <span className="font-bold opacity-70 md:text-lg">
           {banner?.launchpad.minter?.numTokens} Sold Out
         </span>
       );
@@ -336,7 +336,7 @@ const Banner = ({ items }: BannerProps) => {
       if (isTradingStarted) {
         return (
           <Link href={getTradingUrl(banner)} target="_blank">
-            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+            <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
               View Collection
             </Button>
           </Link>
@@ -345,7 +345,7 @@ const Banner = ({ items }: BannerProps) => {
         return (
           <div className="flex items-center gap-4">
             <Link href={getLaunchpadUrl(banner)} target="_blank">
-              <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+              <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
                 Go to Launchpad
               </Button>
             </Link>
@@ -380,7 +380,7 @@ const Banner = ({ items }: BannerProps) => {
         // Mint date has passed and link is available
         return (
           <Link href={banner.banner_minted_link} target="_blank">
-            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+            <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
               Go to Launchpad
             </Button>
           </Link>
@@ -392,7 +392,7 @@ const Banner = ({ items }: BannerProps) => {
     if (banner.banner_minted_link) {
       return (
         <Link href={banner.banner_minted_link} target="_blank">
-          <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+          <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
             Go to Launchpad
           </Button>
         </Link>
@@ -400,7 +400,7 @@ const Banner = ({ items }: BannerProps) => {
     }
 
     return (
-      <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+      <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
         Mint Soon
       </Button>
     );
@@ -408,7 +408,7 @@ const Banner = ({ items }: BannerProps) => {
 
   return (
     <div>
-      <div className="relative h-[calc(50vh)]">
+      <div className="relative h-[calc(35vh)] md:h-[calc(50vh)]">
         <div className="h-1/2 w-full bg-[url('/images/blur.gif')] bg-cover bg-center opacity-50"></div>
         <div className="pointer-events-none absolute inset-0 bg-black/70 backdrop-blur-xl"></div>
         <div className="z-1 absolute bottom-0 left-0 hidden h-[100px] w-full bg-gradient-to-b from-transparent to-black md:!block" />
@@ -425,7 +425,7 @@ const Banner = ({ items }: BannerProps) => {
                   key={banner.id}
                   className="pl-2 md:rounded-[30px]"
                 >
-                  <div className="relative h-[calc(50vh)] md:h-[calc(50vh)]">
+                  <div className="relative h-[calc(35vh)] md:h-[calc(50vh)]">
                     <div className="h-full w-full md:rounded-[30px]">
                       <div className="relative h-full w-full overflow-hidden md:rounded-[30px] md:border md:border-[#2D253E]">
                         {renderMedia(banner)}
@@ -436,7 +436,10 @@ const Banner = ({ items }: BannerProps) => {
                               href={banner.banner_twiter ?? '#'}
                               target="_blank"
                             >
-                              <img src="/images/x.png" className="h-[35px]" />
+                              <img
+                                src="/images/x.png"
+                                className="h-[20px] md:h-[35px]"
+                              />
                             </Link>
                             <Link
                               hidden={!banner.banner_discord}
@@ -445,7 +448,7 @@ const Banner = ({ items }: BannerProps) => {
                             >
                               <img
                                 src="/images/discord.png"
-                                className="h-[35px]"
+                                className="h-[20px] md:h-[35px]"
                               />
                             </Link>
                           </div>
@@ -464,12 +467,12 @@ const Banner = ({ items }: BannerProps) => {
                                       )}
                                     />
                                   </div>
-                                  <h1 className="text-2xl font-black text-white">
+                                  <h1 className="text-xl font-black text-white md:text-2xl">
                                     {banner?.banner_title}
                                   </h1>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-semibold text-green-500">
+                                  <span className="text-sm font-semibold text-green-500 md:text-base">
                                     By {banner?.banner_creator} on{' '}
                                     {banner?.banner_network}
                                   </span>
@@ -575,7 +578,7 @@ const Banner = ({ items }: BannerProps) => {
                   {bannerItem.banner_id == selectedBanner ? (
                     <button
                       type="button"
-                      className="relative h-1 w-12 overflow-hidden rounded-full bg-white/20 transition-all duration-300"
+                      className="relative -mt-1 h-1 w-12 overflow-hidden rounded-full bg-white/20 transition-all duration-300"
                     >
                       {/* Garis horizontal sebagai indikator animasi */}
                       <div

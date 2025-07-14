@@ -26,9 +26,9 @@ const PriceDisplay = ({
       : 'justify-start';
 
   return (
-    <div className={cn('flex items-center ', alignClass)}>
+    <div className={cn('flex items-center', alignClass)}>
       <div className="flex items-center gap-2">
-        <div className="font-medium text-white">
+        <div className="text-sm font-medium text-white md:text-base">
           {formatDecimal(value)}
           {suffix && <span className="ml-0.5 text-xs">{suffix}</span>}
         </div>
