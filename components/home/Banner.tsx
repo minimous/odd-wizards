@@ -571,7 +571,7 @@ const Banner = ({ items }: BannerProps) => {
               </div>
             </div>
           </div>
-          <div className="relative flex items-center justify-center pb-6 md:!hidden">
+          <div className="relative flex items-center justify-center py-4 pb-6 md:!hidden">
             <div className="flex items-center justify-center gap-4">
               {items?.map((bannerItem, bannerIndex) => (
                 <div key={bannerIndex} className="flex items-center">
