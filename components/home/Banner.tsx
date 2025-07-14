@@ -574,11 +574,11 @@ const Banner = ({ items }: BannerProps) => {
           <div className="relative flex items-center justify-center pb-6 md:!hidden">
             <div className="flex items-center justify-center gap-4">
               {items?.map((bannerItem, bannerIndex) => (
-                <div key={bannerIndex}>
+                <div key={bannerIndex} className="flex items-center">
                   {bannerItem.banner_id == selectedBanner ? (
                     <button
                       type="button"
-                      className="relative -mt-1 h-1 w-12 overflow-hidden rounded-full bg-white/20 transition-all duration-300"
+                      className="relative h-1 w-12 overflow-hidden rounded-full bg-white/20 transition-all duration-300"
                     >
                       {/* Garis horizontal sebagai indikator animasi */}
                       <div
