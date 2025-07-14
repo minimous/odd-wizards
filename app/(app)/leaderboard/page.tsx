@@ -338,9 +338,12 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </div>
-      <div className="my-2 px-4 text-center md:my-6">
+      <div className="myt- grid px-4 text-center md:my-6">
         <span className="text-xl font-bold text-white md:text-2xl">
           Odds Global Leaderboard
+        </span>
+        <span className="text-xs text-gray-400 md:text-sm">
+          ✧ Odds points calculated from all projects ✧
         </span>
       </div>
       <div className="mx-auto max-w-[500px] max-w-full px-4 md:px-0">
