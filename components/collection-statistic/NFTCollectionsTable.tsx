@@ -99,6 +99,7 @@ const NFTCollectionsTable = () => {
                 sortOrder={sortOrder}
                 columnKey="floorPrice"
                 onSort={handleSortClick}
+                className="w-[150px]"
               >
                 Floor
               </TableHeader>

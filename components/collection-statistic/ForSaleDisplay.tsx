@@ -1,18 +1,25 @@
 // components/nft-collections/ForSaleDisplay.jsx
 import React from 'react';
 
-const ForSaleDisplay = ({ 
-  percentage, 
+const ForSaleDisplay = ({
+  percentage,
   count,
-  align = "right" 
-}: { percentage: number, count: number, align?: string }) => {
-  const alignClass = align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left';
+  align = 'right'
+}: {
+  percentage: number;
+  count: number;
+  align?: string;
+}) => {
+  const alignClass =
+    align === 'right'
+      ? 'text-right'
+      : align === 'center'
+      ? 'text-center'
+      : 'text-left';
 
   return (
     <div className={alignClass}>
-      <div className="text-white font-medium">
-        {count}
-      </div>
+      <div className="text-sm font-medium text-white md:text-base">{count}</div>
       {/* <div className="text-xs text-gray-400 mt-0.5">
         {percentage}%
       </div> */}

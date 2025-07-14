@@ -34,15 +34,19 @@ const TableRow = ({ collection, index, onClick, className = '' }: TableRow) => {
           {/* <span className="text-gray-400 font-medium w-4 text-sm">
             {index + 1}
           </span> */}
-          <CollectionImage src={collection.imageUrl} alt={collection.name} />
-          <span className="truncate font-medium text-white">
+          <CollectionImage
+            src={collection.imageUrl}
+            className="!h-8 !w-8 rounded-[6px] md:!h-10 md:!w-10 md:rounded-[10px]"
+            alt={collection.name}
+          />
+          <span className="md:font-base truncate text-sm font-medium text-white">
             {collection.name}
           </span>
         </div>
       </td>
 
       {/* Floor Price */}
-      <td className="px-4 py-2">
+      <td className="w-[150px] px-4 py-2">
         <PriceDisplay
           value={collection.floorPrice.value}
           currency={collection.floorPrice.currency}

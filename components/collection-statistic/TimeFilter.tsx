@@ -25,7 +25,7 @@ const TimeFilter = ({
             onFilterChange(filter.key);
           }}
           className={cn(
-            'cursor-pointer md:text-lg',
+            'cursor-pointer text-sm font-bold md:text-lg md:font-normal',
             activeFilter === filter.key ? 'text-white' : 'text-[#857F94]'
           )}
         >
