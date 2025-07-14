@@ -167,6 +167,18 @@ export default function HeaderMobile() {
               >
                 Raffle
               </Link>
+              <Link
+                onClick={() => setOpen(false)}
+                href="/leaderboard"
+                className={cn(
+                  'mx-auto max-w-max text-xl font-bold transition-transform',
+                  path == '/' || path == '/leaderboard'
+                    ? 'text-white'
+                    : 'text-gray-200 hover:text-white'
+                )}
+              >
+                Leaderboard
+              </Link>
               <Footer />
             </div>
           </div>

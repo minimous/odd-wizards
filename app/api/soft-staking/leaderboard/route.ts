@@ -12,32 +12,31 @@ export async function GET(request: NextRequest) {
     const size = parseInt(searchParams.get('size') || '10'); // Default size 10
     const page = parseInt(searchParams.get('page') || '0'); // Default page 0
 
-    if (!project_code) {
-      return NextResponse.json(
-        { message: 'project_code is required' },
-        { status: 400 }
-      );
-    }
+    let project_id;
 
-    const project = await prisma.mst_project.findFirst({
-      where: { project_code: project_code }
-    });
+    if (project_code) {
+      const project = await prisma.mst_project.findFirst({
+        where: { project_code: project_code }
+      });
 
-    if (!project) {
-      return NextResponse.json(
-        {
-          message: 'Project not found',
-          data: null
-        },
-        { status: 400 }
-      );
+      if (!project) {
+        return NextResponse.json(
+          {
+            message: 'Project not found',
+            data: null
+          },
+          { status: 400 }
+        );
+      }
+
+      project_id = project.project_id;
     }
 
     const leaderboard = await getLeaderboard(
-      project.project_id,
       staker_address,
       page,
-      size
+      size,
+      project_id
     );
 
     // Handle BigInt serialization
