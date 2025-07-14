@@ -173,6 +173,17 @@ export default function HeaderV2() {
             >
               Raffle
             </Link>
+            <Link
+              href="/leaderboard"
+              className={cn(
+                'hidden font-semibold transition-transform md:!flex ',
+                path == '/raffle'
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
+              )}
+            >
+              Leaderboard
+            </Link>
           </div>
           <div className="hidden md:!flex">
             <ConnectButtonV2 />
