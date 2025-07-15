@@ -29,8 +29,8 @@ const TableRow = ({ collection, index, onClick, className = '' }: TableRow) => {
       onClick={handleRowClick}
     >
       {/* Collection Info */}
-      <td className="sticky left-0 z-0 w-[150px] bg-black px-4 py-2 md:max-w-max">
-        <div className="flex w-[135px] items-center gap-2 md:max-w-max">
+      <td className="sticky left-0 z-0 w-[150px] bg-black px-4 py-2 md:w-fit">
+        <div className="flex w-[135px] items-center gap-2 md:w-fit">
           {/* <span className="text-gray-400 font-medium w-4 text-sm">
             {index + 1}
           </span> */}

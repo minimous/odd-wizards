@@ -108,7 +108,7 @@ const NFTCollectionsTable = () => {
         <table className="w-full min-w-[800px] table-fixed">
           <thead className="border-b-2 border-[#15111D]">
             <tr>
-              <TableHeader className="sticky left-0 z-10 w-[150px] bg-black md:max-w-max">
+              <TableHeader className="sticky left-0 z-10 w-[150px] bg-black md:w-fit">
                 Collection
               </TableHeader>
               <TableHeader
