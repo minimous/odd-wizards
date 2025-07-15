@@ -219,7 +219,7 @@ const NFTCollectionsTable = () => {
             )}
           </tbody>
           {hasNextPage && (
-            <tfoot className="hidden md:!block">
+            <tfoot className="hidden md:!contents">
               <tr>
                 <td colSpan={7} className="py-4 text-center">
                   <button
