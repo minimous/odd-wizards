@@ -1187,14 +1187,83 @@ export default class WalletService {
   }
 
   /**
+   * Helper methods for mobile wallet detection
+   */
+  private static isMobileDevice(): boolean {
+    const userAgent =
+      navigator.userAgent || navigator.vendor || (window as any).opera;
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+      userAgent.toLowerCase()
+    );
+  }
+
+  private static isInAppBrowser(): boolean {
+    const ua = navigator.userAgent;
+    return /FBAN|FBAV|Instagram|Twitter|Line|WeChat|KakaoTalk/i.test(ua);
+  }
+
+  private static isWebView(): boolean {
+    const standalone = (window.navigator as any).standalone;
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const safari = /safari/.test(userAgent);
+    const ios = /iphone|ipod|ipad/.test(userAgent);
+
+    return (
+      (ios && !standalone && !safari) ||
+      userAgent.includes('wv') ||
+      userAgent.includes('webview')
+    );
+  }
+
+  private static isKeplrMobileApp(): boolean {
+    const ua = navigator.userAgent;
+    // Check for Keplr mobile app user agent or in-app browser
+    return (
+      /KeplrMobile|Keplr/i.test(ua) ||
+      (this.isMobileDevice() && this.isWebView() && !!window.keplr)
+    );
+  }
+
+  private static isLeapMobileApp(): boolean {
+    const ua = navigator.userAgent;
+    // Check for Leap mobile app user agent or in-app browser
+    return (
+      /LeapWallet|Leap/i.test(ua) ||
+      (this.isMobileDevice() && this.isWebView() && !!window.leap)
+    );
+  }
+
+  /**
    * Check if a wallet is installed
    */
   static isWalletInstalled(walletId: string): boolean {
     const walletMap: Record<string, () => boolean> = {
-      'keplr-extension': () => !!window.keplr,
+      'keplr-extension': () => !!window.keplr && !this.isMobileDevice(),
       keplr: () => !!window.keplr,
-      'leap-extension': () => !!window.leap,
+      'keplr-mobile': () => {
+        // For keplr-mobile, check if:
+        // 1. We're on a mobile device
+        // 2. Either Keplr mobile app is detected OR window.keplr exists (in-app browser)
+        // 3. Not in a generic web browser (should be in Keplr app or WebView)
+        return (
+          this.isMobileDevice() &&
+          (this.isKeplrMobileApp() ||
+            (!!window.keplr && (this.isWebView() || this.isInAppBrowser())))
+        );
+      },
+      'leap-extension': () => !!window.leap && !this.isMobileDevice(),
       leap: () => !!window.leap,
+      'leap-cosmos-mobile': () => {
+        // For leap-cosmos-mobile, check if:
+        // 1. We're on a mobile device
+        // 2. Either Leap mobile app is detected OR window.leap exists (in-app browser)
+        // 3. Not in a generic web browser (should be in Leap app or WebView)
+        return (
+          this.isMobileDevice() &&
+          (this.isLeapMobileApp() ||
+            (!!window.leap && (this.isWebView() || this.isInAppBrowser())))
+        );
+      },
       'cosmostation-extension': () => !!window.cosmostation,
       cosmostation: () => !!window.cosmostation,
       'station-extension': () => !!window.station,
