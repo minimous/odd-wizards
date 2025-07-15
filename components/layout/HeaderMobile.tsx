@@ -89,6 +89,18 @@ export default function HeaderMobile() {
               <div className="mx-auto max-w-max transition-transform">
                 <ConnectButtonV2 />
               </div>
+              <Link
+                onClick={() => setOpen(false)}
+                href="/"
+                className={cn(
+                  'mx-auto max-w-max text-xl font-bold transition-transform',
+                  path == '/' || path == '/'
+                    ? 'text-white'
+                    : 'text-gray-200 hover:text-white'
+                )}
+              >
+                NFT
+              </Link>
               <div>
                 <div
                   onClick={() => {
