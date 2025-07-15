@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import TableHeader from './TableHeader';
 import Header from './Header';
 import {
@@ -10,6 +10,8 @@ import TableRow from './TableRow';
 import SkeletonTableRow from './SkeletonTableRow';
 
 const NFTCollectionsTable = () => {
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
   const collectionsHook = useMarketplaceCollections({
     limit: 10,
     sortBy: 'volume24h'
@@ -60,6 +62,20 @@ const NFTCollectionsTable = () => {
     handleSort(mappedKey);
   };
 
+  useEffect(() => {
+    const scrollToRight = () => {
+      if (tableContainerRef.current && window.innerWidth < 768) {
+        tableContainerRef.current.scrollLeft =
+          tableContainerRef.current.scrollWidth -
+          tableContainerRef.current.clientWidth;
+      }
+    };
+
+    if (!loading && collections.length > 0) {
+      setTimeout(scrollToRight, 100);
+    }
+  }, [loading, collections.length]);
+
   // Error state
   if (error) {
     return (
@@ -85,7 +101,10 @@ const NFTCollectionsTable = () => {
       />
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg bg-black">
+      <div
+        ref={tableContainerRef}
+        className="overflow-x-auto rounded-lg bg-black"
+      >
         <table className="w-full min-w-[800px] table-fixed">
           <thead className="border-b-2 border-[#15111D]">
             <tr>

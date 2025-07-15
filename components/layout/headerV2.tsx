@@ -173,7 +173,7 @@ export default function HeaderV2() {
             >
               Raffle
             </Link>
-            <Link
+            {/* <Link
               href="/leaderboard"
               className={cn(
                 'hidden font-semibold transition-transform md:!flex ',
@@ -183,7 +183,7 @@ export default function HeaderV2() {
               )}
             >
               Leaderboard
-            </Link>
+            </Link> */}
           </div>
           <div className="hidden md:!flex">
             <ConnectButtonV2 />
