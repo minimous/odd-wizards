@@ -73,10 +73,11 @@ export default function HomePage() {
               </div>
             </div>
             <div className="transorm absolute left-1/2 top-[325px] z-[999] w-full -translate-x-1/2 md:top-[400px]">
-              <a
+              {/* <a
                 href="/leaderboard"
                 className="flex w-full items-center justify-center gap-2 text-sm md:text-base"
-              >
+              > */}
+              <a className="flex w-full items-center justify-center gap-2 text-sm text-muted md:text-base">
                 Go To Leaderboard <MoveRight /> 🏆
               </a>
             </div>

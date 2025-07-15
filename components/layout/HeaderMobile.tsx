@@ -89,18 +89,6 @@ export default function HeaderMobile() {
               <div className="mx-auto max-w-max transition-transform">
                 <ConnectButtonV2 />
               </div>
-              <Link
-                onClick={() => setOpen(false)}
-                href="/challenge"
-                className={cn(
-                  'mx-auto max-w-max text-xl font-bold transition-transform',
-                  path == '/' || path == '/about'
-                    ? 'text-white'
-                    : 'text-gray-200 hover:text-white'
-                )}
-              >
-                Challenge
-              </Link>
               <div>
                 <div
                   onClick={() => {
@@ -167,7 +155,7 @@ export default function HeaderMobile() {
               >
                 Raffle
               </Link>
-              <Link
+              {/* <Link
                 onClick={() => setOpen(false)}
                 href="/leaderboard"
                 className={cn(
@@ -178,7 +166,7 @@ export default function HeaderMobile() {
                 )}
               >
                 Leaderboard
-              </Link>
+              </Link> */}
               <Footer />
             </div>
           </div>

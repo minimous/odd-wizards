@@ -472,7 +472,7 @@ const Banner = ({ items }: BannerProps) => {
                                   </h1>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-sm font-semibold text-green-500 md:text-base">
+                                  <span className="text-sm font-semibold text-white md:text-base md:text-green-500">
                                     By {banner?.banner_creator} on{' '}
                                     {banner?.banner_network}
                                   </span>
