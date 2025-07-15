@@ -108,7 +108,7 @@ const NFTCollectionsTable = () => {
         <table className="w-full min-w-[800px] table-fixed">
           <thead className="border-b-2 border-[#15111D]">
             <tr>
-              <TableHeader className="sticky left-0 z-10 w-[150px] bg-black md:w-fit">
+              <TableHeader className="sticky left-0 z-10 w-[150px] bg-black md:w-[30%]">
                 Collection
               </TableHeader>
               <TableHeader
@@ -235,7 +235,7 @@ const NFTCollectionsTable = () => {
           )}
         </table>
       </div>
-      <div className="flex items-center justify-center py-4 md:hidden">
+      <div className="flex items-center justify-center py-4 md:!hidden">
         <button
           onClick={loadMore}
           disabled={loadingMore}
