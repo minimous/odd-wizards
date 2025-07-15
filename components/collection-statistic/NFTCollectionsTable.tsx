@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import TableHeader from './TableHeader';
 import Header from './Header';
 import {
@@ -10,6 +10,8 @@ import TableRow from './TableRow';
 import SkeletonTableRow from './SkeletonTableRow';
 
 const NFTCollectionsTable = () => {
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
   const collectionsHook = useMarketplaceCollections({
     limit: 10,
     sortBy: 'volume24h'
@@ -60,6 +62,20 @@ const NFTCollectionsTable = () => {
     handleSort(mappedKey);
   };
 
+  useEffect(() => {
+    const scrollToRight = () => {
+      if (tableContainerRef.current && window.innerWidth < 768) {
+        tableContainerRef.current.scrollLeft =
+          tableContainerRef.current.scrollWidth -
+          tableContainerRef.current.clientWidth;
+      }
+    };
+
+    if (!loading && collections.length > 0) {
+      setTimeout(scrollToRight, 100);
+    }
+  }, [loading, collections.length]);
+
   // Error state
   if (error) {
     return (
@@ -72,7 +88,7 @@ const NFTCollectionsTable = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black p-6 text-white">
+    <div className="min-h-screen bg-black px-4 py-6 text-white md:p-6">
       {/* Header */}
       <Header
         loading={loadingMore}
@@ -85,11 +101,16 @@ const NFTCollectionsTable = () => {
       />
 
       {/* Table */}
-      <div className="overflow-hidden rounded-lg bg-black">
-        <table className="w-full">
+      <div
+        ref={tableContainerRef}
+        className="overflow-x-auto rounded-lg bg-black"
+      >
+        <table className="w-full min-w-[800px] table-fixed">
           <thead className="border-b-2 border-[#15111D]">
             <tr>
-              <TableHeader>Collection</TableHeader>
+              <TableHeader className="sticky left-0 z-10 w-[150px] bg-black md:max-w-max">
+                Collection
+              </TableHeader>
               <TableHeader
                 align="right"
                 sortable
@@ -97,6 +118,7 @@ const NFTCollectionsTable = () => {
                 sortOrder={sortOrder}
                 columnKey="floorPrice"
                 onSort={handleSortClick}
+                className="w-[150px]"
               >
                 Floor
               </TableHeader>
@@ -197,7 +219,7 @@ const NFTCollectionsTable = () => {
             )}
           </tbody>
           {hasNextPage && (
-            <tfoot>
+            <tfoot className="hidden md:!contents">
               <tr>
                 <td colSpan={7} className="py-4 text-center">
                   <button
@@ -212,6 +234,15 @@ const NFTCollectionsTable = () => {
             </tfoot>
           )}
         </table>
+      </div>
+      <div className="flex items-center justify-center py-4 md:hidden">
+        <button
+          onClick={loadMore}
+          disabled={loadingMore}
+          className="cursor-pointer text-sm text-[#857F94] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loadingMore ? 'Loading...' : 'See More...'}
+        </button>
       </div>
     </div>
   );

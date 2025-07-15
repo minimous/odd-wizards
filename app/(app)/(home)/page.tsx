@@ -51,33 +51,37 @@ export default function HomePage() {
       <div className="mt-4">
         <NFTCollectionsTable />
       </div>
-      <div className="mt-4 px-8">
-        <div className="h-full w-full rounded-[10px] bg-[#18181B]">
-          <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg px-40 pb-40 pt-8 md:pb-60">
+      <div className="mt-4 md:px-8">
+        <div className="h-full w-full bg-[#18181B] md:rounded-[10px]">
+          <div className="mx:px-40 relative flex size-full items-center justify-center overflow-hidden rounded-lg px-4 pb-40 pt-8 md:pb-60">
             {/* Content div that stays static */}
             <div className="relative z-10 max-h-max w-full max-w-max">
-              <h1 className="text-center text-3xl font-black md:text-5xl">
+              <h1 className="text-center text-2xl font-black md:text-5xl">
                 {formatAmount(total)}{' '}
                 <span className="block md:!contents">Odds People!</span>
               </h1>
-              <span className="block text-center text-lg text-white">
+              <span className="block text-center text-white md:text-lg">
                 Stay Connected, from{' '}
                 <span className="block md:!contents">all over the world</span>
               </span>
               <div className="mx-auto mt-4">
                 <AvatarCircles
-                  className="mx-auto max-w-max justify-center rounded-full p-4"
+                  className="mx-auto max-w-max justify-center rounded-full p-2 md:p-4"
                   numPeople={99}
                   avatarUrls={avatars}
                 />
               </div>
             </div>
-            <div className="transorm absolute left-1/2 top-[350px] top-[400px] z-[999] -translate-x-1/2">
-              <a className="flex items-center gap-2 text-muted">
+            <div className="transorm absolute left-1/2 top-[325px] z-[999] w-full -translate-x-1/2 md:top-[400px]">
+              {/* <a
+                href="/leaderboard"
+                className="flex w-full items-center justify-center gap-2 text-sm md:text-base"
+              > */}
+              <a className="flex w-full items-center justify-center gap-2 text-sm text-muted md:text-base">
                 Go To Leaderboard <MoveRight /> 🏆
               </a>
             </div>
-            <Globe className="top-[175px]" />
+            <Globe className="top-[200px] md:top-[175px]" />
             <div className="pointer-events-none absolute inset-0 h-full bg-[radial-gradient(circle_at_50%_200%,rgba(0,0,0,0.2),rgba(255,255,255,0))]" />
           </div>
         </div>

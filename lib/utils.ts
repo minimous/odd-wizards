@@ -55,6 +55,27 @@ export function formatAmount(amount: number | undefined | null) {
   return amount.toLocaleString('en-US'); // Menggunakan lokasi 'en-US' untuk memastikan koma sebagai pemisah ribuan
 }
 
+export function formatNumber(num: number | string | null | undefined): string {
+  if (!num) return '0';
+
+  const numStr = num.toString();
+  // Remove any existing commas first
+  const cleanNum = numStr.replace(/,/g, '');
+
+  // Convert to number and back to string to handle edge cases
+  const number = parseFloat(cleanNum);
+  if (isNaN(number)) return '0';
+
+  // Add comma every 3 digits from the right
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+export function formatOddsPoints(
+  points: number | string | null | undefined
+): string {
+  return `✧ ${formatNumber(points)} Odds`;
+}
+
 export default function calculatePoint(
   attrreward: mst_attributes_reward,
   lastClaimDate?: Date | null

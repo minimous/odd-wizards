@@ -238,11 +238,17 @@ export async function getTotalPoints(address: string, project_id: number) {
 }
 
 export async function getLeaderboard(
-  project_id: number,
   staker_address: string | null,
   page: number,
-  size: number
+  size: number,
+  project_id?: number
 ) {
+  console.log('getLeaderboard called with:', {
+    staker_address,
+    page,
+    size,
+    project_id
+  });
   //     const leaderboard: any = await prisma.$queryRaw`
   //     WITH ranked_leaderboard AS (
   //         SELECT
@@ -278,25 +284,121 @@ export async function getLeaderboard(
   //     LIMIT ${size} OFFSET ${page * size};
   // `;
 
+  // Untuk global leaderboard (project_id tidak ada)
+  if (!project_id) {
+    // First, let's check if the staker exists at all
+    if (staker_address) {
+      const stakerCheck = await prisma.$queryRaw`
+        SELECT 
+          ms.staker_address,
+          SUM(ms.staker_nft_staked) AS total_nft_staked,
+          SUM(ms.staker_total_points) AS total_points,
+          COUNT(*) AS collection_count
+        FROM mst_staker ms
+        LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
+        WHERE ms.staker_address = ${staker_address}
+        GROUP BY ms.staker_address;
+      `;
+      console.log('Staker check result:', stakerCheck);
+
+      // Check with user join
+      const stakerWithUser = await prisma.$queryRaw`
+        SELECT 
+          ms.staker_address,
+          mu.user_image_url,
+          SUM(ms.staker_nft_staked) AS total_nft_staked,
+          SUM(ms.staker_total_points) AS total_points
+        FROM mst_staker ms
+        LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
+        LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
+        WHERE ms.staker_address = ${staker_address}
+        GROUP BY ms.staker_address, mu.user_image_url;
+      `;
+      console.log('Staker with user check result:', stakerWithUser);
+    }
+
+    // Try simpler query first for debugging
+    if (staker_address) {
+      const simpleQuery = await prisma.$queryRaw`
+        SELECT
+            ms.staker_address,
+            SUM(ms.staker_nft_staked) AS staker_nft_staked,
+            MAX(ms.staker_red_flag) AS staker_red_flag,
+            mu.user_image_url,
+            SUM(ms.staker_total_points) AS total_points
+        FROM mst_staker ms
+        LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
+        LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
+        WHERE ms.staker_address = ${staker_address}
+        GROUP BY ms.staker_address, mu.user_image_url;
+      `;
+      console.log('Simple query result:', simpleQuery);
+    }
+
+    const leaderboard: any = await prisma.$queryRaw`
+      WITH pre_filtered_data AS (
+          SELECT
+              ms.staker_address,
+              SUM(ms.staker_nft_staked) AS staker_nft_staked,
+              MAX(ms.staker_red_flag) AS staker_red_flag,
+              mu.user_image_url,
+              SUM(ms.staker_total_points) AS total_points
+          FROM mst_staker ms
+          LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
+          LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
+          GROUP BY ms.staker_address, mu.user_image_url
+          HAVING SUM(ms.staker_nft_staked) >= 0
+      ),
+      ranked_leaderboard AS (
+          SELECT
+              staker_address,
+              staker_nft_staked,
+              staker_red_flag,
+              user_image_url,
+              total_points,
+              ROW_NUMBER() OVER (
+                  ORDER BY total_points DESC
+              ) AS ranking
+          FROM pre_filtered_data
+      )
+      SELECT
+          staker_address,
+          staker_nft_staked,
+          staker_red_flag,
+          user_image_url,
+          total_points,
+          ranking
+      FROM ranked_leaderboard
+      WHERE 1=1
+      ${
+        staker_address
+          ? Prisma.sql`AND staker_address = ${staker_address}`
+          : Prisma.empty
+      }
+      ORDER BY total_points DESC, ranking
+      LIMIT ${size} OFFSET ${page * size};
+    `;
+
+    console.log('Global leaderboard result count:', leaderboard.length);
+    console.log('Global leaderboard first result:', leaderboard[0]);
+    return leaderboard;
+  }
+
+  // Untuk project-specific leaderboard (project_id ada)
   const leaderboard: any = await prisma.$queryRaw`
     WITH pre_filtered_data AS (
         SELECT
             mc.collection_project_id,
             ms.staker_address,
             SUM(ms.staker_nft_staked) AS staker_nft_staked,
-            ms.staker_red_flag,
+            MAX(ms.staker_red_flag) AS staker_red_flag,
             mu.user_image_url,
             SUM(ms.staker_total_points) AS total_points
         FROM mst_staker ms
         LEFT JOIN mst_users mu ON mu.user_address = ms.staker_address
         LEFT JOIN mst_collection mc ON mc.collection_id = ms.staker_collection_id
-        WHERE 1=1
-        ${
-          project_id
-            ? Prisma.sql`AND mc.collection_project_id = ${project_id}`
-            : Prisma.empty
-        }
-        GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url, ms.staker_red_flag
+        WHERE mc.collection_project_id = ${project_id}
+        GROUP BY mc.collection_project_id, ms.staker_address, mu.user_image_url
         HAVING SUM(ms.staker_nft_staked) > 0
     ),
     ranked_leaderboard AS (

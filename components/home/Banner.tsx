@@ -254,7 +254,7 @@ const Banner = ({ items }: BannerProps) => {
 
     if (isTradingStarted) {
       return (
-        <span className="text-lg font-bold opacity-70">
+        <span className="font-bold opacity-70 md:text-lg">
           {banner?.launchpad.minter?.numTokens} Sold Out
         </span>
       );
@@ -300,7 +300,7 @@ const Banner = ({ items }: BannerProps) => {
     if (banner.banner_type == 'V') {
       return (
         <video
-          className="h-full w-full rounded-[30px] object-cover transition-all duration-300 ease-in-out hover:scale-[102%]"
+          className="h-full w-full object-cover transition-all duration-300 ease-in-out hover:scale-[102%] md:rounded-[30px]"
           autoPlay
           loop
           muted
@@ -318,7 +318,7 @@ const Banner = ({ items }: BannerProps) => {
         objectFit="cover"
         src={mediaUrl}
         alt=""
-        className="rounded-[30px] transition-all duration-300 ease-in-out hover:scale-[102%]"
+        className="transition-all duration-300 ease-in-out hover:scale-[102%] md:rounded-[30px]"
       />
     );
   };
@@ -336,7 +336,7 @@ const Banner = ({ items }: BannerProps) => {
       if (isTradingStarted) {
         return (
           <Link href={getTradingUrl(banner)} target="_blank">
-            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+            <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
               View Collection
             </Button>
           </Link>
@@ -345,7 +345,7 @@ const Banner = ({ items }: BannerProps) => {
         return (
           <div className="flex items-center gap-4">
             <Link href={getLaunchpadUrl(banner)} target="_blank">
-              <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+              <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
                 Go to Launchpad
               </Button>
             </Link>
@@ -380,7 +380,7 @@ const Banner = ({ items }: BannerProps) => {
         // Mint date has passed and link is available
         return (
           <Link href={banner.banner_minted_link} target="_blank">
-            <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+            <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
               Go to Launchpad
             </Button>
           </Link>
@@ -392,7 +392,7 @@ const Banner = ({ items }: BannerProps) => {
     if (banner.banner_minted_link) {
       return (
         <Link href={banner.banner_minted_link} target="_blank">
-          <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+          <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
             Go to Launchpad
           </Button>
         </Link>
@@ -400,7 +400,7 @@ const Banner = ({ items }: BannerProps) => {
     }
 
     return (
-      <Button className="h-12 rounded-[10px] bg-white px-8 text-lg font-black text-black hover:bg-white">
+      <Button className="h-10 rounded-[10px] bg-white px-8 font-black text-black hover:bg-white md:h-12 md:text-lg">
         Mint Soon
       </Button>
     );
@@ -408,32 +408,38 @@ const Banner = ({ items }: BannerProps) => {
 
   return (
     <div>
-      <div className="relative h-[calc(50vh)]">
+      <div className="relative h-[calc(35vh)] md:h-[calc(50vh)]">
         <div className="h-1/2 w-full bg-[url('/images/blur.gif')] bg-cover bg-center opacity-50"></div>
         <div className="pointer-events-none absolute inset-0 bg-black/70 backdrop-blur-xl"></div>
-        <div className="z-1 absolute bottom-0 left-0 h-[100px] w-full bg-gradient-to-b from-transparent to-black" />
-        <div className="absolute left-0 right-0 top-0 px-8 py-4">
+        <div className="z-1 absolute bottom-0 left-0 hidden h-[100px] w-full bg-gradient-to-b from-transparent to-black md:!block" />
+        <div className="absolute left-0 right-0 top-0 md:px-8 md:py-4">
           <Carousel
             setApi={setApi}
             opts={OPTIONS}
             plugins={[plugin.current]}
-            className="h-full w-full rounded-[30px]"
+            className="h-full w-full md:rounded-[30px]"
           >
-            <CarouselContent className="-ml-2 h-full w-full rounded-[30px]">
+            <CarouselContent className="-ml-2 h-full w-full md:rounded-[30px]">
               {items?.map((banner, index) => (
-                <CarouselItem key={banner.id} className="rounded-[30px] pl-2">
-                  <div className="relative h-[calc(50vh)] md:h-[calc(50vh)]">
-                    <div className="h-full w-full rounded-[30px]">
-                      <div className="relative h-full w-full overflow-hidden rounded-[30px] border border-[#2D253E]">
+                <CarouselItem
+                  key={banner.id}
+                  className="pl-2 md:rounded-[30px]"
+                >
+                  <div className="relative h-[calc(35vh)] md:h-[calc(50vh)]">
+                    <div className="h-full w-full md:rounded-[30px]">
+                      <div className="relative h-full w-full overflow-hidden md:rounded-[30px] md:border md:border-[#2D253E]">
                         {renderMedia(banner)}
-                        <div className="z-5 via-black-75 pb-18 absolute bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-black p-10 pl-8 md:pl-16">
-                          <div className="flex gap-2">
+                        <div className="z-5 via-black-75 md:pb-18 absolute bottom-0 left-0 top-0 flex w-full flex-col justify-end bg-black/30 p-6 pb-4 pl-8 md:bg-gradient-to-b md:from-transparent md:to-black md:p-10 md:pl-16">
+                          <div className="flex items-end gap-2">
                             <Link
                               hidden={!banner.banner_twiter}
                               href={banner.banner_twiter ?? '#'}
                               target="_blank"
                             >
-                              <img src="/images/x.png" className="h-[35px]" />
+                              <img
+                                src="/images/x.png"
+                                className="h-[20px] md:h-[35px]"
+                              />
                             </Link>
                             <Link
                               hidden={!banner.banner_discord}
@@ -442,7 +448,7 @@ const Banner = ({ items }: BannerProps) => {
                             >
                               <img
                                 src="/images/discord.png"
-                                className="h-[35px]"
+                                className="h-[20px] md:h-[35px]"
                               />
                             </Link>
                           </div>
@@ -461,12 +467,12 @@ const Banner = ({ items }: BannerProps) => {
                                       )}
                                     />
                                   </div>
-                                  <h1 className="text-2xl font-black text-white">
+                                  <h1 className="text-xl font-black text-white md:text-2xl">
                                     {banner?.banner_title}
                                   </h1>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-semibold text-green-500">
+                                  <span className="text-sm font-semibold text-white md:text-base md:text-green-500">
                                     By {banner?.banner_creator} on{' '}
                                     {banner?.banner_network}
                                   </span>
@@ -563,6 +569,31 @@ const Banner = ({ items }: BannerProps) => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+          <div className="relative flex items-center justify-center py-4 pb-6 md:!hidden">
+            <div className="flex items-center justify-center gap-4">
+              {items?.map((bannerItem, bannerIndex) => (
+                <div key={bannerIndex} className="flex items-center">
+                  {bannerItem.banner_id == selectedBanner ? (
+                    <button
+                      type="button"
+                      className="relative h-1 w-12 overflow-hidden rounded-full bg-white/20 transition-all duration-300"
+                    >
+                      {/* Garis horizontal sebagai indikator animasi */}
+                      <div
+                        className="animate-horizontal-fill absolute left-0 top-0 h-full bg-white"
+                        style={{ animationDuration: '5s' }}
+                      ></div>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleBannerClick(bannerItem, bannerIndex)}
+                      className="h-1 w-12 rounded-full bg-white/40 opacity-60 transition-all duration-300 hover:opacity-100"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
