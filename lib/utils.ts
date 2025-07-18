@@ -880,28 +880,27 @@ export function formatDecimal(
   // Convert string to number if needed
   let number = typeof value === 'string' ? parseFloat(value) : value;
 
-  // Check if the number is a whole number (no decimal part)
-  const isWholeNumber = Number.isInteger(number);
-
-  // Check if the number is less than 1 (starts with 0)
-  const startsWithZero = number < 1 && number > 0;
-
   // Format based on size
   if (number >= 1_000_000) {
-    // For millions, conditionally show decimals
+    // For millions
     const divided = number / 1_000_000;
-    return isWholeNumber
+    const isWholeAfterDivision = Number.isInteger(divided);
+    return isWholeAfterDivision
       ? `${Math.floor(divided)}M`
       : `${divided.toFixed(decimal)}M`;
   } else if (number >= 1_000) {
-    // For thousands, conditionally show decimals
+    // For thousands
     const divided = number / 1_000;
-    return isWholeNumber
+    const isWholeAfterDivision = Number.isInteger(divided);
+    return isWholeAfterDivision
       ? `${Math.floor(divided)}K`
       : `${divided.toFixed(decimal)}K`;
   }
 
   // For numbers less than 1000
+  const isWholeNumber = Number.isInteger(number);
+  const startsWithZero = number < 1 && number > 0;
+
   if (isWholeNumber) {
     return `${Math.floor(number)}`;
   } else if (startsWithZero) {
