@@ -451,6 +451,16 @@ const Banner = ({ items }: BannerProps) => {
                                 className="h-[20px] md:h-[35px]"
                               />
                             </Link>
+                            <Link
+                              hidden={!banner.banner_telegram}
+                              href={banner.banner_telegram ?? ''}
+                              target="_blank"
+                            >
+                              <img
+                                src="/images/Telegram.png"
+                                className="h-[20px] md:h-[35px]"
+                              />
+                            </Link>
                           </div>
                           <div className="grid items-end justify-between gap-y-2 md:flex">
                             <div>
