@@ -175,5 +175,6 @@ export interface BannerWithLaunchpad {
   banner_minted_link?: string;
   banner_status: string;
   banner_seqn: number;
+  banner_telegram: string;
   launchpad?: GeneralLaunchpad;
 }

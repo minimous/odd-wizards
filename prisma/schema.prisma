@@ -289,4 +289,5 @@ model mst_banners {
   banner_minted_date  DateTime?
   banner_title        String?
   banner_minted_link  String?
+  banner_telegram     String?
 }
