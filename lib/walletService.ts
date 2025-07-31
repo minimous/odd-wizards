@@ -1232,8 +1232,13 @@ export default class WalletService {
       /LeapWallet|Leap/i.test(ua) ||
       /LeapCosmosWallet/i.test(ua) ||
       /Leap Cosmos Wallet/i.test(ua) ||
+      // Additional checks for mobile app context
+      /LeapCosmos/i.test(ua) ||
+      // If we're on mobile and have leap object, likely in-app browser
       (this.isMobileDevice() && this.isWebView() && !!window.leap) ||
-      (this.isMobileDevice() && !!window.leap && this.isInAppBrowser())
+      (this.isMobileDevice() && !!window.leap && this.isInAppBrowser()) ||
+      // More relaxed check: if on mobile and leap exists, consider it available
+      (this.isMobileDevice() && !!window.leap)
     );
   }
 
@@ -1249,10 +1254,14 @@ export default class WalletService {
         // 1. We're on a mobile device
         // 2. Either Keplr mobile app is detected OR window.keplr exists (in-app browser)
         // 3. Not in a generic web browser (should be in Keplr app or WebView)
+        const isMobile = this.isMobileDevice();
+        const hasKeplrObject = !!window.keplr;
+        const isKeplrApp = this.isKeplrMobileApp();
+        const isWebViewOrInApp = this.isWebView() || this.isInAppBrowser();
+
+        // On mobile devices, if Keplr object exists, consider it installed
         return (
-          this.isMobileDevice() &&
-          (this.isKeplrMobileApp() ||
-            (!!window.keplr && (this.isWebView() || this.isInAppBrowser())))
+          isMobile && hasKeplrObject && (isKeplrApp || isWebViewOrInApp || true)
         );
       },
       'leap-extension': () => !!window.leap && !this.isMobileDevice(),
@@ -1268,11 +1277,16 @@ export default class WalletService {
         const isWebViewOrInApp = this.isWebView() || this.isInAppBrowser();
 
         // Enhanced detection for Leap mobile app
+        // On mobile devices, if Leap object exists, consider it installed
+        // This handles cases where the user is browsing inside the Leap app
         return (
           isMobile &&
+          hasLeapObject &&
           (isLeapApp ||
-            (hasLeapObject && isWebViewOrInApp) ||
-            (hasLeapObject && isMobile)) // Fallback: if leap object exists on mobile
+            isWebViewOrInApp ||
+            // Additional check: if we're on mobile and Leap object exists,
+            // assume it's available (either extension or in-app browser)
+            true)
         );
       },
       'cosmostation-extension': () => !!window.cosmostation,
@@ -1291,9 +1305,41 @@ export default class WalletService {
       trust: () => !!window.trustWallet,
       'ledger-extension': () => !!window.ledger,
       ledger: () => !!window.ledger,
-      metamask: () => !!window.ethereum?.isMetaMask,
+      metamask: () => {
+        // Check for MetaMask on both desktop and mobile
+        if (window.ethereum?.isMetaMask) return true;
+
+        // On mobile, also check for MetaMask mobile app
+        if (this.isMobileDevice()) {
+          // MetaMask mobile app injects ethereum object
+          return (
+            !!window.ethereum &&
+            (window.ethereum.isMetaMask ||
+              window.ethereum._metamask ||
+              // Additional mobile detection
+              /MetaMask/i.test(navigator.userAgent))
+          );
+        }
+
+        return false;
+      },
       'leap-metamask-cosmos-snap': () => !!window.ethereum?.isMetaMask,
-      phantom: () => !!window.phantom?.ethereum,
+      phantom: () => {
+        // Check for Phantom on both desktop and mobile
+        if (window.phantom?.ethereum) return true;
+
+        // On mobile, check for Phantom mobile app
+        if (this.isMobileDevice()) {
+          return (
+            !!window.phantom ||
+            /Phantom/i.test(navigator.userAgent) ||
+            // Additional check for Phantom mobile injected object
+            !!(window as any).solana?.isPhantom
+          );
+        }
+
+        return false;
+      },
       walletconnect: () => true
     };
 
@@ -1322,7 +1368,9 @@ export default class WalletService {
       // For Keplr on Initia chains
       if (
         (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
-        (walletId === 'keplr-extension' || walletId === 'keplr')
+        (walletId === 'keplr-extension' ||
+          walletId === 'keplr' ||
+          walletId === 'keplr-mobile')
       ) {
         if (window.keplr) {
           try {
@@ -1354,7 +1402,9 @@ export default class WalletService {
       // For Leap on Initia chains, check EVM mode first
       if (
         (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
-        (walletId === 'leap-extension' || walletId === 'leap-cosmos-mobile')
+        (walletId === 'leap-extension' ||
+          walletId === 'leap-cosmos-mobile' ||
+          walletId === 'leap')
       ) {
         if (window.leap?.ethereum) {
           try {
