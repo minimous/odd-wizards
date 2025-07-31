@@ -23,9 +23,9 @@ import { ArrowLeft, Wallet, Download, Network, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import useChainRegistry from '@/hooks/useChainRegistry';
 import { WalletConfig } from '@/types/wallet';
-import WalletService from '@/lib/walletService';
 import { getWalletsForChain, getWalletsByChainType } from '@/config/wallets';
 import { ScrollBar } from '@/components/scroll-area';
+import WalletService from '@/lib/walletService';
 // import { useInitiaWidget } from '@initia/widget-react';
 
 // Chain configurations
@@ -110,7 +110,7 @@ export default function WalletConnectModal({
     }
   };
 
-  // Handle wallet selection
+  // Handle wallet selection using WalletService with cosmos-kit integration
   const handleWalletSelect = async (wallet: WalletConfig) => {
     try {
       setConnecting(wallet.id);
@@ -120,9 +120,130 @@ export default function WalletConnectModal({
         throw new Error('No chain selected');
       }
 
-      if (onConnectWallet) {
-        onConnectWallet(wallet.id, currentChain.type, selectedChain);
-      }
+      // Get chain configuration for WalletService
+      const chainConfig =
+        selectedChain === 'stargaze-1'
+          ? {
+              chainId: 'stargaze-1',
+              chainName: 'Stargaze',
+              rpc: 'https://rpc.stargaze-apis.com',
+              rest: 'https://rest.stargaze-apis.com',
+              bech32Prefix: 'stars',
+              coinType: 118,
+              currency: {
+                coinDenom: 'STARS',
+                coinMinimalDenom: 'ustars',
+                coinDecimals: 6
+              },
+              stakeCurrency: {
+                coinDenom: 'STARS',
+                coinMinimalDenom: 'ustars',
+                coinDecimals: 6
+              },
+              gasPriceStep: {
+                low: 0.01,
+                average: 0.025,
+                high: 0.04
+              },
+              currencies: [
+                {
+                  coinDenom: 'STARS',
+                  coinMinimalDenom: 'ustars',
+                  coinDecimals: 6
+                }
+              ] as [
+                {
+                  coinDenom: string;
+                  coinMinimalDenom: string;
+                  coinDecimals: number;
+                }
+              ],
+              feeCurrencies: [
+                {
+                  coinDenom: 'STARS',
+                  coinMinimalDenom: 'ustars',
+                  coinDecimals: 6,
+                  gasPriceStep: {
+                    low: 0.01,
+                    average: 0.025,
+                    high: 0.04
+                  }
+                }
+              ] as [
+                {
+                  coinDenom: string;
+                  coinMinimalDenom: string;
+                  coinDecimals: number;
+                  gasPriceStep: {
+                    low: number;
+                    average: number;
+                    high: number;
+                  };
+                }
+              ]
+            }
+          : {
+              chainId: 'intergaze-1',
+              chainName: 'Intergaze',
+              rpc: 'https://rpc.initia.tech:443',
+              rest: 'https://lcd.initia.tech',
+              bech32Prefix: 'init',
+              coinType: 118,
+              currency: {
+                coinDenom: 'INIT',
+                coinMinimalDenom: 'uinit',
+                coinDecimals: 6
+              },
+              stakeCurrency: {
+                coinDenom: 'INIT',
+                coinMinimalDenom: 'uinit',
+                coinDecimals: 6
+              },
+              gasPriceStep: {
+                low: 0.01,
+                average: 0.025,
+                high: 0.04
+              },
+              currencies: [
+                {
+                  coinDenom: 'INIT',
+                  coinMinimalDenom: 'uinit',
+                  coinDecimals: 6
+                }
+              ] as [
+                {
+                  coinDenom: string;
+                  coinMinimalDenom: string;
+                  coinDecimals: number;
+                }
+              ],
+              feeCurrencies: [
+                {
+                  coinDenom: 'INIT',
+                  coinMinimalDenom: 'uinit',
+                  coinDecimals: 6,
+                  gasPriceStep: {
+                    low: 0.01,
+                    average: 0.025,
+                    high: 0.04
+                  }
+                }
+              ] as [
+                {
+                  coinDenom: string;
+                  coinMinimalDenom: string;
+                  coinDecimals: number;
+                  gasPriceStep: {
+                    low: number;
+                    average: number;
+                    high: number;
+                  };
+                }
+              ]
+            };
+
+      // Use WalletService which now has cosmos-kit integration
+      const result = await WalletService.connect(wallet.id, chainConfig);
 
       toast({
         variant: 'success',
@@ -130,18 +251,29 @@ export default function WalletConnectModal({
         description: `Successfully connected to ${wallet.name} on ${currentChain.name}`
       });
 
+      // Call the callback if provided
+      if (onConnectWallet) {
+        onConnectWallet(wallet.id, currentChain.type, selectedChain);
+      }
+
       onClose();
     } catch (error: any) {
       console.error('Wallet connection error:', error);
       let errorMessage = error.message;
 
-      if (error.message?.includes('rejected')) {
+      if (
+        error.message?.includes('rejected') ||
+        error.message?.includes('Request rejected')
+      ) {
         errorMessage = 'Connection was rejected by the user';
       } else if (
         error.message?.includes('not installed') ||
-        error.message?.includes('not found')
+        error.message?.includes('not found') ||
+        error.message?.includes('extension')
       ) {
         errorMessage = `${wallet.name} is not installed. Please install the extension.`;
+      } else if (error.message?.includes('timeout')) {
+        errorMessage = 'Connection timed out. Please try again.';
       }
 
       toast({
