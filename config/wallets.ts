@@ -13,7 +13,12 @@ const stargazeWallets = [
 ];
 
 // Add Initia-specific wallets
-const initiaWallets = ['metamask', 'leap-extension', 'phantom'];
+const initiaWallets = [
+  'leap-extension',
+  'leap-cosmos-mobile',
+  'leap-metamask-cosmos-snap',
+  'phantom'
+];
 
 // Helper function to get wallet logo
 const getWalletLogo = (walletName: string, logo?: string): string => {
@@ -128,15 +133,6 @@ const initiaWalletConfigs: WalletConfig[] = [
     color: getWalletColor('leap-extension'),
     supportedTypes: ['stargaze', 'intergaze'],
     downloadUrl: getWalletDownloadUrl('leap-extension')
-  },
-  {
-    id: 'leap-cosmos-mobile',
-    name: 'Leap Wallet (Mobile)',
-    logo: getWalletLogo('leap-cosmos-mobile'),
-    description: 'Connect using Leap mobile wallet for multiple networks',
-    color: getWalletColor('leap-cosmos-mobile'),
-    supportedTypes: ['stargaze', 'intergaze'],
-    downloadUrl: 'https://apps.apple.com/app/leap-cosmos-wallet/id1642465549'
   },
   {
     id: 'phantom',
