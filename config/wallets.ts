@@ -137,7 +137,7 @@ const initiaWalletConfigs: WalletConfig[] = [
     logo: getWalletLogo('leap-extension'),
     description: 'Connect using Leap wallet for multiple networks',
     color: getWalletColor('leap-extension'),
-    supportedTypes: ['stargaze', 'intergaze'],
+    supportedTypes: ['intergaze'],
     downloadUrl: getWalletDownloadUrl('leap-extension')
   },
   {

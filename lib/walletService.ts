@@ -82,7 +82,16 @@ export default class WalletService {
   ): Promise<WalletConnectionResult> {
     // Try to use cosmos-kit wallet if available
     const cosmosKitWallet = this.getCosmosKitWallet(walletId);
-    if (cosmosKitWallet && this.isCosmosChain(chainConfig.chainId)) {
+
+    // For mobile wallets on Intergaze, always use custom implementation
+    const isMobileWallet = walletId.includes('-mobile');
+    const isIntergazeChain = chainConfig.chainId === 'intergaze-1';
+
+    if (
+      cosmosKitWallet &&
+      this.isCosmosChain(chainConfig.chainId) &&
+      !(isMobileWallet && isIntergazeChain)
+    ) {
       return await this.connectViaCosmosKit(cosmosKitWallet, chainConfig);
     }
 
@@ -120,7 +129,11 @@ export default class WalletService {
       // For Leap and Keplr, use direct wallet object approach
       const walletName = cosmosKitWallet.walletName;
 
-      if (walletName === 'leap-extension' || walletName === 'leap') {
+      if (
+        walletName === 'leap-extension' ||
+        walletName === 'leap' ||
+        walletName === 'leap-cosmos-mobile'
+      ) {
         if (chainConfig.chainId === 'stargaze-1') {
           return await this.connectLeap(chainConfig);
         } else if (chainConfig.chainId === 'intergaze-1') {
@@ -128,7 +141,11 @@ export default class WalletService {
         }
       }
 
-      if (walletName === 'keplr-extension' || walletName === 'keplr') {
+      if (
+        walletName === 'keplr-extension' ||
+        walletName === 'keplr' ||
+        walletName === 'keplr-mobile'
+      ) {
         if (chainConfig.chainId === 'stargaze-1') {
           return await this.connectKeplr(chainConfig);
         } else if (chainConfig.chainId === 'intergaze-1') {
@@ -345,11 +362,18 @@ export default class WalletService {
   static async connectKeplrForInitia(
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
+    console.log(
+      'Connecting Keplr for Initia, window.keplr available:',
+      !!window.keplr
+    );
+    console.log('Chain config:', chainConfig);
+
     if (!window.keplr) {
       throw new Error('Keplr extension not found');
     }
 
     try {
+      console.log('Keplr ethereum support:', !!window.keplr.ethereum);
       // Check if Keplr supports EVM mode for Initia
       if (window.keplr.ethereum) {
         // Use EVM mode for Initia chains
@@ -376,12 +400,17 @@ export default class WalletService {
           publicKey: hexAddress
         };
       } else {
+        console.log('Falling back to Cosmos mode for Keplr');
         // Fallback to Cosmos mode
         // First, try to suggest the chain to Keplr
+        console.log('Suggesting chain to Keplr:', chainConfig);
         await this.suggestChain(window.keplr, chainConfig);
+        console.log('Chain suggestion completed');
 
         // Enable the chain
+        console.log('Enabling chain:', chainConfig.chainId);
         await window.keplr.enable(chainConfig.chainId);
+        console.log('Chain enabled successfully');
 
         // Get the key for this chain
         const key = await window.keplr.getKey(chainConfig.chainId);
@@ -417,10 +446,24 @@ export default class WalletService {
         };
       }
     } catch (error: any) {
+      console.error('Keplr connection error details:', error);
       if (error.code === 4001) {
         throw new Error('User rejected the connection request');
       }
-      throw new Error(`Keplr connection failed: ${error.message}`);
+
+      // Handle various error formats
+      let errorMessage = 'Unknown error occurred';
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.reason) {
+        errorMessage = error.reason;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      }
+
+      throw new Error(`Keplr connection failed: ${errorMessage}`);
     }
   }
 
@@ -430,11 +473,18 @@ export default class WalletService {
   static async connectLeapForInitia(
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
+    console.log(
+      'Connecting Leap for Initia, window.leap available:',
+      !!window.leap
+    );
+    console.log('Chain config:', chainConfig);
+
     if (!window.leap) {
       throw new Error('Leap extension not found');
     }
 
     try {
+      console.log('Leap ethereum support:', !!window.leap.ethereum);
       // Check if Leap supports EVM mode for Initia
       if (window.leap.ethereum) {
         // Use EVM mode for Initia chains
@@ -461,9 +511,15 @@ export default class WalletService {
           publicKey: hexAddress
         };
       } else {
+        console.log('Falling back to Cosmos mode for Leap');
         // Fallback to Cosmos mode
+        console.log('Suggesting chain to Leap:', chainConfig);
         await this.suggestChain(window.leap, chainConfig);
+        console.log('Chain suggestion completed');
+
+        console.log('Enabling chain:', chainConfig.chainId);
         await window.leap.enable(chainConfig.chainId);
+        console.log('Chain enabled successfully');
 
         const key = await window.leap.getKey(chainConfig.chainId);
         const offlineSigner = window.leap.getOfflineSigner(chainConfig.chainId);
@@ -477,7 +533,21 @@ export default class WalletService {
         };
       }
     } catch (error: any) {
-      throw new Error(`Leap connection failed: ${error.message}`);
+      console.error('Leap connection error details:', error);
+
+      // Handle various error formats
+      let errorMessage = 'Unknown error occurred';
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.reason) {
+        errorMessage = error.reason;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      }
+
+      throw new Error(`Leap connection failed: ${errorMessage}`);
     }
   }
 
@@ -608,20 +678,22 @@ export default class WalletService {
     }
 
     try {
+      const chainIdNumber = this.extractChainIdNumber(chainConfig.chainId);
+      const networkParams = {
+        chainId: `0x${chainIdNumber.toString(16)}`,
+        chainName: chainConfig.chainName,
+        nativeCurrency: {
+          name: chainConfig.currency?.coinDenom || 'INIT',
+          symbol: chainConfig.currency?.coinDenom || 'INIT',
+          decimals: chainConfig.currency?.coinDecimals || 18
+        },
+        rpcUrls: [chainConfig.rpc]
+        // blockExplorerUrls: chainConfig.explorers ? [chainConfig.explorers[0]] : []
+      };
+
       await window.keplr.ethereum.request({
         method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: `0x${chainConfig.chainId}`, // Convert to hex if needed
-            chainName: chainConfig.chainName,
-            nativeCurrency: {
-              name: chainConfig.currency?.coinDenom || 'INIT',
-              symbol: chainConfig.currency?.coinMinimalDenom || 'INIT',
-              decimals: chainConfig.currency?.coinDecimals || 18
-            },
-            rpcUrls: [chainConfig.rpc]
-          }
-        ]
+        params: [networkParams]
       });
     } catch (error: any) {
       // If the network already exists, this will throw an error which we can ignore
@@ -1364,12 +1436,48 @@ export default class WalletService {
   }
 
   /**
+   * Check if Keplr mobile is installed/available
+   */
+  private static isKeplrMobileInstalled(): boolean {
+    const isMobile = this.isMobileDevice();
+    const hasKeplrObject = !!window.keplr;
+    const isKeplrApp = this.isKeplrMobileApp();
+    const isWebViewOrInApp = this.isWebView() || this.isInAppBrowser();
+
+    return (
+      isMobile && hasKeplrObject && (isKeplrApp || isWebViewOrInApp || true)
+    );
+  }
+
+  /**
+   * Check if Leap mobile is installed/available
+   */
+  private static isLeapMobileInstalled(): boolean {
+    const isMobile = this.isMobileDevice();
+    const hasLeapObject = !!window.leap;
+    const isLeapApp = this.isLeapMobileApp();
+    const isWebViewOrInApp = this.isWebView() || this.isInAppBrowser();
+
+    return isMobile && hasLeapObject && (isLeapApp || isWebViewOrInApp || true);
+  }
+
+  /**
    * Check if a wallet is installed
    */
   static isWalletInstalled(walletId: string): boolean {
     const walletMap: Record<string, () => boolean> = {
-      'keplr-extension': () => !!window.keplr && !this.isMobileDevice(),
-      keplr: () => !!window.keplr,
+      'keplr-extension': () => {
+        // If keplr object exists, consider it installed
+        // If we're on desktop and keplr exists, or if mobile version is available
+        return (
+          !!window.keplr &&
+          (!this.isMobileDevice() || this.isKeplrMobileInstalled())
+        );
+      },
+      keplr: () => {
+        // Generic keplr detection - if mobile installed, extension is also considered available
+        return !!window.keplr || this.isKeplrMobileInstalled();
+      },
       'keplr-mobile': () => {
         // For keplr-mobile, check if:
         // 1. We're on a mobile device
@@ -1385,8 +1493,18 @@ export default class WalletService {
           isMobile && hasKeplrObject && (isKeplrApp || isWebViewOrInApp || true)
         );
       },
-      'leap-extension': () => !!window.leap && !this.isMobileDevice(),
-      leap: () => !!window.leap,
+      'leap-extension': () => {
+        // If leap object exists, consider it installed
+        // If we're on desktop and leap exists, or if mobile version is available
+        return (
+          !!window.leap &&
+          (!this.isMobileDevice() || this.isLeapMobileInstalled())
+        );
+      },
+      leap: () => {
+        // Generic leap detection - if mobile installed, extension is also considered available
+        return !!window.leap || this.isLeapMobileInstalled();
+      },
       'leap-cosmos-mobile': () => {
         // For leap-cosmos-mobile, check if:
         // 1. We're on a mobile device
