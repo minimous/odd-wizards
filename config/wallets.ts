@@ -130,6 +130,15 @@ const initiaWalletConfigs: WalletConfig[] = [
     downloadUrl: getWalletDownloadUrl('leap-extension')
   },
   {
+    id: 'leap-cosmos-mobile',
+    name: 'Leap Wallet (Mobile)',
+    logo: getWalletLogo('leap-cosmos-mobile'),
+    description: 'Connect using Leap mobile wallet for Initia networks',
+    color: getWalletColor('leap-cosmos-mobile'),
+    supportedTypes: ['intergaze'],
+    downloadUrl: 'https://apps.apple.com/app/leap-cosmos-wallet/id1642465549'
+  },
+  {
     id: 'phantom',
     name: 'Phantom',
     logo: getWalletLogo('phantom'),

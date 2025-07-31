@@ -232,6 +232,8 @@ model trn_distribusi_reward {
   distribusi_position     Int?
   distribusi_type         String?
   distribusi_tx_hash      String?
+  distribusi_chain        String?   @default("stargaze") // Chain identifier: stargaze, intergaze, megaeth
+  distribusi_chain_data   String?   // JSON string for chain-specific data
 }
 
 model trn_raffle {
