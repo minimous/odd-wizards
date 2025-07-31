@@ -375,72 +375,28 @@ export default class WalletService {
     }
 
     try {
-      // Check if Keplr supports EVM mode for Initia
-      if (window.keplr.ethereum) {
-        // Use EVM mode for Initia chains
-        const accounts = await window.keplr.ethereum.request({
-          method: 'eth_requestAccounts'
-        });
+      // For Intergaze (Initia-based chains), always use Cosmos mode
+      // Intergaze is a Cosmos chain, not an EVM chain
 
-        if (!accounts || accounts.length === 0) {
-          throw new Error('No accounts found in Keplr');
-        }
+      // First, suggest the chain to Keplr
+      await this.suggestChain(window.keplr, chainConfig);
 
-        // Add network to Keplr if needed
-        await this.addInitiaNetworkToKeplr(chainConfig);
+      // Enable the chain
+      await window.keplr.enable(chainConfig.chainId);
 
-        // Get addresses
-        const hexAddress = accounts[0];
-        const prefix = this.getBech32Prefix(chainConfig.chainId);
-        const bech32Address = AddressUtils.toBech32(hexAddress, prefix);
+      // Get the key for this chain
+      const key = await window.keplr.getKey(chainConfig.chainId);
 
-        return {
-          address: bech32Address,
-          name: 'Keplr Account',
-          provider: window.keplr.ethereum,
-          publicKey: hexAddress
-        };
-      } else {
-        // Fallback to Cosmos mode
-        // First, try to suggest the chain to Keplr
-        await this.suggestChain(window.keplr, chainConfig);
+      // Get offline signer
+      const offlineSigner = window.keplr.getOfflineSigner(chainConfig.chainId);
 
-        // Enable the chain
-        await window.keplr.enable(chainConfig.chainId);
-
-        // Get the key for this chain
-        const key = await window.keplr.getKey(chainConfig.chainId);
-
-        // Get offline signer
-        const offlineSigner = window.keplr.getOfflineSigner(
-          chainConfig.chainId
-        );
-
-        // For Initia chains, we need to handle both Cosmos and EVM addresses
-        const cosmosAddress = key.bech32Address;
-
-        // Convert to hex address if needed for EVM compatibility
-        let hexAddress: string | undefined;
-        try {
-          // If Keplr supports EVM for this chain, get the hex address
-          if (window.keplr.getKey && key.pubKey) {
-            // Convert the bech32 address to hex format for EVM compatibility
-            hexAddress = AddressUtils.toPrefixedHex(cosmosAddress);
-          }
-        } catch (error) {
-          console.warn('Failed to get hex address from Keplr:', error);
-        }
-
-        return {
-          address: cosmosAddress, // Primary address (bech32)
-          publicKey: key.pubKey,
-          name: key.name,
-          algo: key.algo,
-          offlineSigner,
-          // Store hex address for EVM operations if available
-          ...(hexAddress && { hexAddress })
-        };
-      }
+      return {
+        address: key.bech32Address,
+        publicKey: key.pubKey,
+        name: key.name,
+        algo: key.algo,
+        offlineSigner
+      };
     } catch (error: any) {
       console.error('Keplr connection error details:', error);
 
@@ -481,47 +437,26 @@ export default class WalletService {
     }
 
     try {
-      // Check if Leap supports EVM mode for Initia
-      if (window.leap.ethereum) {
-        // Use EVM mode for Initia chains
-        const accounts = await window.leap.ethereum.request({
-          method: 'eth_requestAccounts'
-        });
+      // For Intergaze (Initia-based chains), always use Cosmos mode
+      // Intergaze is a Cosmos chain, not an EVM chain
 
-        if (!accounts || accounts.length === 0) {
-          throw new Error('No accounts found in Leap');
-        }
+      // First, suggest the chain to Leap
+      await this.suggestChain(window.leap, chainConfig);
 
-        // Add network to Leap if needed
-        await this.addInitiaNetworkToLeap(chainConfig);
+      // Enable the chain
+      await window.leap.enable(chainConfig.chainId);
 
-        // Get addresses
-        const hexAddress = accounts[0];
-        const prefix = this.getBech32Prefix(chainConfig.chainId);
-        const bech32Address = AddressUtils.toBech32(hexAddress, prefix);
+      // Get the key for this chain
+      const key = await window.leap.getKey(chainConfig.chainId);
+      const offlineSigner = window.leap.getOfflineSigner(chainConfig.chainId);
 
-        return {
-          address: bech32Address,
-          name: 'Leap Account',
-          provider: window.leap.ethereum,
-          publicKey: hexAddress
-        };
-      } else {
-        // Fallback to Cosmos mode
-        await this.suggestChain(window.leap, chainConfig);
-        await window.leap.enable(chainConfig.chainId);
-
-        const key = await window.leap.getKey(chainConfig.chainId);
-        const offlineSigner = window.leap.getOfflineSigner(chainConfig.chainId);
-
-        return {
-          address: key.bech32Address,
-          publicKey: key.pubKey,
-          name: key.name,
-          algo: key.algo,
-          offlineSigner
-        };
-      }
+      return {
+        address: key.bech32Address,
+        publicKey: key.pubKey,
+        name: key.name,
+        algo: key.algo,
+        offlineSigner
+      };
     } catch (error: any) {
       console.error('Leap connection error details:', error);
 
@@ -672,73 +607,6 @@ export default class WalletService {
       });
     } catch (error) {
       console.warn('Failed to add network to MetaMask:', error);
-    }
-  }
-
-  /**
-   * Add Initia network to Keplr EVM mode
-   */
-  static async addInitiaNetworkToKeplr(
-    chainConfig: ChainConfig
-  ): Promise<void> {
-    if (!window.keplr?.ethereum) {
-      throw new Error('Keplr EVM mode not available');
-    }
-
-    try {
-      const chainIdNumber = this.extractChainIdNumber(chainConfig.chainId);
-      const networkParams = {
-        chainId: `0x${chainIdNumber.toString(16)}`,
-        chainName: chainConfig.chainName,
-        nativeCurrency: {
-          name: chainConfig.currency?.coinDenom || 'INIT',
-          symbol: chainConfig.currency?.coinDenom || 'INIT',
-          decimals: chainConfig.currency?.coinDecimals || 18
-        },
-        rpcUrls: [chainConfig.rpc]
-        // blockExplorerUrls: chainConfig.explorers ? [chainConfig.explorers[0]] : []
-      };
-
-      await window.keplr.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [networkParams]
-      });
-    } catch (error: any) {
-      // If the network already exists, this will throw an error which we can ignore
-      if (error.code !== 4902) {
-        console.warn('Failed to add network to Keplr:', error);
-      }
-    }
-  }
-
-  /**
-   * Add Initia network to Leap
-   */
-  private static async addInitiaNetworkToLeap(
-    chainConfig: ChainConfig
-  ): Promise<void> {
-    if (!window.leap?.ethereum) return;
-
-    try {
-      const chainIdNumber = this.extractChainIdNumber(chainConfig.chainId);
-      const networkParams = {
-        chainId: `0x${chainIdNumber.toString(16)}`,
-        chainName: chainConfig.chainName,
-        rpcUrls: [chainConfig.rpc],
-        nativeCurrency: {
-          name: chainConfig.currency?.coinDenom || 'INIT',
-          symbol: chainConfig.currency?.coinDenom || 'INIT',
-          decimals: chainConfig.currency?.coinDecimals || 18
-        }
-        // blockExplorerUrls: chainConfig.explorers ? [chainConfig.explorers[0]] : []
-      };
-
-      await window.leap.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [networkParams]
-      });
-    } catch (error) {
-      console.warn('Failed to add network to Leap:', error);
     }
   }
 
