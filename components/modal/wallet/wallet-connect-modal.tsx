@@ -262,8 +262,9 @@ export default function WalletConnectModal({
       let errorMessage = error.message;
 
       if (
-        error.message?.includes('rejected') ||
-        error.message?.includes('Request rejected')
+        error.message?.includes('User rejected') ||
+        error.message?.includes('Request rejected') ||
+        error.message?.includes('denied by user')
       ) {
         errorMessage = 'Connection was rejected by the user';
       } else if (

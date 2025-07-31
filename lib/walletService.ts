@@ -349,10 +349,18 @@ export default class WalletService {
         publicKey: hexAddress // Store hex address as publicKey for reference
       };
     } catch (error: any) {
-      if (error.code === 4001) {
+      // Only treat as user rejection if it's specifically a rejection error
+      if (
+        error.code === 4001 ||
+        (error?.message && error.message.toLowerCase().includes('rejected')) ||
+        (error?.message &&
+          error.message.toLowerCase().includes('denied by user'))
+      ) {
         throw new Error('User rejected the connection request');
       }
-      throw new Error(`MetaMask connection failed: ${error.message}`);
+
+      const errorMessage = error?.message || 'Unknown error occurred';
+      throw new Error(`MetaMask connection failed: ${errorMessage}`);
     }
   }
 
@@ -362,18 +370,11 @@ export default class WalletService {
   static async connectKeplrForInitia(
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
-    console.log(
-      'Connecting Keplr for Initia, window.keplr available:',
-      !!window.keplr
-    );
-    console.log('Chain config:', chainConfig);
-
     if (!window.keplr) {
       throw new Error('Keplr extension not found');
     }
 
     try {
-      console.log('Keplr ethereum support:', !!window.keplr.ethereum);
       // Check if Keplr supports EVM mode for Initia
       if (window.keplr.ethereum) {
         // Use EVM mode for Initia chains
@@ -400,17 +401,12 @@ export default class WalletService {
           publicKey: hexAddress
         };
       } else {
-        console.log('Falling back to Cosmos mode for Keplr');
         // Fallback to Cosmos mode
         // First, try to suggest the chain to Keplr
-        console.log('Suggesting chain to Keplr:', chainConfig);
         await this.suggestChain(window.keplr, chainConfig);
-        console.log('Chain suggestion completed');
 
         // Enable the chain
-        console.log('Enabling chain:', chainConfig.chainId);
         await window.keplr.enable(chainConfig.chainId);
-        console.log('Chain enabled successfully');
 
         // Get the key for this chain
         const key = await window.keplr.getKey(chainConfig.chainId);
@@ -447,7 +443,14 @@ export default class WalletService {
       }
     } catch (error: any) {
       console.error('Keplr connection error details:', error);
-      if (error.code === 4001) {
+
+      // Only treat as user rejection if it's specifically a rejection error
+      if (
+        error.code === 4001 ||
+        (error?.message && error.message.toLowerCase().includes('rejected')) ||
+        (error?.message &&
+          error.message.toLowerCase().includes('denied by user'))
+      ) {
         throw new Error('User rejected the connection request');
       }
 
@@ -473,18 +476,11 @@ export default class WalletService {
   static async connectLeapForInitia(
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
-    console.log(
-      'Connecting Leap for Initia, window.leap available:',
-      !!window.leap
-    );
-    console.log('Chain config:', chainConfig);
-
     if (!window.leap) {
       throw new Error('Leap extension not found');
     }
 
     try {
-      console.log('Leap ethereum support:', !!window.leap.ethereum);
       // Check if Leap supports EVM mode for Initia
       if (window.leap.ethereum) {
         // Use EVM mode for Initia chains
@@ -511,15 +507,9 @@ export default class WalletService {
           publicKey: hexAddress
         };
       } else {
-        console.log('Falling back to Cosmos mode for Leap');
         // Fallback to Cosmos mode
-        console.log('Suggesting chain to Leap:', chainConfig);
         await this.suggestChain(window.leap, chainConfig);
-        console.log('Chain suggestion completed');
-
-        console.log('Enabling chain:', chainConfig.chainId);
         await window.leap.enable(chainConfig.chainId);
-        console.log('Chain enabled successfully');
 
         const key = await window.leap.getKey(chainConfig.chainId);
         const offlineSigner = window.leap.getOfflineSigner(chainConfig.chainId);
@@ -534,6 +524,16 @@ export default class WalletService {
       }
     } catch (error: any) {
       console.error('Leap connection error details:', error);
+
+      // Only treat as user rejection if it's specifically a rejection error
+      if (
+        error.code === 4001 ||
+        (error?.message && error.message.toLowerCase().includes('rejected')) ||
+        (error?.message &&
+          error.message.toLowerCase().includes('denied by user'))
+      ) {
+        throw new Error('User rejected the connection request');
+      }
 
       // Handle various error formats
       let errorMessage = 'Unknown error occurred';
@@ -588,10 +588,18 @@ export default class WalletService {
         publicKey: hexAddress
       };
     } catch (error: any) {
-      if (error.code === 4001) {
+      // Only treat as user rejection if it's specifically a rejection error
+      if (
+        error.code === 4001 ||
+        (error?.message && error.message.toLowerCase().includes('rejected')) ||
+        (error?.message &&
+          error.message.toLowerCase().includes('denied by user'))
+      ) {
         throw new Error('User rejected the connection request');
       }
-      throw new Error(`Phantom connection failed: ${error.message}`);
+
+      const errorMessage = error?.message || 'Unknown error occurred';
+      throw new Error(`Phantom connection failed: ${errorMessage}`);
     }
   }
 
