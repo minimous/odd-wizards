@@ -14,6 +14,9 @@ const stargazeWallets = [
 
 // Add Initia-specific wallets
 const initiaWallets = [
+  'metamask',
+  'keplr-extension',
+  'keplr-mobile',
   'leap-extension',
   'leap-cosmos-mobile',
   'leap-metamask-cosmos-snap',
@@ -133,6 +136,24 @@ const initiaWalletConfigs: WalletConfig[] = [
     color: getWalletColor('leap-extension'),
     supportedTypes: ['stargaze', 'intergaze'],
     downloadUrl: getWalletDownloadUrl('leap-extension')
+  },
+  {
+    id: 'keplr-mobile',
+    name: 'Keplr Wallet (Mobile)',
+    logo: getWalletLogo('keplr-extension'),
+    description: 'Connect using Keplr mobile wallet for Initia networks',
+    color: getWalletColor('keplr-extension'),
+    supportedTypes: ['stargaze', 'intergaze'],
+    downloadUrl: 'https://apps.apple.com/app/keplr-wallet/id1567851089'
+  },
+  {
+    id: 'leap-cosmos-mobile',
+    name: 'Leap Wallet (Mobile)',
+    logo: getWalletLogo('leap-cosmos-mobile'),
+    description: 'Connect using Leap mobile wallet for multiple networks',
+    color: getWalletColor('leap-cosmos-mobile'),
+    supportedTypes: ['stargaze', 'intergaze'],
+    downloadUrl: 'https://apps.apple.com/app/leap-cosmos-wallet/id1642465549'
   },
   {
     id: 'phantom',
