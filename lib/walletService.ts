@@ -158,6 +158,7 @@ export default class WalletService {
 
         case 'leap-extension':
         case 'leap':
+        case 'leap-cosmos-mobile':
           return await this.connectLeapForInitia(chainConfig);
 
         case 'phantom':
@@ -1229,7 +1230,10 @@ export default class WalletService {
     // Check for Leap mobile app user agent or in-app browser
     return (
       /LeapWallet|Leap/i.test(ua) ||
-      (this.isMobileDevice() && this.isWebView() && !!window.leap)
+      /LeapCosmosWallet/i.test(ua) ||
+      /Leap Cosmos Wallet/i.test(ua) ||
+      (this.isMobileDevice() && this.isWebView() && !!window.leap) ||
+      (this.isMobileDevice() && !!window.leap && this.isInAppBrowser())
     );
   }
 
@@ -1258,10 +1262,17 @@ export default class WalletService {
         // 1. We're on a mobile device
         // 2. Either Leap mobile app is detected OR window.leap exists (in-app browser)
         // 3. Not in a generic web browser (should be in Leap app or WebView)
+        const isMobile = this.isMobileDevice();
+        const hasLeapObject = !!window.leap;
+        const isLeapApp = this.isLeapMobileApp();
+        const isWebViewOrInApp = this.isWebView() || this.isInAppBrowser();
+
+        // Enhanced detection for Leap mobile app
         return (
-          this.isMobileDevice() &&
-          (this.isLeapMobileApp() ||
-            (!!window.leap && (this.isWebView() || this.isInAppBrowser())))
+          isMobile &&
+          (isLeapApp ||
+            (hasLeapObject && isWebViewOrInApp) ||
+            (hasLeapObject && isMobile)) // Fallback: if leap object exists on mobile
         );
       },
       'cosmostation-extension': () => !!window.cosmostation,
@@ -1343,7 +1354,7 @@ export default class WalletService {
       // For Leap on Initia chains, check EVM mode first
       if (
         (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
-        walletId === 'leap-extension'
+        (walletId === 'leap-extension' || walletId === 'leap-cosmos-mobile')
       ) {
         if (window.leap?.ethereum) {
           try {
@@ -1447,7 +1458,7 @@ export default class WalletService {
       // For Leap on Initia chains
       if (
         (chainId === 'initia-1' || chainId?.startsWith('intergaze')) &&
-        walletId === 'leap-extension'
+        (walletId === 'leap-extension' || walletId === 'leap-cosmos-mobile')
       ) {
         if (window.leap?.ethereum) {
           try {
