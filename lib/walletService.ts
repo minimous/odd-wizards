@@ -1,6 +1,8 @@
 import { ChainConfig, WalletConfig } from '@/types/wallet';
 import { STARGAZE_WALLETS, getWalletConfig } from '@/config/wallets';
 import { AddressUtils } from './utils';
+import { wallets } from 'cosmos-kit';
+import { chains } from 'chain-registry';
 
 // Extend Window interface for all wallet objects
 declare global {
@@ -72,9 +74,125 @@ export default class WalletService {
   private static readonly LEAP_SNAP_ID = 'npm:@leapwallet/metamask-cosmos-snap';
 
   /**
-   * Connect to any supported wallet by ID
+   * Connect to any supported wallet by ID using cosmos-kit internal logic
    */
   static async connect(
+    walletId: string,
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    // Try to use cosmos-kit wallet if available
+    const cosmosKitWallet = this.getCosmosKitWallet(walletId);
+    if (cosmosKitWallet && this.isCosmosChain(chainConfig.chainId)) {
+      return await this.connectViaCosmosKit(cosmosKitWallet, chainConfig);
+    }
+
+    // Fallback to custom implementation
+    return await this.connectCustom(walletId, chainConfig);
+  }
+
+  /**
+   * Get cosmos-kit wallet by ID
+   */
+  private static getCosmosKitWallet(walletId: string) {
+    return wallets.find(
+      (wallet) =>
+        wallet.walletName === walletId ||
+        wallet.walletName === walletId.replace('-extension', '') ||
+        wallet.walletName === walletId.replace('-mobile', '')
+    );
+  }
+
+  /**
+   * Check if chain is supported by cosmos-kit
+   */
+  private static isCosmosChain(chainId: string): boolean {
+    return chainId === 'stargaze-1' || chainId === 'intergaze-1';
+  }
+
+  /**
+   * Connect using cosmos-kit wallet logic (without modal)
+   */
+  private static async connectViaCosmosKit(
+    cosmosKitWallet: any,
+    chainConfig: ChainConfig
+  ): Promise<WalletConnectionResult> {
+    try {
+      // For Leap and Keplr, use direct wallet object approach
+      const walletName = cosmosKitWallet.walletName;
+
+      if (walletName === 'leap-extension' || walletName === 'leap') {
+        if (chainConfig.chainId === 'stargaze-1') {
+          return await this.connectLeap(chainConfig);
+        } else if (chainConfig.chainId === 'intergaze-1') {
+          return await this.connectLeapForInitia(chainConfig);
+        }
+      }
+
+      if (walletName === 'keplr-extension' || walletName === 'keplr') {
+        if (chainConfig.chainId === 'stargaze-1') {
+          return await this.connectKeplr(chainConfig);
+        } else if (chainConfig.chainId === 'intergaze-1') {
+          return await this.connectKeplrForInitia(chainConfig);
+        }
+      }
+
+      // Generic cosmos-kit approach
+      const walletClient = cosmosKitWallet.getClient();
+
+      if (!walletClient) {
+        throw new Error('Wallet client not available');
+      }
+
+      // Enable the chain
+      if (walletClient.enable) {
+        await walletClient.enable(chainConfig.chainId);
+      }
+
+      // Get key/account info
+      let key;
+      if (walletClient.getKey) {
+        key = await walletClient.getKey(chainConfig.chainId);
+      } else if (walletClient.getAccount) {
+        const account = await walletClient.getAccount(chainConfig.chainId);
+        key = {
+          bech32Address: account.address,
+          pubKey: account.pubkey,
+          name: account.username || 'Wallet Account',
+          algo: 'secp256k1'
+        };
+      }
+
+      if (!key) {
+        throw new Error('Could not get wallet key');
+      }
+
+      // Get offline signer if available
+      let offlineSigner;
+      if (walletClient.getOfflineSigner) {
+        offlineSigner = walletClient.getOfflineSigner(chainConfig.chainId);
+      }
+
+      return {
+        address: key.bech32Address,
+        publicKey: key.pubKey,
+        name: key.name,
+        algo: key.algo,
+        offlineSigner
+      };
+    } catch (error: any) {
+      console.warn(
+        'Cosmos-kit connection failed, falling back to custom:',
+        error
+      );
+      // Fallback to custom implementation
+      return await this.connectCustom(cosmosKitWallet.walletName, chainConfig);
+    }
+  }
+
+  /**
+   * Custom connection implementation (existing logic)
+   */
+  private static async connectCustom(
     walletId: string,
     chainConfig: ChainConfig
   ): Promise<WalletConnectionResult> {
@@ -95,10 +213,12 @@ export default class WalletService {
       switch (walletId) {
         case 'keplr-extension':
         case 'keplr':
+        case 'keplr-mobile':
           return await this.connectKeplr(chainConfig);
 
         case 'leap-extension':
         case 'leap':
+        case 'leap-cosmos-mobile':
           return await this.connectLeap(chainConfig);
 
         case 'cosmostation-extension':
@@ -154,6 +274,7 @@ export default class WalletService {
 
         case 'keplr-extension':
         case 'keplr':
+        case 'keplr-mobile':
           return await this.connectKeplrForInitia(chainConfig);
 
         case 'leap-extension':

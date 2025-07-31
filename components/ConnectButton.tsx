@@ -30,7 +30,7 @@ export default function ConnectButton({
   // Handle connecting the wallet
   const handleConnectWallet = async () => {
     try {
-      await connect(); // Connect the wallet
+      await connect(); // Connect the wallet using cosmos-kit
     } catch (error) {
       console.error('Error connecting wallet:', error);
     }
