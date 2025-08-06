@@ -18,10 +18,8 @@
   "build": {
     "env": {
       "SKIP_ENV_VALIDATION": "1",
-      "SKIP_DOWNLOAD": "true",
-      "npm_config_optional": "false",
-      "npm_config_ignore_scripts": "true"
+      "NODE_OPTIONS": "--max_old_space_size=4096"
     }
   },
-  "installCommand": "npm ci --ignore-scripts && node scripts/remove-node-hid.js"
+  "installCommand": "npm install --legacy-peer-deps --omit=optional"
 }
