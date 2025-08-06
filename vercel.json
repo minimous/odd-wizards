@@ -18,8 +18,13 @@
   "build": {
     "env": {
       "SKIP_ENV_VALIDATION": "1",
-      "NODE_OPTIONS": "--max_old_space_size=4096"
+      "NODE_OPTIONS": "--max_old_space_size=4096",
+      "npm_config_target_platform": "linux",
+      "npm_config_target_arch": "x64",
+      "npm_config_cache": "/tmp/.npm",
+      "SKIP_DOWNLOAD": "true"
     }
   },
-  "installCommand": "npm install --legacy-peer-deps --omit=optional"
+  "buildCommand": "npm run build",
+  "installCommand": "yarn install --ignore-optional --network-timeout 600000"
 }
