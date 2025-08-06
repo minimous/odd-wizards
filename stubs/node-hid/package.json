@@ -1,13 +1,22 @@
 {
   "name": "node-hid",
   "version": "2.1.2",
-  "description": "Stub package for node-hid to avoid build issues on serverless platforms",
+  "description": "Stub package for hardware wallet dependencies to avoid build issues on serverless platforms",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "install": "echo 'Skipping hardware wallet dependency installation for serverless compatibility'"
+  },
   "keywords": [
     "stub",
-    "node-hid"
+    "hardware-wallet",
+    "serverless"
   ],
   "author": "stub",
-  "license": "MIT"
+  "license": "MIT",
+  "os": [
+    "!win32"
+  ],
+  "engines": {
+    "node": ">=14"
+  }
 }
