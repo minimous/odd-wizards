@@ -34,4 +34,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/scripts
+# Keep stubs directory for build compatibility
+!/stubs

@@ -12,6 +12,36 @@ export interface ChainConfig {
   apiUrl?: string;
   explorerUrl?: string;
   rewardWalletMnemonic: string;
+  coinType?: number;
+  hdPath?: string;
+  bech32Prefix?: string;
+  rpc?: string;
+  rest?: string;
+  currency?: {
+    coinDenom: string;
+    coinMinimalDenom: string;
+    coinDecimals: number;
+  };
+  currencies?: Array<{
+    coinDenom: string;
+    coinMinimalDenom: string;
+    coinDecimals: number;
+  }>;
+  feeCurrencies?: Array<{
+    coinDenom: string;
+    coinMinimalDenom: string;
+    coinDecimals: number;
+    gasPriceStep?: {
+      low: number;
+      average: number;
+      high: number;
+    };
+  }>;
+  stakeCurrency?: {
+    coinDenom: string;
+    coinMinimalDenom: string;
+    coinDecimals: number;
+  };
 }
 
 export interface ChainConfigs {
@@ -42,15 +72,55 @@ const getChainConfigs = (): ChainConfigs => {
       chainId: 'intergaze-1',
       chainName: 'Intergaze',
       rpcUrl: env.INTERGAZE_RPC_URL || 'https://rpc.intergaze-apis.com',
+      rpc: env.INTERGAZE_RPC_URL || 'https://rpc.intergaze-apis.com',
+      rest: env.INTERGAZE_REST_URL || 'https://rest.intergaze-apis.com',
       apiUrl: env.INTERGAZE_API_URL || 'https://api.intergaze-apis.com',
       prefix: 'init',
+      bech32Prefix: 'init',
       denom:
         'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
       gasPrice:
         '0.03l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
       explorerUrl: 'https://scan.initia.xyz/intergaze-1',
       rewardWalletMnemonic:
-        env.INTERGAZE_REWARD_WALLET_MNEMONIC || env.REWARD_WALLET_MNEMONIC || ''
+        env.INTERGAZE_REWARD_WALLET_MNEMONIC ||
+        env.REWARD_WALLET_MNEMONIC ||
+        '',
+      coinType: 60, // Use Ethereum coinType for Initia/Intergaze (same as Keplr)
+      hdPath: "m/44'/60'/0'/0/0",
+      currency: {
+        coinDenom: 'INIT',
+        coinMinimalDenom:
+          'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
+        coinDecimals: 6
+      },
+      currencies: [
+        {
+          coinDenom: 'INIT',
+          coinMinimalDenom:
+            'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
+          coinDecimals: 6
+        }
+      ],
+      feeCurrencies: [
+        {
+          coinDenom: 'INIT',
+          coinMinimalDenom:
+            'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.03,
+            high: 0.05
+          }
+        }
+      ],
+      stakeCurrency: {
+        coinDenom: 'INIT',
+        coinMinimalDenom:
+          'l2/fb936ffef4eb4019d82941992cc09ae2788ce7197fcb08cb00c4fe6f5e79184e',
+        coinDecimals: 6
+      }
     },
     megaeth: {
       chainId: network === 'mainnet' ? 'megaeth-1' : 'megaeth-testnet',

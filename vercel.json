@@ -1,13 +1,20 @@
 {
-    "headers": [
-      {
-        "source": "/api/(.*)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-store, no-cache, must-revalidate"
-          }
-        ]
-      }
-    ]
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "build": {
+    "env": {
+      "SKIP_ENV_VALIDATION": "1",
+      "NODE_OPTIONS": "--max_old_space_size=4096",
+      "HUSKY": "0"
+    }
   }
+}
