@@ -149,6 +149,7 @@ model mst_reward {
   reward_token_id       String?
   reward_type           String?
   reward_rank           Int?
+  reward_chain          String?
 
   project mst_project? @relation(fields: [reward_project_id], references: [project_id])
 }

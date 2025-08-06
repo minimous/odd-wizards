@@ -1,6 +1,6 @@
 import { ChainConfig, WalletConfig } from '@/types/wallet';
 import { STARGAZE_WALLETS, getWalletConfig } from '@/config/wallets';
-import { AddressUtils } from './utils';
+import { AddressUtils, AddressUtilsLegacy } from './utils';
 import { wallets } from 'cosmos-kit';
 import { chains } from 'chain-registry';
 
@@ -43,7 +43,7 @@ export function useInitiaAddress(prefix: string = 'init') {
   const { address } = useAccount();
 
   if (!address) return '';
-  const hexAddress = AddressUtils.toPrefixedHex(address);
+  const hexAddress = AddressUtilsLegacy.toPrefixedHex(address);
   return AddressUtils.toBech32(hexAddress, prefix);
 }
 
@@ -53,7 +53,7 @@ export function useHexAddress() {
   const { address } = useAccount();
 
   if (!address) return '';
-  return AddressUtils.toPrefixedHex(address);
+  return AddressUtilsLegacy.toPrefixedHex(address);
 }
 
 // Utility functions that accept address as parameter (no hooks)
@@ -67,7 +67,7 @@ export function getInitiaAddressFromHex(
 
 export function convertToHexAddress(address: string): string {
   if (!address) return '';
-  return AddressUtils.toPrefixedHex(address);
+  return AddressUtilsLegacy.toPrefixedHex(address);
 }
 
 export default class WalletService {
@@ -549,7 +549,7 @@ export default class WalletService {
     if (!wagmiAddress) return '';
 
     const prefix = this.getBech32Prefix(chainId);
-    const hexAddress = AddressUtils.toPrefixedHex(wagmiAddress);
+    const hexAddress = AddressUtilsLegacy.toPrefixedHex(wagmiAddress);
     return AddressUtils.toBech32(hexAddress, prefix);
   }
 
@@ -558,7 +558,7 @@ export default class WalletService {
    */
   static getHexAddressFromWagmi(wagmiAddress: string): string {
     if (!wagmiAddress) return '';
-    return AddressUtils.toPrefixedHex(wagmiAddress);
+    return AddressUtilsLegacy.toPrefixedHex(wagmiAddress);
   }
 
   /**
@@ -1791,7 +1791,7 @@ export default class WalletService {
 
       try {
         // For Initia chains, use the hex address for signing
-        const hexAddress = AddressUtils.toPrefixedHex(address);
+        const hexAddress = AddressUtilsLegacy.toPrefixedHex(address);
         const signature = await provider.request({
           method: 'personal_sign',
           params: [message, hexAddress]
