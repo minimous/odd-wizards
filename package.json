@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
+    "postinstall": "node scripts/patch-initia-deps.js && patch-package",
     "prebuild": "node scripts/remove-node-hid.js || true",
     "build": "next build",
     "start": "next start",
@@ -148,6 +149,7 @@
     "node-hid": "2.1.2"
   },
   "devDependencies": {
+    "patch-package": "^8.0.0",
     "@types/secp256k1": "^4.0.6",
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.11.0",

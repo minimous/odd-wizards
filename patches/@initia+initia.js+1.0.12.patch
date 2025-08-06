@@ -1,0 +1,12 @@
+diff --git a/node_modules/@initia/initia.js/package.json b/node_modules/@initia/initia.js/package.json
+index 1234567..abcdefg 100644
+--- a/node_modules/@initia/initia.js/package.json
++++ b/node_modules/@initia/initia.js/package.json
+@@ -50,7 +50,6 @@
+     "@cosmjs/stargate": "^0.32.4",
+     "@cosmjs/tendermint-rpc": "^0.32.4",
+     "@keplr-wallet/types": "^0.12.82",
+-    "@ledgerhq/hw-transport-node-hid": "^6.29.9",
+     "@noble/curves": "^1.4.0",
+     "@noble/hashes": "^1.4.0",
+     "axios": "^1.6.8",
