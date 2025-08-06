@@ -10,19 +10,11 @@
       ]
     }
   ],
-  "functions": {
-    "app/**": {
-      "excludeFiles": "**/node_modules/node-hid/**"
-    }
-  },
   "build": {
     "env": {
       "SKIP_ENV_VALIDATION": "1",
       "NODE_OPTIONS": "--max_old_space_size=4096",
-      "HUSKY": "0",
-      "CI": "true"
+      "HUSKY": "0"
     }
-  },
-  "buildCommand": "npm run build",
-  "installCommand": "npm install --legacy-peer-deps"
+  }
 }
