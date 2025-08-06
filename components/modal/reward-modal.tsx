@@ -30,9 +30,57 @@ export default function RewardModalModal({
   const [token, setToken] = useState<Token>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [txHash, setTxHash] = useState<string>();
+  const [network, setNetwork] = useState<string>('stargaze');
   const [loading, setLoading] = useState<boolean>(false);
   // const [complete, setComplete] = useState<boolean>(false);
   const { toast, promiseToast } = useToast();
+
+  // Helper function to get explorer URL based on network
+  const getExplorerUrl = (network: string, txHash: string) => {
+    switch (network.toLowerCase()) {
+      case 'stargaze':
+        return `https://www.mintscan.io/stargaze/tx/${txHash}`;
+      case 'intergaze':
+        return `https://scan.initia.xyz/intergaze-1/txs/${txHash}`;
+      case 'megaeth':
+        return `https://explorer.megaeth.systems/tx/${txHash}`;
+      default:
+        return `https://www.mintscan.io/stargaze/tx/${txHash}`;
+    }
+  };
+
+  // Helper function to get marketplace URL based on network
+  const getMarketplaceUrl = (
+    network: string,
+    contractAddress: string,
+    tokenId: string
+  ) => {
+    // Return a fallback URL if contract address or token ID is missing
+    if (!contractAddress || !tokenId) {
+      return 'https://www.oddsgarden.io/';
+    }
+
+    switch (network.toLowerCase()) {
+      case 'stargaze':
+        return `https://www.stargaze.zone/m/${contractAddress}/${tokenId}`;
+      case 'intergaze':
+        return `https://marketplace.intergaze.network/token/${contractAddress}/${tokenId}`;
+      case 'megaeth':
+        return `https://rarible.com/token/${contractAddress}:${tokenId}`;
+      default:
+        return `https://www.stargaze.zone/m/${contractAddress}/${tokenId}`;
+    }
+  };
+
+  // Helper function to get image URL based on network and token data
+  const getTokenImageUrl = (token: Token | undefined, network: string) => {
+    if (!token) return '';
+    // For different networks, token might have different image properties
+    if (network.toLowerCase() === 'intergaze') {
+      return token?.media?.url || token?.image || '';
+    }
+    return token?.media?.url || token?.image || '';
+  };
 
   useEffect(() => {
     if (isOpen && wallet) {
@@ -50,6 +98,7 @@ export default function RewardModalModal({
       setToken(resp.data.data.token);
       setIsClaimed(resp.data.data.isClaimed);
       setTxHash(resp.data.data.txHash);
+      setNetwork(resp.data.data.network || 'stargaze');
       if (!resp.data.data.isClaimed) {
         triggerConffeti();
       }
@@ -135,7 +184,19 @@ export default function RewardModalModal({
   };
 
   const doShare = async () => {
-    const tweetText = `Just won this from https://www.oddsgarden.io/\nhttps://www.stargaze.zone/m/${token?.collection.contractAddress}/${token?.tokenId}\n\nThank you!🥳\n\n#oddsgarden #stargaze`;
+    const contractAddress = token?.collection?.contractAddress || '';
+    const tokenId = token?.tokenId || '';
+    const marketplaceUrl = getMarketplaceUrl(network, contractAddress, tokenId);
+    const networkHashtag =
+      network.toLowerCase() === 'stargaze'
+        ? '#stargaze'
+        : network.toLowerCase() === 'intergaze'
+        ? '#intergaze'
+        : network.toLowerCase() === 'megaeth'
+        ? '#megaeth'
+        : '#blockchain';
+
+    const tweetText = `Just won this from https://www.oddsgarden.io/\n${marketplaceUrl}\n\nThank you!🥳\n\n#oddsgarden ${networkHashtag}`;
     const encodedTweetText = encodeURIComponent(tweetText);
     const mobileTweetUrl = `twitter://post?message=${encodedTweetText}`; // Mobile app scheme
     const webTweetUrl = `https://x.com/intent/tweet?text=${encodedTweetText}`;
@@ -168,16 +229,18 @@ export default function RewardModalModal({
         <div className="w-full text-white">
           <div className="rounded-[35px] border border-[#323237] bg-[#171717] px-6 py-3">
             <div className="grid items-center justify-center">
-              <div className="flex items-center justify-center">
-                {isClaimed ? (
-                  <span className="text-lg font-bold md:!text-xl">
-                    🥳 Claimed 🥳
-                  </span>
-                ) : (
-                  <span className="text-lg font-bold md:!text-xl">
-                    👑 Congratulations 👑
-                  </span>
-                )}
+              <div className="flex flex-col items-center justify-center gap-2">
+                <div className="flex items-center justify-center">
+                  {isClaimed ? (
+                    <span className="text-lg font-bold md:!text-xl">
+                      🥳 Claimed 🥳
+                    </span>
+                  ) : (
+                    <span className="text-lg font-bold md:!text-xl">
+                      👑 Congratulations 👑
+                    </span>
+                  )}
+                </div>
               </div>
               {isClaimed ? (
                 <div className="flex items-center justify-center gap-2 truncate">
@@ -186,7 +249,7 @@ export default function RewardModalModal({
                   </span>
                   <Link
                     className="text-xs text-[#DB2877] md:!text-sm"
-                    href={`https://www.mintscan.io/stargaze/tx/${txHash}`}
+                    href={getExplorerUrl(network, txHash || '')}
                     target="_blank"
                   >
                     {formatAddress(`${txHash}`)}
@@ -195,14 +258,24 @@ export default function RewardModalModal({
               ) : (
                 <div className="flex items-center justify-center gap-2 truncate">
                   <span className="text-sm text-gray-400">You get a prize</span>
-                  <Link
-                    href={`https://www.stargaze.zone/m/${token?.collection.contractAddress}/${token?.tokenId}`}
-                    target="_blank"
-                  >
+                  {token?.collection?.contractAddress && token?.tokenId ? (
+                    <Link
+                      href={getMarketplaceUrl(
+                        network,
+                        token.collection.contractAddress,
+                        token.tokenId
+                      )}
+                      target="_blank"
+                    >
+                      <span className="text-sm text-[#DB2877]">
+                        {token?.name || 'Unknown NFT'}
+                      </span>
+                    </Link>
+                  ) : (
                     <span className="text-sm text-[#DB2877]">
-                      {token?.name}
+                      {token?.name || 'Unknown NFT'}
                     </span>
-                  </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -212,7 +285,10 @@ export default function RewardModalModal({
                   <div
                     className="h-full w-full bg-cover transition-transform duration-300 hover:scale-105"
                     style={{
-                      backgroundImage: `url('${token?.media.url}')`
+                      backgroundImage: `url('${getTokenImageUrl(
+                        token,
+                        network
+                      )}')`
                     }}
                   ></div>
                 ) : (
@@ -226,7 +302,10 @@ export default function RewardModalModal({
                     <div
                       className="h-full w-full bg-cover transition-transform duration-300 hover:scale-105"
                       style={{
-                        backgroundImage: `url('${token?.media.url}')`
+                        backgroundImage: `url('${getTokenImageUrl(
+                          token,
+                          network
+                        )}')`
                       }}
                     ></div>
                   </ScratchToReveal>

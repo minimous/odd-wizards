@@ -23,6 +23,7 @@ import { OPERATOR_CONSTANTS } from '@/constants/filterConstant';
 import { UTApi } from 'uploadthing/server';
 import { getAddress, isAddress } from 'ethers';
 import { fromBech32, fromHex, toBech32, toHex } from '@cosmjs/encoding';
+export { AddressUtils } from './address-utils';
 
 const config = getConfig();
 
@@ -1160,7 +1161,7 @@ export const signAmino = async (
   return result.data;
 };
 
-export const AddressUtils = {
+export const AddressUtilsLegacy = {
   toBytes(address: string, byteLength: number = 20) {
     if (!address) throw new Error('address is required');
 
@@ -1179,21 +1180,21 @@ export const AddressUtils = {
 
   toBech32(address: string, prefix: string = 'init') {
     if (!address) return '';
-    return toBech32(prefix, AddressUtils.toBytes(address));
+    return toBech32(prefix, AddressUtilsLegacy.toBytes(address));
   },
 
   toHex(address: string) {
     if (!address) return '';
-    return toHex(AddressUtils.toBytes(address));
+    return toHex(AddressUtilsLegacy.toBytes(address));
   },
 
   toPrefixedHex(address: string) {
     if (!address) return '';
-    const checksummed = getAddress(AddressUtils.toHex(address));
-    const bytes = AddressUtils.toBytes(address);
+    const checksummed = getAddress(AddressUtilsLegacy.toHex(address));
+    const bytes = AddressUtilsLegacy.toBytes(address);
     const last = bytes[bytes.length - 1];
     const isSpecial =
-      bytes.subarray(0, bytes.length - 1).every((byte) => byte === 0) &&
+      bytes.subarray(0, bytes.length - 1).every((byte: number) => byte === 0) &&
       last < 0x10;
     if (isSpecial) return checksummed.replace(/^0x0+/, '0x');
     return checksummed;
@@ -1212,7 +1213,10 @@ export const AddressUtils = {
   },
 
   equals(address1: string, address2: string) {
-    return AddressUtils.toBech32(address1) === AddressUtils.toBech32(address2);
+    return (
+      AddressUtilsLegacy.toBech32(address1) ===
+      AddressUtilsLegacy.toBech32(address2)
+    );
   }
 };
 

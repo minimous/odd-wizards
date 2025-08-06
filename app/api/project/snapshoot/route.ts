@@ -66,12 +66,17 @@ export async function POST(request: NextRequest) {
           await prisma?.trn_distribusi_reward.create({
             data: {
               distribusi_project_id: project.project_id,
-              distribusi_reward: `https://www.stargaze.zone/m/${reward.reward_collection}/${reward.reward_token_id}`,
+              distribusi_reward: getRewardUrl(
+                reward.reward_collection || '',
+                reward.reward_token_id || '',
+                reward.reward_chain || 'stargaze'
+              ),
               distribusi_wallet: snapshoot[idx].staker_address,
               distribusi_start: new Date(),
               distribusi_end: addDays(new Date(), 30),
               distribusi_position: idx + 1,
-              distribusi_type: reward.reward_type
+              distribusi_type: reward.reward_type,
+              distribusi_chain: reward.reward_chain
             }
           });
 
@@ -112,3 +117,14 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+const getRewardUrl = (collection: string, tokenId: string, chain: string) => {
+  switch (chain) {
+    case 'stargaze':
+      return `https://www.stargaze.zone/m/${collection}/${tokenId}`;
+    case 'intergaze':
+      return `https://intergaze.xyz/m/${collection}/${tokenId}`;
+    case 'megaeth':
+      return `https://www.megaeth.systems/m/${collection}/${tokenId}`;
+  }
+};

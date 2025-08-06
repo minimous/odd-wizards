@@ -562,4 +562,31 @@ export class IntergazeService {
       });
     });
   }
+
+  /**
+   * Get single token data by collection address and token ID using the tokens API
+   * This is an alternative to getSingleNft with potentially different data structure
+   * @param collectionAddress - The collection contract address
+   * @param tokenId - The token ID
+   * @returns Promise<any> - Single token data from tokens API
+   */
+  async getToken(
+    collectionAddress: string,
+    tokenId: string | number
+  ): Promise<any> {
+    try {
+      const url = `${this.tokensBaseUrl}/${collectionAddress}/${tokenId}`;
+
+      console.log(`Fetching token from Intergaze API: ${url}`);
+
+      const response = await axios.get(url);
+
+      console.log(`Fetched token: ${collectionAddress}/${tokenId}`);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching token from Intergaze:', error);
+      throw error;
+    }
+  }
 }
