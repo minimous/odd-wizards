@@ -1,0 +1,13 @@
+{
+  "name": "node-hid",
+  "version": "2.1.2",
+  "description": "Stub package for node-hid to avoid build issues on serverless platforms",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "stub",
+    "node-hid"
+  ],
+  "author": "stub",
+  "license": "MIT"
+}
