@@ -100,7 +100,7 @@ const Banner = ({ items }: BannerProps) => {
     } else if (
       banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.HYPEREVM
     ) {
-      return `https://liquidfi.app/launchpad/${banner.banner_collection_address}`;
+      return `https://www.liquidfi.app/mint/hyperliquid/${banner.banner_collection_address}`;
     }
 
     return '#';
@@ -126,7 +126,7 @@ const Banner = ({ items }: BannerProps) => {
     } else if (
       banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.HYPEREVM
     ) {
-      return `https://www.liquidfi.app/mint/hyperliquid/${banner.banner_collection_address}`;
+      return `https://drip.trade/collections/${banner.launchpad.contractAddress}`;
     }
 
     return '#';

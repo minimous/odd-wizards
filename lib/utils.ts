@@ -1232,7 +1232,7 @@ export const createLinkCollection = (
     case NETWORK_CONSTANT.INTERGAZE:
       return `https://intergaze.xyz/m/${collectionAddress}`;
     case NETWORK_CONSTANT.HYPEREVM:
-      return `https://www.liquidfi.app/mint/hyperliquid/${collectionAddress}`;
+      return `https://drip.trade/collections/${collectionAddress}`;
     case NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase():
       return `https://rarible.fun/collections/megaethtestnet/${collectionAddress}`;
   }
