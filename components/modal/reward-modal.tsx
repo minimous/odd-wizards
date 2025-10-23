@@ -70,7 +70,7 @@ export default function RewardModalModal({
       case 'megaeth':
         return `https://rarible.com/token/${contractAddress}:${tokenId}`;
       case 'hyperevm':
-        return `https://www.liquidfi.app/mint/hyperliquid/${contractAddress}`;
+        return `https://drip.trade/collections/${contractAddress}`;
       default:
         return `https://www.stargaze.zone/m/${contractAddress}/${tokenId}`;
     }
