@@ -133,6 +133,20 @@ const getChainConfigs = (): ChainConfigs => {
       explorerUrl: 'https://explorer.megaeth.org',
       rewardWalletMnemonic:
         env.MEGAETH_REWARD_WALLET_MNEMONIC || env.REWARD_WALLET_MNEMONIC || ''
+    },
+    hyperevm: {
+      chainId: network === 'mainnet' ? 'hyperevm-1' : 'hyperevm-testnet',
+      chainName: 'HyperEVM',
+      rpcUrl: env.HYPEREVM_RPC_URL || 'https://rpc.hyperliquid.xyz',
+      apiUrl: env.HYPEREVM_API_URL || 'https://api558.liquidfi.app/api/v1',
+      prefix: '0x',
+      denom: 'HYPE',
+      gasPrice: '20000000000', // 20 gwei
+      explorerUrl: 'https://hyperliquid-testnet.explorer.caldera.xyz',
+      rewardWalletMnemonic:
+        env.HYPEREVM_REWARD_WALLET_MNEMONIC || env.REWARD_WALLET_MNEMONIC || '',
+      coinType: 60, // Use Ethereum coinType for EVM chains
+      hdPath: "m/44'/60'/0'/0/0"
     }
   };
 
