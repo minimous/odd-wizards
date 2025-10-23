@@ -44,6 +44,8 @@ export default function RewardModalModal({
         return `https://scan.initia.xyz/intergaze-1/txs/${txHash}`;
       case 'megaeth':
         return `https://explorer.megaeth.systems/tx/${txHash}`;
+      case 'hyperevm':
+        return `https://hyperliquid-testnet.explorer.caldera.xyz/tx/${txHash}`;
       default:
         return `https://www.mintscan.io/stargaze/tx/${txHash}`;
     }
@@ -67,6 +69,8 @@ export default function RewardModalModal({
         return `https://marketplace.intergaze.network/token/${contractAddress}/${tokenId}`;
       case 'megaeth':
         return `https://rarible.com/token/${contractAddress}:${tokenId}`;
+      case 'hyperevm':
+        return `https://www.liquidfi.app/mint/hyperliquid/${contractAddress}`;
       default:
         return `https://www.stargaze.zone/m/${contractAddress}/${tokenId}`;
     }

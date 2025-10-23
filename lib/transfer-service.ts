@@ -867,7 +867,7 @@ export class MultiChainTransferService {
    * Get supported chains
    */
   getSupportedChains(): string[] {
-    return ['stargaze', 'intergaze', 'megaeth'];
+    return ['stargaze', 'intergaze', 'megaeth', 'hyperevm'];
   }
 
   /**

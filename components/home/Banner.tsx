@@ -59,7 +59,7 @@ const Banner = ({ items }: BannerProps) => {
   const getMinter = (banner: BannerWithLaunchpad) => {
     if (!banner.launchpad) return null;
 
-    // For Stargaze, use minterV2; for Intergaze, use minter
+    // For Stargaze, use minterV2; for Intergaze, Hyperliquid, and MegaETH, use minter
     if (banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.STARGAZE) {
       return banner.launchpad.minterV2;
     } else if (
@@ -69,6 +69,10 @@ const Banner = ({ items }: BannerProps) => {
     } else if (
       banner.banner_network?.toLowerCase() ===
       NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase()
+    ) {
+      return banner.launchpad.minter;
+    } else if (
+      banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.HYPEREVM
     ) {
       return banner.launchpad.minter;
     }
@@ -93,6 +97,10 @@ const Banner = ({ items }: BannerProps) => {
       NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase()
     ) {
       return `https://rarible.fun/collections/megaethtestnet/${banner.launchpad.contractAddress}/drops`;
+    } else if (
+      banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.HYPEREVM
+    ) {
+      return `https://liquidfi.app/launchpad/${banner.banner_collection_address}`;
     }
 
     return '#';
@@ -115,6 +123,10 @@ const Banner = ({ items }: BannerProps) => {
       NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase()
     ) {
       return `https://rarible.fun/collections/megaethtestnet/${banner.launchpad.contractAddress}`;
+    } else if (
+      banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.HYPEREVM
+    ) {
+      return `https://www.liquidfi.app/mint/hyperliquid/${banner.banner_collection_address}`;
     }
 
     return '#';
@@ -168,8 +180,9 @@ const Banner = ({ items }: BannerProps) => {
         const currentStage = minter.currentStage;
 
         // Check if trading has started
-        const tradingStart =
-          new Date(banner.launchpad.startTradingTime).getTime() / 1000;
+        const tradingStart = new Date(
+          banner.launchpad.startTradingTime
+        ).getTime();
         const isTradingStarted = now >= tradingStart;
 
         // If any banner is in live trading, set the global flag
@@ -248,8 +261,7 @@ const Banner = ({ items }: BannerProps) => {
       : new Date().getTime();
 
     // Check if trading has started for this specific launchpad
-    const tradingStart =
-      new Date(banner.launchpad.startTradingTime).getTime() / 1000;
+    const tradingStart = new Date(banner.launchpad.startTradingTime).getTime();
     const isTradingStarted = now >= tradingStart;
 
     if (isTradingStarted) {
@@ -329,8 +341,9 @@ const Banner = ({ items }: BannerProps) => {
     // Check if this banner has launchpad data
     if (banner.launchpad && minter) {
       const now = new Date().getTime();
-      const tradingStart =
-        new Date(banner.launchpad.startTradingTime).getTime() / 1000;
+      const tradingStart = new Date(
+        banner.launchpad.startTradingTime
+      ).getTime();
       const isTradingStarted = now >= tradingStart;
 
       if (isTradingStarted) {
