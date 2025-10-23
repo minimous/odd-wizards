@@ -1231,6 +1231,10 @@ export const createLinkCollection = (
       return `https://www.stargaze.zone/m/${collectionAddress}/tokens`;
     case NETWORK_CONSTANT.INTERGAZE:
       return `https://intergaze.xyz/m/${collectionAddress}`;
+    case NETWORK_CONSTANT.HYPEREVM:
+      return `https://www.liquidfi.app/mint/hyperliquid/${collectionAddress}`;
+    case NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase():
+      return `https://rarible.fun/collections/megaethtestnet/${collectionAddress}`;
   }
 
   return '#';
@@ -1244,6 +1248,10 @@ export const getLogoNetwork = (network: string) => {
       return `https://raw.githubusercontent.com/cosmos/chain-registry/master/stargaze/images/stars.png`;
     case NETWORK_CONSTANT.INTERGAZE:
       return `https://registry.initia.xyz/images/intergaze.png`;
+    case NETWORK_CONSTANT.HYPEREVM:
+      return `https://hyperliquid.xyz/logo.png`;
+    case NETWORK_CONSTANT.MEGAETH.toLocaleLowerCase():
+      return `https://rarible.com/favicon.ico`;
   }
 
   return '#';

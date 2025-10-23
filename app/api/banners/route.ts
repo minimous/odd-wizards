@@ -4,6 +4,10 @@ import { StargazeService } from '@/lib/stargaze/stargaze-service';
 import { IntergazeService } from '@/lib/intergaze/intergaze-service';
 import { GeneralLaunchpad } from '@/types/launchpad';
 import { RaribleService } from '@/lib/megaeth/rarible-service';
+import {
+  HyperliquidService,
+  LaunchpadData
+} from '@/lib/hyperliquid/hyperliquid-service';
 import { NETWORK_CONSTANT } from '@/constants';
 
 export const dynamic = 'force-dynamic';
@@ -266,6 +270,165 @@ function normalizeRaribleLaunchpad(raribleData: any): GeneralLaunchpad {
   };
 }
 
+// Helper function to normalize Hyperliquid data to general format
+function normalizeHyperliquidLaunchpad(
+  hyperliquidData: LaunchpadData
+): GeneralLaunchpad {
+  const currentTime = Date.now();
+
+  // Convert allRounds to mint stages format
+  const mintStages = hyperliquidData.allRounds.map((round) => {
+    const startTime = round.startTime * 1000; // Convert to milliseconds
+    const endTime = round.endTime * 1000; // Convert to milliseconds
+
+    // Determine stage status based on current time and round flags
+    let status: 'ACTIVE' | 'UPCOMING' | 'ENDED' = 'UPCOMING';
+    if (round.isEnded) {
+      status = 'ENDED';
+    } else if (round.isStarted) {
+      status = 'ACTIVE';
+    }
+
+    // Explicitly type the stage type and presale type
+    const type: 'PUBLIC' | 'PRESALE' = round.isPublic ? 'PUBLIC' : 'PRESALE';
+    const presaleType: 'NONE' | 'REGULAR' = round.isPublic ? 'NONE' : 'REGULAR';
+
+    return {
+      id: round.roundId,
+      name: round.name,
+      type: type,
+      presaleType: presaleType,
+      status: status,
+      startTime: startTime,
+      endTime: endTime,
+      salePrice: {
+        amount: round.price.toString(),
+        denom: 'HYPE',
+        symbol: 'HYPE',
+        exponent: 18 // Default for Hyperliquid
+      },
+      addressTokenCounts: {
+        limit: round.maxPerWallet,
+        mintable: round.maxPerWallet,
+        minted: 0
+      },
+      stageCounts: {
+        limit: round.supply,
+        mintable: round.supply - round.minted,
+        minted: round.minted
+      },
+      numMembers: undefined,
+      isMember: false,
+      proofs: null,
+      burnConditions: null
+    };
+  });
+
+  // Find current active stage
+  let currentStage = null;
+
+  // First, try to find an ACTIVE stage
+  currentStage = mintStages.find((stage) => stage.status === 'ACTIVE');
+
+  // If no active stage, find the next upcoming stage (earliest start time that's in the future)
+  if (!currentStage) {
+    const upcomingStages = mintStages
+      .filter((stage) => stage.status === 'UPCOMING')
+      .sort((a, b) => (a.startTime as number) - (b.startTime as number));
+
+    currentStage = upcomingStages[0] || null;
+  }
+
+  // If still no current stage and we have stages, use the first one as fallback
+  if (!currentStage && mintStages.length > 0) {
+    currentStage = mintStages[0];
+  }
+
+  // Calculate total minted across all rounds
+  const totalMinted = hyperliquidData.allRounds.reduce(
+    (sum, round) => sum + round.minted,
+    0
+  );
+
+  return {
+    id: hyperliquidData.id,
+    contractAddress: hyperliquidData.address,
+    name: hyperliquidData.name,
+    description: hyperliquidData.description,
+    creator: {
+      address: hyperliquidData.owner,
+      name: hyperliquidData.ownerName
+    },
+    minter: {
+      minterType: 'hyperliquid-launchpad',
+      minterAddress: hyperliquidData.address,
+      mintableTokens: hyperliquidData.maxSupply,
+      mintedTokens: totalMinted,
+      airdroppedTokens: 0,
+      numTokens: hyperliquidData.maxSupply,
+      existingTokens: totalMinted,
+      currentStage: currentStage,
+      mintStages: mintStages
+    },
+    startTradingTime:
+      currentStage?.startTime || mintStages[0]?.startTime || Date.now(),
+    media: {
+      type: 'image',
+      url: hyperliquidData.image,
+      height: 0,
+      width: 0,
+      fallbackUrl: hyperliquidData.image,
+      visualAssets: {
+        lg: {
+          type: 'image',
+          height: 400,
+          width: 400,
+          url: hyperliquidData.image,
+          staticUrl: hyperliquidData.image
+        },
+        md: {
+          type: 'image',
+          height: 300,
+          width: 300,
+          url: hyperliquidData.image,
+          staticUrl: hyperliquidData.image
+        },
+        sm: {
+          type: 'image',
+          height: 200,
+          width: 200,
+          url: hyperliquidData.image,
+          staticUrl: hyperliquidData.image
+        },
+        xl: {
+          type: 'image',
+          height: 500,
+          width: 500,
+          url: hyperliquidData.coverImage || hyperliquidData.image,
+          staticUrl: hyperliquidData.coverImage || hyperliquidData.image
+        },
+        xs: {
+          type: 'image',
+          height: 100,
+          width: 100,
+          url: hyperliquidData.image,
+          staticUrl: hyperliquidData.image
+        }
+      }
+    },
+    // Additional Hyperliquid-specific fields
+    totalSupply: hyperliquidData.maxSupply,
+    website: hyperliquidData.twitter || undefined,
+    royaltyInfo:
+      hyperliquidData.royalties.length > 0
+        ? {
+            sharePercent: hyperliquidData.royalties[0],
+            receivers: hyperliquidData.royaltyReceivers
+          }
+        : undefined
+  };
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
@@ -284,7 +447,7 @@ export async function GET(request: NextRequest) {
 
     // Use Promise.all to wait for all launchpad data
     const bannersWithLaunchpad = await Promise.all(
-      banners.map(async (banner) => {
+      banners.map(async (banner: any) => {
         if (banner.banner_collection_address) {
           let launchpad: GeneralLaunchpad | null = null;
 
@@ -347,6 +510,17 @@ export async function GET(request: NextRequest) {
                 // Still use the launchpad data without minted count
                 launchpad = normalizeRaribleLaunchpad(raribleData);
               }
+            } else if (
+              banner.banner_network?.toLowerCase() === NETWORK_CONSTANT.HYPEREVM
+            ) {
+              const hyperliquidService = new HyperliquidService();
+
+              // Get launchpad data using collection address as identifier
+              const hyperliquidData = await hyperliquidService.getLaunchpad(
+                banner.banner_collection_address
+              );
+
+              launchpad = normalizeHyperliquidLaunchpad(hyperliquidData);
             }
           } catch (error) {
             console.error(

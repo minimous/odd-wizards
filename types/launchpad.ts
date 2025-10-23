@@ -164,7 +164,7 @@ export interface BannerWithLaunchpad {
   banner_id: number;
   banner_title: string;
   banner_creator: string;
-  banner_network: 'stargaze' | 'intergaze';
+  banner_network: 'stargaze' | 'intergaze' | 'hyperevm' | 'MegaETH Testnet';
   banner_image: string;
   banner_thumbnail?: string;
   banner_type: 'I' | 'V';
